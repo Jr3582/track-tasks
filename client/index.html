@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script defer src="api.js"></script>
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display&display=swap">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        playfair: ['"Playfair Display"', 'serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+</head>
+<body>
+    <!-- <button class="flex bg-gray-600 w-fit h-fit rounded-2xl p-1" onclick="fetchAllTasks()">button</button> -->
+    <!-- DIV CONTAINER FOR ALL TASKS -->
+    <!-- NOTES:
+        - h-screen: makes the height of the container the whole viewport
+        - viewport: what is visible on your screen right now
+    -->
+
+    <!-- POP UP FOR MAKING THE TASK-->
+    <div class="flex absolute w-full h-full z-99 bg-black/50 justify-center items-center">
+        <!-- INNER BOX (THIS IS WHERE ALL THE INPUT INFO GOES)-->
+        <div class="grid grid-cols-3 w-2/3 h-2/3 bg-white rounded-md p-8 gap-2">
+            <!-- (TITLE, SUMMARY, DESCRIPTION)-->
+            <div class="col-span-2 h-full border-r-4 p-2">
+                <!-- TITLE -->
+                <div class="flex pb-4 border-b-2 flex-col gap-1">
+                    <span class="font-playfair">Title<span class="text-red-600">*</span></span>
+                    <input type="text" class="w-full h-8 bg-gray-400 rounded-md p-1">
+                </div>
+                
+                <!-- SUMARY -->
+                <div class="flex pb-4 border-b-2 flex-col gap-1">
+                    <span class="font-playfair">Summary<span class="text-red-600">*</span></span>
+                    <input type="text" class="w-full h-8 bg-gray-400 rounded-md p-1">
+                </div>
+
+                <!-- DESCRIPTION -->
+                <div class="flex flex-col gap-1">
+                    <span class="font-playfair">Summary<span class="text-red-600">*</span></span>
+                    <textarea type="text" class="w-full bg-gray-400 rounded-md p-1"></textarea>
+                </div>
+            </div>
+            <div class="grid grid-rows-5 h-full gap-2">
+                <!-- (STATUS, ASSIGNMENT, URGENCY)-->
+                <div class="row-span-4">
+
+                </div>
+                <!-- (SUBMIT BUTTON)-->
+                <div class="row-span-1 border-t-4 p-2">
+                    <div class="flex w-full h-full bg-blue-600 rounded-md justify-center items-center cursor-pointer button-anim">
+                        <span class="font-playfair text-4xl">Create Task</span>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="flex grid-cols-4 flex-row h-screen justify-evenly gap-2 p-2">
+        <!-- TO DO COLUMN -->
+        <div class="flex w-full h-full bg-blue-800 rounded-md flex-col gap-2 p-2">
+            <div class="flex w-full h-fit bg-blue-600 text-2xl rounded-md item-center justify-center p-2">
+                <span class="font-playfair">TO DO</span>
+            </div>
+            <button class="flex w-full h-fit bg-blue-600 text-xl rounded-md item-center justify-center cursor-pointer button-anim">
+                <span class="font-playfair text-blue-800">Create New Task +</span>
+            </button>
+        </div>
+
+        <!-- IN PROGRESS COLUMN -->
+        <div class="flex w-full h-full bg-green-800 rounded-md flex-col gap-2 p-2">
+            <div class="flex w-full h-fit bg-green-600 text-2xl rounded-md item-center justify-center p-2">
+                <span class="font-playfair">IN PROGRESS</span>
+            </div>
+            <button class="flex w-full h-fit bg-green-600 text-xl rounded-md item-center justify-center cursor-pointer button-anim">
+                <span class="font-playfair text-green-800">Create New Task +</span>
+            </button>
+        </div>
+
+        <!-- IN REVIEW COLUMN -->
+        <div class="flex w-full h-full bg-yellow-800 rounded-md flex-col gap-2 p-2">
+            <div class="flex w-full h-fit bg-yellow-600 text-2xl rounded-md item-center justify-center p-2">
+                <span class="font-playfair">IN REVIEW</span>
+            </div>
+            <button class="flex w-full h-fit bg-yellow-600 text-xl rounded-md item-center justify-center cursor-pointer button-anim">
+                <span class="font-playfair text-yellow-800">Create New Task +</span>
+            </button>
+        </div>
+
+        <!-- DONE COLUMN -->
+        <div class="flex w-full h-full bg-red-800 rounded-md flex-col gap-2 p-2">
+            <div class="flex w-full h-fit bg-red-600 text-2xl rounded-md item-center justify-center p-2">
+                <span class="font-playfair">DONE</span>
+            </div>
+            <button class="flex w-full h-fit bg-red-600 text-xl rounded-md item-center justify-center cursor-pointer button-anim">
+                <span class="font-playfair text-red-800">Create New Task +</span>
+            </button>
+        </div>
+    </div>
+    <!-- <div id="tasks-list"> -->
+
+    </div>
+</body>
+</html>

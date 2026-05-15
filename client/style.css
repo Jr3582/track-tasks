@@ -1,0 +1,7 @@
+.button-anim {
+    transition: transform 0.4s ease;
+}
+
+.button-anim:hover {
+    transform: scale(1.025);
+}
