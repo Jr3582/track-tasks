@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display&display=swap">
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="app.js" defer></script>
     <script>
         tailwind.config = {
             theme: {
@@ -21,9 +22,11 @@
     </script>
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
 </head>
-<body>
+<body >
     <!-- <button class="flex bg-gray-600 w-fit h-fit rounded-2xl p-1" onclick="fetchAllTasks()">button</button> -->
+
     <!-- DIV CONTAINER FOR ALL TASKS -->
+
     <!-- NOTES:
         - h-screen: makes the height of the container the whole viewport
         - viewport: what is visible on your screen right now
@@ -32,79 +35,102 @@
     <!-- POP UP FOR MAKING THE TASK-->
     <div class="flex absolute w-full h-full z-99 bg-black/50 justify-center items-center">
         <!-- INNER BOX (THIS IS WHERE ALL THE INPUT INFO GOES)-->
-        <div class="grid grid-cols-3 w-2/3 h-2/3 bg-white rounded-md p-8 gap-2">
-            <!-- (TITLE, SUMMARY, DESCRIPTION)-->
-            <div class="col-span-2 h-full border-r-4 p-2">
-                <!-- TITLE -->
-                <div class="flex pb-4 border-b-2 flex-col gap-1">
-                    <span class="font-playfair">Title<span class="text-red-600">*</span></span>
-                    <input type="text" class="w-full h-8 bg-gray-400 rounded-md p-1">
-                </div>
-                
-                <!-- SUMARY -->
-                <div class="flex pb-4 border-b-2 flex-col gap-1">
-                    <span class="font-playfair">Summary<span class="text-red-600">*</span></span>
-                    <input type="text" class="w-full h-8 bg-gray-400 rounded-md p-1">
-                </div>
-
-                <!-- DESCRIPTION -->
-                <div class="flex flex-col gap-1">
-                    <span class="font-playfair">Summary<span class="text-red-600">*</span></span>
-                    <textarea type="text" class="w-full bg-gray-400 rounded-md p-1"></textarea>
-                </div>
-            </div>
-            <div class="grid grid-rows-5 h-full gap-2">
-                <!-- (STATUS, ASSIGNMENT, URGENCY)-->
-                <div class="row-span-4">
-
-                </div>
-                <!-- (SUBMIT BUTTON)-->
-                <div class="row-span-1 border-t-4 p-2">
-                    <div class="flex w-full h-full bg-blue-600 rounded-md justify-center items-center cursor-pointer button-anim">
-                        <span class="font-playfair text-4xl">Create Task</span>
+        <form id="createTask" class="flex w-2/3 h-2/3">
+            <div class="grid grid-cols-3 w-full h-full bg-white rounded-md p-8 gap-2">
+                <!-- (TITLE, SUMMARY, DESCRIPTION)-->
+                <div class="col-span-2 h-full border-r-4 p-2">
+                    <!-- TITLE -->
+                    <div class="flex pb-4 border-b-2 flex-col gap-1">
+                        <span class="font-playfair">Title<span class="text-red-600">*</span></span>
+                        <input type="text" class="w-full h-8 bg-gray-300 rounded-md p-1 font-playfair">
+                    </div>
+                    
+                    <!-- SUMARY -->
+                    <div class="flex pb-4 border-b-2 flex-col gap-1">
+                        <span class="font-playfair">Summary<span class="text-red-600">*</span></span>
+                        <input type="text" class="w-full h-8 bg-gray-300 rounded-md p-1 font-playfair">
                     </div>
 
+                    <!-- DESCRIPTION -->
+                    <div class="flex flex-col gap-1">
+                        <span class="font-playfair">Description<span class="text-red-600">*</span></span>
+                        <textarea type="text" class="w-full min-h-48 bg-gray-300 rounded-md p-1 font-playfair"></textarea>
+                    </div>
+                </div>
+                <div class="grid grid-rows-5 h-full gap-2">
+                    <!-- (STATUS, ASSIGNMENT, URGENCY)-->
+                    <div class="row-span-4">
+                        <!-- STATUS -->
+                        <div class="flex flex-col">
+                            <span class="font-playfair">STATUS<span class="text-red-600">*</span></span>
+                            <div class="flex relative flex-row items-start">
+                                <div id="currentStatus" class="flex justify-between p-1 w-3/5 bg-blue-800 items-end rounded-md cursor-pointer button-anim text-2xl" onclick="activateDropBox(event)"><span class="font-playfair text-blue-500">TO DO</span><span class="pl-4 text-blue-500">▽</span></div>
+                                <div id="dropDownOptions" class="absolute top-0 left-0 absolute w-1/2 bg-gray-300 z-90 opacity-0 transition-opacity duration-300 pointer-events-none shadow-[3px_3px_4px_rgba(0,0,0,0.4)]">
+                                    <!-- THE OPTIONS -->
+                                    <div class="bg-blue-800 button-anim cursor-pointer" onclick="changeStatus('TO DO')"><span class="font-playfair text-2xl text-blue-500 p-1">TO DO</span></div>
+                                    <div class="bg-green-800 button-anim cursor-pointer" onclick="changeStatus('IN PROGRESS')"><span class="font-playfair text-2xl text-green-500 p-1">IN PROGRESS</span></div>
+                                    <div class="bg-yellow-800 button-anim cursor-pointer" onclick="changeStatus('REVIEWING')"><span class="font-playfair text-2xl text-yellow-500 p-1">REVIEWING</span></div>
+                                    <div class="bg-red-800 button-anim cursor-pointer" onclick="changeStatus('DONE')"><span class="font-playfair text-2xl text-red-500 p-1">DONE</span></div>
+                                </div>
+                            </div>
+                            <!-- <select id="status" class="flex w-1/2">
+                                <option class="text-blue-800">To Do</option>
+                                <option class="text-green-800">In Progress</option>
+                                <option class="text-yellow-800">Reviewing</option>
+                                <option class="text-red-800">Done</option>
+                            </select> -->
+                            <div>Test</div>
+                        </div>
+
+                    </div>
+                    <!-- (SUBMIT BUTTON)-->
+                    <div class="row-span-1 border-t-4 p-2">
+                        <button class="flex w-full h-full bg-blue-600 rounded-md justify-center items-center cursor-pointer button-anim">
+                            <span class="font-playfair text-4xl">Create Task</span>
+                        </button>
+
+                    </div>
                 </div>
             </div>
-        </div>
+        </form>    
     </div>
     <div class="flex grid-cols-4 flex-row h-screen justify-evenly gap-2 p-2">
         <!-- TO DO COLUMN -->
         <div class="flex w-full h-full bg-blue-800 rounded-md flex-col gap-2 p-2">
-            <div class="flex w-full h-fit bg-blue-600 text-2xl rounded-md item-center justify-center p-2">
+            <div class="flex w-full h-fit bg-blue-500 text-2xl rounded-md item-center justify-center p-2">
                 <span class="font-playfair">TO DO</span>
             </div>
-            <button class="flex w-full h-fit bg-blue-600 text-xl rounded-md item-center justify-center cursor-pointer button-anim">
+            <button class="flex w-full h-fit bg-blue-500 text-xl rounded-md item-center justify-center cursor-pointer button-anim">
                 <span class="font-playfair text-blue-800">Create New Task +</span>
             </button>
         </div>
 
         <!-- IN PROGRESS COLUMN -->
         <div class="flex w-full h-full bg-green-800 rounded-md flex-col gap-2 p-2">
-            <div class="flex w-full h-fit bg-green-600 text-2xl rounded-md item-center justify-center p-2">
+            <div class="flex w-full h-fit bg-green-500 text-2xl rounded-md item-center justify-center p-2">
                 <span class="font-playfair">IN PROGRESS</span>
             </div>
-            <button class="flex w-full h-fit bg-green-600 text-xl rounded-md item-center justify-center cursor-pointer button-anim">
+            <button class="flex w-full h-fit bg-green-500 text-xl rounded-md item-center justify-center cursor-pointer button-anim">
                 <span class="font-playfair text-green-800">Create New Task +</span>
             </button>
         </div>
 
         <!-- IN REVIEW COLUMN -->
         <div class="flex w-full h-full bg-yellow-800 rounded-md flex-col gap-2 p-2">
-            <div class="flex w-full h-fit bg-yellow-600 text-2xl rounded-md item-center justify-center p-2">
+            <div class="flex w-full h-fit bg-yellow-500 text-2xl rounded-md item-center justify-center p-2">
                 <span class="font-playfair">IN REVIEW</span>
             </div>
-            <button class="flex w-full h-fit bg-yellow-600 text-xl rounded-md item-center justify-center cursor-pointer button-anim">
+            <button class="flex w-full h-fit bg-yellow-500 text-xl rounded-md item-center justify-center cursor-pointer button-anim">
                 <span class="font-playfair text-yellow-800">Create New Task +</span>
             </button>
         </div>
 
         <!-- DONE COLUMN -->
         <div class="flex w-full h-full bg-red-800 rounded-md flex-col gap-2 p-2">
-            <div class="flex w-full h-fit bg-red-600 text-2xl rounded-md item-center justify-center p-2">
+            <div class="flex w-full h-fit bg-red-500 text-2xl rounded-md item-center justify-center p-2">
                 <span class="font-playfair">DONE</span>
             </div>
-            <button class="flex w-full h-fit bg-red-600 text-xl rounded-md item-center justify-center cursor-pointer button-anim">
+            <button class="flex w-full h-fit bg-red-500 text-xl rounded-md item-center justify-center cursor-pointer button-anim">
                 <span class="font-playfair text-red-800">Create New Task +</span>
             </button>
         </div>
