@@ -1,13 +1,8 @@
 const form = document.getElementById("createTask");
-const dropDown = document.getElementById("dropDownOptions");
+const statusDropDown = document.getElementById("statusDropDownOptions");
+const urgencyDropDown = document.getElementById("urgencyDropDownOptions");
 const curStatus = document.getElementById("currentStatus");
-
-const statuses = {
-    "To Do": { bg: "bg-blue-800", text: "text-blue-500"},
-    "In Progress": { bg: "bg-green-800", text: "text-green-500"},
-    "In Review": { bg: "bg-yellow-800", text: "text-yellow-500"},
-    "Done": { bg: "bg-red-800", text: "text-red-500"}
-}
+const curUrgency = document.getElementById("curUrgency");
 
 let st = "TO DO";
 
@@ -16,35 +11,65 @@ form.addEventListener("submit", function(event) {
 })
 
 document.addEventListener("click", function(e) {
-    if(dropDown.classList.contains("opacity-100")) {
-        dropDown.classList.remove("opacity-100");
-        dropDown.classList.add("opacity-0");
+    if(statusDropDown.classList.contains("opacity-100")) {
+        statusDropDown.classList.remove("opacity-100");
+        statusDropDown.classList.add("opacity-0");
 
-        dropDown.classList.remove("pointer-events-auto");
-        dropDown.classList.add("pointer-events-none");
+        statusDropDown.classList.remove("pointer-events-auto");
+        statusDropDown.classList.add("pointer-events-none");
 
         //DEBUGGING MESSAGE
-        console.log("hiding dropdown");
+        console.log("hiding statusDropDown");
+    } 
+    if(urgencyDropDown.classList.contains("opacity-100")) {
+        urgencyDropDown.classList.remove("opacity-100");
+        urgencyDropDown.classList.add("opacity-0");
+
+        urgencyDropDown.classList.remove("pointer-events-auto");
+        urgencyDropDown.classList.add("pointer-events-none");
+
+        //DEBUGGING MESSAGE
+        console.log("hiding urgencyDropDown");
     }
 })
 
-function activateDropBox(event) {
-    if(dropDown.classList.contains("opacity-0")) {
+function activateStatusDropBox(event) {
+    if(statusDropDown.classList.contains("opacity-0")) {
         event.stopPropagation();
         
-        dropDown.classList.remove("opacity-0");
-        dropDown.classList.remove("pointer-events-none");
+        statusDropDown.classList.remove("opacity-0");
+        statusDropDown.classList.remove("pointer-events-none");
 
-        dropDown.classList.add("opacity-100");
-        dropDown.classList.add("pointer-events-auto");
+        if(urgencyDropDown.classList.contains("opacity-100")) urgencyDropDown.classList.remove("opacity-100"); urgencyDropDown.classList.add("opacity-0")
+        if(urgencyDropDown.classList.contains("pointer-events-auto")) urgencyDropDown.classList.remove("pointer-events-auto"); urgencyDropDown.classList.add("pointer-events-none")
+
+        statusDropDown.classList.add("opacity-100");
+        statusDropDown.classList.add("pointer-events-auto");
 
         //DEBUGGING MESSAGE
-        console.log("openning dropdown");
+        console.log("openning statusDropDown");
 
         //NOTES:
         //pointer-events-none: Makes it so that you can click through without activating
     }
+}
 
+function activateUrgencyDropBox(event) {
+    if(urgencyDropDown.classList.contains("opacity-0")) {
+        event.stopPropagation();
+        
+        urgencyDropDown.classList.remove("opacity-0");
+        urgencyDropDown.classList.remove("pointer-events-none");
+
+        if(statusDropDown.classList.contains("opacity-100")) statusDropDown.classList.remove("opacity-100"); statusDropDown.classList.add("opacity-0")
+        if(statusDropDown.classList.contains("pointer-events-auto")) statusDropDown.classList.remove('pointer-events-auto'); statusDropDown.classList.add("pointer-events-none")
+
+        urgencyDropDown.classList.add("opacity-100");
+        urgencyDropDown.classList.add("pointer-events-auto");
+
+        //DEBUGGING MESSAGE
+        console.log("openning urgencyDropDown");
+    }
 }
 
 function changeStatus(status) {

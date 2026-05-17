@@ -40,14 +40,14 @@
                 <!-- (TITLE, SUMMARY, DESCRIPTION)-->
                 <div class="col-span-2 h-full border-r-4 p-2">
                     <!-- TITLE -->
-                    <div class="flex pb-4 border-b-2 flex-col gap-1">
+                    <div class="flex pb-4 flex-col gap-1">
                         <span class="font-playfair">Title<span class="text-red-600">*</span></span>
                         <input type="text" class="w-full h-8 bg-gray-300 rounded-md p-1 font-playfair">
                     </div>
                     
                     <!-- SUMARY -->
-                    <div class="flex pb-4 border-b-2 flex-col gap-1">
-                        <span class="font-playfair">Summary<span class="text-red-600">*</span></span>
+                    <div class="flex pb-4 flex-col gap-1">
+                        <span class="font-playfair">Summary<span class="text-red-600"></span></span>
                         <input type="text" class="w-full h-8 bg-gray-300 rounded-md p-1 font-playfair">
                     </div>
 
@@ -58,28 +58,60 @@
                     </div>
                 </div>
                 <div class="grid grid-rows-5 h-full gap-2">
-                    <!-- (STATUS, ASSIGNMENT, URGENCY)-->
+                    <!-- STATUS, ASSIGNMENT, URGENCY, START DATE, AND END DATE AREA-->
                     <div class="row-span-4">
-                        <!-- STATUS -->
+                        <!-- STATUS, URGENCY, ASSIGNMENT COL, START DATE, AND END DATE -->
                         <div class="flex flex-col">
+                            <!-- STATUS DROP BOXES-->
                             <span class="font-playfair">STATUS<span class="text-red-600">*</span></span>
-                            <div class="flex relative flex-row items-start">
-                                <div id="currentStatus" class="flex justify-between p-1 w-3/5 bg-blue-800 items-end rounded-md cursor-pointer button-anim text-2xl" onclick="activateDropBox(event)"><span class="font-playfair text-blue-500">TO DO</span><span class="pl-4 text-blue-500">▽</span></div>
-                                <div id="dropDownOptions" class="absolute top-0 left-0 absolute w-1/2 bg-gray-300 z-90 opacity-0 transition-opacity duration-300 pointer-events-none shadow-[3px_3px_4px_rgba(0,0,0,0.4)]">
-                                    <!-- THE OPTIONS -->
+                            <div class="flex relative flex-row items-start pb-4">
+                                <div id="currentStatus" class="flex justify-between p-1 w-3/5 bg-blue-800 items-end rounded-md cursor-pointer button-anim text-2xl" onclick="activateStatusDropBox(event)"><span class="font-playfair text-blue-500">TO DO</span><span class="pl-4 text-blue-500">▽</span></div>
+                                <div id="statusDropDownOptions" class="absolute top-0 left-0 absolute w-1/2 z-30 opacity-0 transition-opacity duration-300 pointer-events-none shadow-[3px_3px_4px_rgba(0,0,0,0.4)]">
+                                    <!-- THE STATUS OPTIONS -->
                                     <div class="bg-blue-800 button-anim cursor-pointer" onclick="changeStatus('TO DO')"><span class="font-playfair text-2xl text-blue-500 p-1">TO DO</span></div>
                                     <div class="bg-green-800 button-anim cursor-pointer" onclick="changeStatus('IN PROGRESS')"><span class="font-playfair text-2xl text-green-500 p-1">IN PROGRESS</span></div>
                                     <div class="bg-yellow-800 button-anim cursor-pointer" onclick="changeStatus('REVIEWING')"><span class="font-playfair text-2xl text-yellow-500 p-1">REVIEWING</span></div>
                                     <div class="bg-red-800 button-anim cursor-pointer" onclick="changeStatus('DONE')"><span class="font-playfair text-2xl text-red-500 p-1">DONE</span></div>
                                 </div>
                             </div>
+                            <!-- URGENCY DROP BOXES-->
+                            <span class="font-playfair">URGENCY<span class="text-red-600">*</span></span>
+                            <div class="flex relative flex-row items-start pb-4">
+                                <div id="curUrgency" class="flex justify-between p-1 w-3/5 bg-green-800 items-end rounded-md cursor-pointer button-anim text-2xl" onclick="activateUrgencyDropBox(event)"><span class="font-playfair text-green-500">LOW</span><span class="pl-4 text-green-500">▽</span></div>
+                                <div id="urgencyDropDownOptions" class="absolute top-0 left-0 absolute w-1/2 z-20 opacity-0 transition-opacity duration-300 pointer-events-none shadow-[3px_3px_4px_rgba(0,0,0,0.4)]">
+                                    <!-- THE URGENCY OPTIONS -->
+                                    <div class="bg-green-800 button-anim cursor-pointer" onclick="changeUrgency('LOW')"><span class="font-playfair text-2xl text-green-500 p-1">LOW</span></div>
+                                    <div class="bg-yellow-800 button-anim cursor-pointer" onclick="changeUrgency('URGENT')"><span class="font-playfair text-2xl text-yellow-500 p-1">URGENT</span></div>
+                                    <div class="bg-orange-800 button-anim cursor-pointer" onclick="changeUrgency('VERY URGENT')"><span class="font-playfair text-2xl text-orange-500 p-1">VERY URGENT</span></div>
+                                    <div class="bg-red-800 button-anim cursor-pointer" onclick="changeUrgency('TOP PRIORITY')"><span class="font-playfair text-2xl text-red-500 p-1">TOP PRIORITY</span></div>
+                                </div>
+                            </div>
+                            <!-- TEXT INPUTS -->
+                            <div class="grid grid-cols-2 gap-4">
+                                <!-- ASSIGNEE TEXT-BOX -->
+                                <span class="font-playfair">ASSIGNEE<span class="text-red-600">*</span>:</span>
+                                <input type="text" class="flex bg-gray-300 ml-4 p-1 rounded-md font-playfair">
+                                <!-- PARENT TASK TEXT-BOX -->
+                                <span class="font-playfair">PARENT TASK<span class="text-red-600"></span>:</span>
+                                <input type="text" class="flex bg-gray-300 ml-4 p-1 rounded-md font-playfair">
+                                <!-- START DATE TEXT-BOX -->
+                                <span class="font-playfair">START DATE<span class="text-red-600"></span>:</span>
+                                <input type="date" class="flex bg-gray-300 ml-4 p-1 rounded-md font-playfair">
+                                <!-- DUE DATE TEXT-BOX -->
+                                <span class="font-playfair">DUE DATE<span class="text-red-600"></span>:</span>
+                                <input type="date" class="flex bg-gray-300 ml-4 p-1 rounded-md font-playfair">
+                                <!-- OWNER -->
+                                <span class="font-playfair">OWNER<span class="text-red-600">*</span>:</span>
+                                <input type="text" class="flex bg-gray-300 ml-4 p-1 rounded-md font-playfair">
+                            </div>
+
+                             <!-- OLD NON-CUSTOMIZED DROP BOX-->
                             <!-- <select id="status" class="flex w-1/2">
                                 <option class="text-blue-800">To Do</option>
                                 <option class="text-green-800">In Progress</option>
                                 <option class="text-yellow-800">Reviewing</option>
                                 <option class="text-red-800">Done</option>
                             </select> -->
-                            <div>Test</div>
                         </div>
 
                     </div>
