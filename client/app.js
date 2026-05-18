@@ -45,6 +45,8 @@ document.addEventListener("click", function(e) {
         popUp.classList.remove("pointer-events-auto");
         popUp.classList.add("pointer-events-none");
 
+        form.reset();
+
         //DEBUGGING MESSAGE
         console.log("hiding urgencyDropDown");
     }
