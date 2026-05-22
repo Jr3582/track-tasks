@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.VisualBasic;
 
 namespace MyFirstApp.Controllers;
 
@@ -13,9 +14,7 @@ public class TasksController : ControllerBase
     private static int _newId = 1;
     private static List<TaskItem> _tasks = new()
     { 
-        new TaskItem {Id = 1, Title = "Something", IsComplete = false}, 
-        new TaskItem {Id = 2, Title = "Something 2", IsComplete = false}
-    
+        new TaskItem {Id = 1, Title = "Test 1", Summary = "Test Summary", Description = "Test Description", Assignee = "John", Owner = "Jimmy", Status = "TO DO", Urgency = "LOW", IsComplete = false}    
     
     }
     ;
@@ -32,7 +31,7 @@ public class TasksController : ControllerBase
         task.Id = _newId;
         _newId++;
         _tasks.Add(task);
-        return Ok(task);
+        return StatusCode(201, task);
     }
 
     [HttpPut("{id}")] 
@@ -68,5 +67,14 @@ public class TaskItem
 {
     public int Id { get; set; }
     public string Title { get; set; } = "";
+    public string? Summary { get; set; } = "";
+    public string? Description { get; set; } = "";
+    public string? Assignee { get; set; } = "";
+    public string? Parent { get; set; } = "";
+    public DateTime? StartDate { get; set; }
+    public DateTime? DueDate { get; set; }
+    public string Owner { get; set; } = "";
+    public string Status { get; set; } = "";
+    public string Urgency { get; set; } = "";
     public bool IsComplete { get; set; }
 }

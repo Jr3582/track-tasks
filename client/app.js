@@ -1,15 +1,54 @@
 const form = document.getElementById("createTask");
 const statusDropDown = document.getElementById("statusDropDownOptions");
 const urgencyDropDown = document.getElementById("urgencyDropDownOptions");
-const curStatus = document.getElementById("currentStatus");
-const curUrgency = document.getElementById("curUrgency");
+
 const popUp = document.getElementById("popUp");
 
-let st = "TO DO";
+//FORM INPUTS
+const title = document.getElementById("title");
+const summary = document.getElementById("summary");
+const description = document.getElementById("description");
+const assignee = document.getElementById("assignee");
+const parentTask = document.getElementById("parent");
+const startDate = document.getElementById("start_date");
+const dueDate = document.getElementById("due_date");
+const owner = document.getElementById("owner");
+const curStatus = document.getElementById("currentStatus");
+const curUrgency = document.getElementById("curUrgency");
 
-//STOPS THE PAGE FROM REFRESHING AFTER SUBMITTING
-form.addEventListener("submit", function(event) {
+let st = "TO DO";
+let urg = "LOW";
+
+//EVENT LISTENER FOR FORM
+form.addEventListener("submit", async function(event) {
+    //STOPS THE PAGE FROM REFRESHING AFTER SUBMITTING
     event.preventDefault();
+
+    //CONVERTING THE TIME FORMAT TO FULL ISO
+    const fullISOStart = startDate.value ? new Date(startDate.value).toISOString() : null;
+    const fullISODue = dueDate.value ? new Date(dueDate.value).toISOString() : null;
+
+    const task = {
+        title: title.value,
+        summary: summary.value,
+        description: description.value,
+        assignee: assignee.value,
+        parentTask: parentTask.value,
+        startDate: fullISOStart,
+        dueDate: fullISODue,
+        owner: owner.value,
+        curStatus: st,
+        curUrgency: urg
+    }
+    const response = await fetch("http://localhost:5056/Tasks", {
+        method: "Post",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(task)
+    });
+
+    console.log(await response.json());
 })
 
 //STOPS THE FORM FROM DISAPPEARING IF CLICKED INSIDE
@@ -93,6 +132,7 @@ function activateUrgencyDropBox(event) {
 
 //CHANGE STATUS FOR DROPDOWN
 function changeStatus(status) {
+    st = status;
     switchOption(status, "TO DO", "IN PROGRESS", "REVIEWING", "DONE", "bg-blue-800", "bg-green-800", "bg-yellow-800", "bg-red-800", "text-blue-500", "text-green-500", "text-yellow-500", "text-red-500", curStatus);
     
     //DEBUGGING MESSAGE
@@ -101,10 +141,11 @@ function changeStatus(status) {
 
 //CHANGE URGENCY FOR DROPDOWN
 function changeUrgency(urgency) {
+    urg = urgency;
     switchOption(urgency, "LOW", "URGENT", "VERY URGENT", "TOP PRIORITY", "bg-green-800", "bg-yellow-800", "bg-orange-800", "bg-red-800", "text-green-500", "text-yellow-500", "text-orange-500", "text-red-500", curUrgency);
     
     //DEBUGGING MESSAGE
-    console.log(st);
+    console.log(urg);
 }
 
 function showCreateTask(status, event){
@@ -154,8 +195,6 @@ function switchOption(choice, o1, o2, o3, o4, o1c, o2c, o3c, o4c, o1tc, o2tc, o3
     curChoice.children[0].textContent = choice;
     switch (choice) {
         case o1:
-            st = o1;
-
             removeBg();
             addBg(o1c);
 
@@ -163,8 +202,6 @@ function switchOption(choice, o1, o2, o3, o4, o1c, o2c, o3c, o4c, o1tc, o2tc, o3
             addTextColor(curChoice.children[0], o1tc, curChoice.children[1], o1tc);
             break;
         case o2:
-            st = o2;
-
             removeBg();
             addBg(o2c);
 
@@ -172,8 +209,6 @@ function switchOption(choice, o1, o2, o3, o4, o1c, o2c, o3c, o4c, o1tc, o2tc, o3
             addTextColor(curChoice.children[0], o2tc, curChoice.children[1], o2tc);
             break;
         case o3:
-            st = o3;
-
             removeBg();
             addBg(o3c);
 
@@ -181,8 +216,6 @@ function switchOption(choice, o1, o2, o3, o4, o1c, o2c, o3c, o4c, o1tc, o2tc, o3
             addTextColor(curChoice.children[0], o3tc, curChoice.children[1], o3tc);
             break;
         case o4:
-            st = o4;
-
             removeBg();
             addBg(o4c);
 
