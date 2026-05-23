@@ -32,7 +32,7 @@
         - viewport: what is visible on your screen right now
     -->
 
-    <!-- POP UP FOR MAKING THE TASK-->
+    <!-- POP UP FOR MAKING THE TAS -->
     <div id="popUp" class="flex absolute w-full h-full z-99 bg-black/50 justify-center items-center opacity-0 transition-opacity duration-300 pointer-events-none">
         <!-- INNER BOX (THIS IS WHERE ALL THE INPUT INFO GOES)-->
         <form id="createTask" class="flex w-2/3 h-2/3">
@@ -126,6 +126,7 @@
             </div>
         </form>    
     </div>
+
     <div class="flex grid-cols-4 flex-row h-screen justify-evenly gap-2 p-2">
         <!-- TO DO COLUMN -->
         <div class="flex w-full h-full bg-blue-800 rounded-md flex-col gap-2 p-2">
@@ -135,7 +136,7 @@
                     <span class="font-playfair">TO DO</span>
                 </div>
                 <!-- NEW TASKS GOES HERE -->
-                <div class="bg-blue-600 rounded-md p-2 font-playfair text-2xl text-bold task-card">Test Task</div>
+                <div class="relative bg-blue-600 rounded-md p-2 font-playfair text-2xl text-bold task-card cursor-pointer button-anim mb-2"><span class="flex w-1/2">Task Title </span><span class="absolute right-2 bottom-1 text-2xl text-red-800">!</span></div>
             </div>
             <!-- BUTTON TO CREATE NEW TASKS -->
             <button onclick="showCreateTask('TO DO', event)" class="flex w-full h-fit bg-blue-500 text-xl rounded-md item-center justify-center cursor-pointer button-anim">
@@ -145,12 +146,12 @@
 
         <!-- IN PROGRESS COLUMN -->
         <div class="flex w-full h-full bg-green-800 rounded-md flex-col gap-2 p-2">
-            <!-- NEW TASKS GOES HERE -->
              <div id="inprog_col">
                 <!-- TITLE -->
                 <div class="flex w-full h-fit bg-green-500 text-2xl rounded-md item-center justify-center p-2 no-drag mb-2">
                     <span class="font-playfair">IN PROGRESS</span>
                 </div>
+                <!-- NEW TASKS GOES HERE -->
              </div>
             <!-- BUTTON TO CREATE NEW TASKS -->
             <button onclick="showCreateTask('IN PROGRESS', event)" class="flex w-full h-fit bg-green-500 text-xl rounded-md item-center justify-center cursor-pointer button-anim no-drag">

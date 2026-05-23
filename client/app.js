@@ -1,4 +1,4 @@
-const form = document.getElementById("createTask");
+const createTaskform = document.getElementById("createTask");
 const statusDropDown = document.getElementById("statusDropDownOptions");
 const urgencyDropDown = document.getElementById("urgencyDropDownOptions");
 
@@ -25,6 +25,7 @@ const done_col = document.getElementById("done_col");
 let st = "TO DO";
 let urg = "LOW";
 
+// VVV THIS IS FOR MOVING TASK AROUND TO EACH COL VVV
 new Sortable(todo_col, {
     group: "tasks",
     draggable: ".task-card",
@@ -64,8 +65,92 @@ new Sortable(done_col, {
     },
 });
 
+//FETCHING ALL TASKS WHEN SITE IS LOADED
+async function fetchAllTasks() {
+    let task;
+    const tasks = await fetch("http://localhost:5056/Tasks");
+    for(task of await tasks.json()) {
+        const newTask = document.createElement("div");
+        const title = document.createElement("span");
+        const urgency = document.createElement("span");
+        
+        switch (task.status) {
+            case "TO DO":
+                newTask.className = "relative bg-blue-600 rounded-md p-2 font-playfair text-2xl text-bold task-card cursor-pointer button-anim mb-2";
+                urgency.className = "absolute right-2 bottom-1 text-2xl text-red-800";
+                title.className = "flex w-1/2";
+
+                title.textContent = task.title;
+                urgency.textContent = fetchUrgency(task.urgency);
+
+                newTask.appendChild(title);
+                newTask.appendChild(urgency);
+                todo_col.appendChild(newTask);
+                break;
+            case "IN PROGRESS":
+                newTask.className = "relative bg-green-600 rounded-md p-2 font-playfair text-2xl text-bold task-card cursor-pointer button-anim mb-2";
+                urgency.className = "absolute right-2 bottom-1 text-2xl text-red-800";
+                title.className = "flex w-1/2";
+
+                title.textContent = task.title;
+                urgency.textContent = fetchUrgency(task.urgency);
+
+                newTask.appendChild(title);
+                newTask.appendChild(urgency);
+                inprog_col.appendChild(newTask);
+                break;
+            case "REVIEWING":
+                newTask.className = "relative bg-yellow-600 rounded-md p-2 font-playfair text-2xl text-bold task-card cursor-pointer button-anim mb-2";
+                urgency.className = "absolute right-2 bottom-1 text-2xl text-red-800";
+                title.className = "flex w-1/2";
+
+                title.textContent = task.title;
+                urgency.textContent = fetchUrgency(task.urgency);
+
+                newTask.appendChild(title);
+                newTask.appendChild(urgency);
+                inrew_col.appendChild(newTask);
+                break;
+            case "DONE":
+                newTask.className = "relative bg-red-600 rounded-md p-2 font-playfair text-2xl text-bold task-card cursor-pointer button-anim mb-2";
+                urgency.className = "absolute right-2 bottom-1 text-2xl text-red-800";
+                title.className = "flex w-1/2";
+
+                title.textContent = task.title;
+                urgency.textContent = fetchUrgency(task.urgency);
+
+                newTask.appendChild(title);
+                newTask.appendChild(urgency);
+                done_col.appendChild(newTask);
+                break;
+        }
+    }
+}
+
+function fetchUrgency(taskUrgency) {
+    let res = "";
+    switch(taskUrgency) {
+        case "LOW":
+            res = "!";
+            break;
+        case "URGENT":
+            res = "!!";
+            break;
+        case "CRITICAL":
+            res = "!!!";
+            break;
+        case "PRIORITY":
+            res = "!!!!";
+            break;
+    }
+    return res;
+
+}
+
+fetchAllTasks();
+
 //EVENT LISTENER FOR FORM
-form.addEventListener("submit", async function(event) {
+createTaskform.addEventListener("submit", async function(event) {
     //STOPS THE PAGE FROM REFRESHING AFTER SUBMITTING
     event.preventDefault();
 
@@ -97,7 +182,7 @@ form.addEventListener("submit", async function(event) {
 })
 
 //STOPS THE FORM FROM DISAPPEARING IF CLICKED INSIDE
-form.addEventListener("click", function(event) {
+createTaskform.addEventListener("click", function(event) {
     event.stopPropagation();
 })
 
@@ -129,7 +214,7 @@ document.addEventListener("click", function(e) {
         popUp.classList.remove("pointer-events-auto");
         popUp.classList.add("pointer-events-none");
 
-        form.reset();
+        createTaskform.reset();
 
         //DEBUGGING MESSAGE
         console.log("hiding urgencyDropDown");

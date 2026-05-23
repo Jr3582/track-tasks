@@ -14,8 +14,8 @@ public class TasksController : ControllerBase
     private static int _newId = 1;
     private static List<TaskItem> _tasks = new()
     { 
-        new TaskItem {Id = 1, Title = "Test 1", Summary = "Test Summary", Description = "Test Description", Assignee = "John", Owner = "Jimmy", Status = "TO DO", Urgency = "LOW", IsComplete = false}    
-    
+        new TaskItem {Id = 1, Title = "Test 1", Summary = "Test Summary", Description = "Test Description", Assignee = "John", Owner = "Jimmy", Status = "TO DO", Urgency = "LOW", IsComplete = false},
+        new TaskItem {Id = 2, Title = "Test 2", Summary = "Test Summary 2", Description = "Test Description 2", Assignee = "John", Owner = "Johnny", Status = "IN PROGRESS", Urgency = "PRIORITY", IsComplete = false}
     }
     ;
 
