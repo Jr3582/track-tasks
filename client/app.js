@@ -16,8 +16,53 @@ const owner = document.getElementById("owner");
 const curStatus = document.getElementById("currentStatus");
 const curUrgency = document.getElementById("curUrgency");
 
+//SORTABLE
+const todo_col = document.getElementById("todo_col");
+const inprog_col = document.getElementById("inprog_col");
+const inrew_col = document.getElementById("inrew_col");
+const done_col = document.getElementById("done_col");
+
 let st = "TO DO";
 let urg = "LOW";
+
+new Sortable(todo_col, {
+    group: "tasks",
+    draggable: ".task-card",
+    filter: ".no-drag",
+    onAdd: function(event) {
+        removeBg(event.item);
+        addBg(event.item, "bg-blue-600");
+    },
+});
+
+new Sortable(inprog_col, {
+    group: "tasks",
+    draggable: ".task-card",
+    filter: ".no-drag",
+    onAdd: function(event) {
+        removeBg(event.item);
+        addBg(event.item, "bg-green-600");
+    },
+});
+
+new Sortable(inrew_col, {
+    group: "tasks",
+    draggable: ".task-card",
+    filter: ".no-drag",
+    onAdd: function(event) {
+        removeBg(event.item);
+        addBg(event.item, "bg-yellow-600");
+    },
+});
+new Sortable(done_col, {
+    group: "tasks",
+    draggable: ".task-card",
+    filter: ".no-drag",
+    onAdd: function(event) {
+        removeBg(event.item);
+        addBg(event.item, "bg-red-600");
+    },
+});
 
 //EVENT LISTENER FOR FORM
 form.addEventListener("submit", async function(event) {
@@ -135,6 +180,13 @@ function changeStatus(status) {
     st = status;
     switchOption(status, "TO DO", "IN PROGRESS", "REVIEWING", "DONE", "bg-blue-800", "bg-green-800", "bg-yellow-800", "bg-red-800", "text-blue-500", "text-green-500", "text-yellow-500", "text-red-500", curStatus);
     
+    //REMOVING THE DROPDOWN AFTER MAKING A CHOICE
+    statusDropDown.classList.remove("opacity-100");
+    statusDropDown.classList.remove("pointer-events-auto");
+
+    statusDropDown.classList.add("opacity-0");
+    statusDropDown.classList.add("pointer-events-none");
+    
     //DEBUGGING MESSAGE
     console.log(st);
 }
@@ -142,8 +194,14 @@ function changeStatus(status) {
 //CHANGE URGENCY FOR DROPDOWN
 function changeUrgency(urgency) {
     urg = urgency;
-    switchOption(urgency, "LOW", "URGENT", "VERY URGENT", "TOP PRIORITY", "bg-green-800", "bg-yellow-800", "bg-orange-800", "bg-red-800", "text-green-500", "text-yellow-500", "text-orange-500", "text-red-500", curUrgency);
+    switchOption(urgency, "LOW", "URGENT", "CRITICAL", "PRIORITY", "bg-green-800", "bg-yellow-800", "bg-orange-800", "bg-red-800", "text-green-500", "text-yellow-500", "text-orange-500", "text-red-500", curUrgency);
     
+    urgencyDropDown.classList.remove("opacity-100");
+    urgencyDropDown.classList.remove("pointer-events-auto");
+
+    urgencyDropDown.classList.add("opacity-0");
+    urgencyDropDown.classList.add("pointer-events-none");
+
     //DEBUGGING MESSAGE
     console.log(urg);
 }
@@ -166,13 +224,13 @@ function showCreateTask(status, event){
 
 
 //HELPER FUNCTIONS FOR REMOVING BACKGROUND COLOR
-function removeBg() {
-    const bgClass = [...curStatus.classList].find(cls => cls.startsWith("bg-"));
-    if(bgClass) curStatus.classList.remove(bgClass);
+function removeBg(item) {
+    const bgClass = [...item.classList].find(cls => cls.startsWith("bg-"));
+    if(bgClass) item.classList.remove(bgClass);
 }
 
-function addBg(bgClass) {
-    curStatus.classList.add(bgClass);
+function addBg(item, bgColor) {
+    item.classList.add(bgColor);
 }
 
 
@@ -193,31 +251,34 @@ function addTextColor(child1, color1, child2, color2) {
 //SWITCHING DROPDOWN OPTIONS FUNCTION
 function switchOption(choice, o1, o2, o3, o4, o1c, o2c, o3c, o4c, o1tc, o2tc, o3tc, o4tc, curChoice) {
     curChoice.children[0].textContent = choice;
+    console.log(curChoice.children[0]);
+    console.log(curChoice.children[1]);
+    
     switch (choice) {
         case o1:
-            removeBg();
-            addBg(o1c);
+            removeBg(curChoice);
+            addBg(curChoice, o1c);
 
             removeTextColor(curChoice.children[0], curChoice.children[1]);
             addTextColor(curChoice.children[0], o1tc, curChoice.children[1], o1tc);
             break;
         case o2:
-            removeBg();
-            addBg(o2c);
+            removeBg(curChoice);
+            addBg(curChoice, o2c);
 
             removeTextColor(curChoice.children[0], curChoice.children[1]);
             addTextColor(curChoice.children[0], o2tc, curChoice.children[1], o2tc);
             break;
         case o3:
-            removeBg();
-            addBg(o3c);
+            removeBg(curChoice);
+            addBg(curChoice, o3c);
 
             removeTextColor(curChoice.children[0], curChoice.children[1]);
             addTextColor(curChoice.children[0], o3tc, curChoice.children[1], o3tc);
             break;
         case o4:
-            removeBg();
-            addBg(o4c);
+            removeBg(curChoice);
+            addBg(curChoice, o4c);
 
             removeTextColor(curChoice.children[0], curChoice.children[1]);
             addTextColor(curChoice.children[0], o4tc, curChoice.children[1], o4tc);
