@@ -67,10 +67,10 @@
                                 <div required id="curStatus" class="flex justify-between p-1 w-3/5 bg-blue-800 items-end rounded-md cursor-pointer button-anim text-2xl" onclick="activateStatusDropBox(event, document.getElementById('statusDropDownOptions'), document.getElementById('urgencyDropDownOptions'))"><span class="font-playfair text-blue-500">TO DO</span><span class="pl-4 text-blue-500">▽</span></div>
                                 <div id="statusDropDownOptions" class="absolute top-0 left-0 absolute w-1/2 z-30 opacity-0 transition-opacity duration-300 pointer-events-none shadow-[3px_3px_4px_rgba(0,0,0,0.4)]">
                                     <!-- THE STATUS OPTIONS -->
-                                    <div class="bg-blue-800 button-anim cursor-pointer" onclick="changeStatus('TO DO')"><span class="font-playfair text-2xl text-blue-500 p-1">TO DO</span></div>
-                                    <div class="bg-green-800 button-anim cursor-pointer" onclick="changeStatus('IN PROGRESS')"><span class="font-playfair text-2xl text-green-500 p-1">IN PROGRESS</span></div>
-                                    <div class="bg-yellow-800 button-anim cursor-pointer" onclick="changeStatus('REVIEWING')"><span class="font-playfair text-2xl text-yellow-500 p-1">REVIEWING</span></div>
-                                    <div class="bg-red-800 button-anim cursor-pointer" onclick="changeStatus('DONE')"><span class="font-playfair text-2xl text-red-500 p-1">DONE</span></div>
+                                    <div class="bg-blue-800 button-anim cursor-pointer" onclick="changeStatus('TO DO', document.getElementById('curStatus'))"><span class="font-playfair text-2xl text-blue-500 p-1">TO DO</span></div>
+                                    <div class="bg-green-800 button-anim cursor-pointer" onclick="changeStatus('IN PROGRESS', document.getElementById('curStatus'))"><span class="font-playfair text-2xl text-green-500 p-1">IN PROGRESS</span></div>
+                                    <div class="bg-yellow-800 button-anim cursor-pointer" onclick="changeStatus('REVIEWING', document.getElementById('curStatus'))"><span class="font-playfair text-2xl text-yellow-500 p-1">REVIEWING</span></div>
+                                    <div class="bg-red-800 button-anim cursor-pointer" onclick="changeStatus('DONE', document.getElementById('curStatus'))"><span class="font-playfair text-2xl text-red-500 p-1">DONE</span></div>
                                 </div>
                             </div>
                             <!-- URGENCY DROP BOXES-->
@@ -79,10 +79,10 @@
                                 <div required id="curUrgency" class="flex justify-between p-1 w-3/5 bg-green-800 items-end rounded-md cursor-pointer button-anim text-2xl" onclick="activateUrgencyDropBox(event, document.getElementById('urgencyDropDownOptions'), document.getElementById('statusDropDownOptions'))"><span class="font-playfair text-green-500">LOW</span><span class="pl-4 text-green-500">▽</span></div>
                                 <div id="urgencyDropDownOptions" class="absolute top-0 left-0 absolute w-1/2 z-20 opacity-0 transition-opacity duration-300 pointer-events-none shadow-[3px_3px_4px_rgba(0,0,0,0.4)]">
                                     <!-- THE URGENCY OPTIONS -->
-                                    <div class="bg-green-800 button-anim cursor-pointer" onclick="changeUrgency('LOW')"><span class="font-playfair text-2xl text-green-500 p-1">LOW</span></div>
-                                    <div class="bg-yellow-800 button-anim cursor-pointer" onclick="changeUrgency('URGENT')"><span class="font-playfair text-2xl text-yellow-500 p-1">URGENT</span></div>
-                                    <div class="bg-orange-800 button-anim cursor-pointer" onclick="changeUrgency('CRITICAL')"><span class="font-playfair text-2xl text-orange-500 p-1">CRITICAL</span></div>
-                                    <div class="bg-red-800 button-anim cursor-pointer" onclick="changeUrgency('PRIORITY')"><span class="font-playfair text-2xl text-red-500 p-1">PRIORITY</span></div>
+                                    <div class="bg-green-800 button-anim cursor-pointer" onclick="changeUrgency('LOW', document.getElementById('curUrgency'))"><span class="font-playfair text-2xl text-green-500 p-1">LOW</span></div>
+                                    <div class="bg-yellow-800 button-anim cursor-pointer" onclick="changeUrgency('URGENT', document.getElementById('curUrgency'))"><span class="font-playfair text-2xl text-yellow-500 p-1">URGENT</span></div>
+                                    <div class="bg-orange-800 button-anim cursor-pointer" onclick="changeUrgency('CRITICAL', document.getElementById('curUrgency'))"><span class="font-playfair text-2xl text-orange-500 p-1">CRITICAL</span></div>
+                                    <div class="bg-red-800 button-anim cursor-pointer" onclick="changeUrgency('PRIORITY', document.getElementById('curUrgency'))"><span class="font-playfair text-2xl text-red-500 p-1">PRIORITY</span></div>
                                 </div>
                             </div>
                             <!-- TEXT INPUTS -->
@@ -161,10 +161,10 @@
                                 <div required id="updateCurStatus" class="flex justify-between p-1 w-3/5 bg-blue-800 items-end rounded-md cursor-pointer button-anim text-2xl" onclick="activateStatusDropBox(event, document.getElementById('updateStatusDropDownOptions'), document.getElementById('updateUrgencyDropDownOptions'))"><span class="font-playfair text-blue-500">TO DO</span><span class="pl-4 text-blue-500">▽</span></div>
                                 <div id="updateStatusDropDownOptions" class="absolute top-0 left-0 absolute w-1/2 z-30 opacity-0 transition-opacity duration-300 pointer-events-none shadow-[3px_3px_4px_rgba(0,0,0,0.4)]">
                                     <!-- THE STATUS OPTIONS -->
-                                    <div class="bg-blue-800 button-anim cursor-pointer" onclick="changeStatus('TO DO')"><span class="font-playfair text-2xl text-blue-500 p-1">TO DO</span></div>
-                                    <div class="bg-green-800 button-anim cursor-pointer" onclick="changeStatus('IN PROGRESS')"><span class="font-playfair text-2xl text-green-500 p-1">IN PROGRESS</span></div>
-                                    <div class="bg-yellow-800 button-anim cursor-pointer" onclick="changeStatus('REVIEWING')"><span class="font-playfair text-2xl text-yellow-500 p-1">REVIEWING</span></div>
-                                    <div class="bg-red-800 button-anim cursor-pointer" onclick="changeStatus('DONE')"><span class="font-playfair text-2xl text-red-500 p-1">DONE</span></div>
+                                    <div class="bg-blue-800 button-anim cursor-pointer" onclick="changeStatus('TO DO', document.getElementById('updateCurStatus'))"><span class="font-playfair text-2xl text-blue-500 p-1">TO DO</span></div>
+                                    <div class="bg-green-800 button-anim cursor-pointer" onclick="changeStatus('IN PROGRESS', document.getElementById('updateCurStatus'))"><span class="font-playfair text-2xl text-green-500 p-1">IN PROGRESS</span></div>
+                                    <div class="bg-yellow-800 button-anim cursor-pointer" onclick="changeStatus('REVIEWING', document.getElementById('updateCurStatus'))"><span class="font-playfair text-2xl text-yellow-500 p-1">REVIEWING</span></div>
+                                    <div class="bg-red-800 button-anim cursor-pointer" onclick="changeStatus('DONE', document.getElementById('updateCurStatus'))"><span class="font-playfair text-2xl text-red-500 p-1">DONE</span></div>
                                 </div>
                             </div>
                             <!-- URGENCY DROP BOXES-->
@@ -173,10 +173,10 @@
                                 <div required id="updateCurUrgency" class="flex justify-between p-1 w-3/5 bg-green-800 items-end rounded-md cursor-pointer button-anim text-2xl" onclick="activateUrgencyDropBox(event, document.getElementById('updateUrgencyDropDownOptions'), document.getElementById('updateStatusDropDownOptions'))"><span class="font-playfair text-green-500">LOW</span><span class="pl-4 text-green-500">▽</span></div>
                                 <div id="updateUrgencyDropDownOptions" class="absolute top-0 left-0 absolute w-1/2 z-20 opacity-0 transition-opacity duration-300 pointer-events-none shadow-[3px_3px_4px_rgba(0,0,0,0.4)]">
                                     <!-- THE URGENCY OPTIONS -->
-                                    <div class="bg-green-800 button-anim cursor-pointer" onclick="changeUrgency('LOW')"><span class="font-playfair text-2xl text-green-500 p-1">LOW</span></div>
-                                    <div class="bg-yellow-800 button-anim cursor-pointer" onclick="changeUrgency('URGENT')"><span class="font-playfair text-2xl text-yellow-500 p-1">URGENT</span></div>
-                                    <div class="bg-orange-800 button-anim cursor-pointer" onclick="changeUrgency('CRITICAL')"><span class="font-playfair text-2xl text-orange-500 p-1">CRITICAL</span></div>
-                                    <div class="bg-red-800 button-anim cursor-pointer" onclick="changeUrgency('PRIORITY')"><span class="font-playfair text-2xl text-red-500 p-1">PRIORITY</span></div>
+                                    <div class="bg-green-800 button-anim cursor-pointer" onclick="changeUrgency('LOW', document.getElementById('updateCurUrgency'))"><span class="font-playfair text-2xl text-green-500 p-1">LOW</span></div>
+                                    <div class="bg-yellow-800 button-anim cursor-pointer" onclick="changeUrgency('URGENT', document.getElementById('updateCurUrgency'))"><span class="font-playfair text-2xl text-yellow-500 p-1">URGENT</span></div>
+                                    <div class="bg-orange-800 button-anim cursor-pointer" onclick="changeUrgency('CRITICAL', document.getElementById('updateCurUrgency'))"><span class="font-playfair text-2xl text-orange-500 p-1">CRITICAL</span></div>
+                                    <div class="bg-red-800 button-anim cursor-pointer" onclick="changeUrgency('PRIORITY', document.getElementById('updateCurUrgency'))"><span class="font-playfair text-2xl text-red-500 p-1">PRIORITY</span></div>
                                 </div>
                             </div>
                             <!-- TEXT INPUTS -->

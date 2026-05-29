@@ -38,6 +38,7 @@ const done_col = document.getElementById("done_col");
 
 let st = "TO DO";
 let urg = "LOW";
+let curTaskId = 0;
 
 // VVV THIS IS FOR MOVING TASK AROUND TO EACH COL VVV
 new Sortable(todo_col, {
@@ -165,7 +166,7 @@ function fetchUrgency(taskUrgency) {
 
 fetchAllTasks();
 
-//EVENT LISTENER FOR FORM
+//EVENT LISTENER FOR CREATE FORM
 createTaskform.addEventListener("submit", async function(event) {
     //STOPS THE PAGE FROM REFRESHING AFTER SUBMITTING
     event.preventDefault();
@@ -186,6 +187,7 @@ createTaskform.addEventListener("submit", async function(event) {
         curStatus: st,
         curUrgency: urg
     }
+    console.log(task);
     const response = await fetch("http://localhost:5056/Tasks", {
         method: "Post",
         headers: {
@@ -197,10 +199,48 @@ createTaskform.addEventListener("submit", async function(event) {
     console.log(await response.json());
 })
 
+updateTaskform.addEventListener("submit", async function(event) {
+    //STOPS THE PAGE FROM REFRESHING AFTER SUBMITTING
+    event.preventDefault();
+
+    //CONVERTING THE TIME FORMAT TO FULL ISO
+    const fullISOStart = startDate.value ? new Date(updateStartDate.value).toISOString() : null;
+    const fullISODue = dueDate.value ? new Date(updateDueDate.value).toISOString() : null;
+
+    const task = {
+        title: updateTitle.value,
+        summary: updateSummary.value,
+        description: updateDescription.value,
+        assignee: updateAssignee.value,
+        parentTask: updateParentTask.value,
+        startDate: fullISOStart,
+        dueDate: fullISODue,
+        owner: updateOwner.value,
+        curStatus: st,
+        curUrgency: urg
+    }
+    const response = await fetch(`http://localhost:5056/Tasks/${curTaskId}`, {
+        method: "Put",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(task)
+    });
+
+    console.log(await response.json());
+
+})
+
+
 //STOPS THE FORM FROM DISAPPEARING IF CLICKED INSIDE
 createTaskform.addEventListener("click", function(event) {
     event.stopPropagation();
 })
+
+updateTaskform.addEventListener("click", function(event) {
+    event.stopPropagation();
+})
+
 
 document.addEventListener("click", function(e) {
     if(statusDropDown.classList.contains("opacity-100")) {
@@ -243,8 +283,6 @@ document.addEventListener("click", function(e) {
 
         updatePopUp.classList.remove("pointer-events-auto");
         updatePopUp.classList.add("pointer-events-none");
-
-        updateTaskform.reset();
 
         //DEBUGGING MESSAGE
         console.log("hiding update task pop up");
@@ -291,9 +329,9 @@ function activateUrgencyDropBox(event, urgentDropDown, statDropDown) {
 }
 
 //CHANGE STATUS FOR DROPDOWN
-function changeStatus(status) {
+function changeStatus(status, statusDOM) {
     st = status;
-    switchOption(status, "TO DO", "IN PROGRESS", "REVIEWING", "DONE", "bg-blue-800", "bg-green-800", "bg-yellow-800", "bg-red-800", "text-blue-500", "text-green-500", "text-yellow-500", "text-red-500", curStatus);
+    switchOption(status, "TO DO", "IN PROGRESS", "REVIEWING", "DONE", "bg-blue-800", "bg-green-800", "bg-yellow-800", "bg-red-800", "text-blue-500", "text-green-500", "text-yellow-500", "text-red-500", statusDOM);
     
     //REMOVING THE DROPDOWN AFTER MAKING A CHOICE
     statusDropDown.classList.remove("opacity-100");
@@ -307,9 +345,9 @@ function changeStatus(status) {
 }
 
 //CHANGE URGENCY FOR DROPDOWN
-function changeUrgency(urgency) {
+function changeUrgency(urgency, urgencyDOM) {
     urg = urgency;
-    switchOption(urgency, "LOW", "URGENT", "CRITICAL", "PRIORITY", "bg-green-800", "bg-yellow-800", "bg-orange-800", "bg-red-800", "text-green-500", "text-yellow-500", "text-orange-500", "text-red-500", curUrgency);
+    switchOption(urgency, "LOW", "URGENT", "CRITICAL", "PRIORITY", "bg-green-800", "bg-yellow-800", "bg-orange-800", "bg-red-800", "text-green-500", "text-yellow-500", "text-orange-500", "text-red-500", urgencyDOM);
     
     urgencyDropDown.classList.remove("opacity-100");
     urgencyDropDown.classList.remove("pointer-events-auto");
@@ -338,6 +376,8 @@ function showCreateTask(status, event){
 
 //FUNCTION TO SHOW UPDATE TASK POP UP
 async function showUpdateTask(id, event) {
+    event.stopPropagation();
+    curTaskId = id;
     const getTask = await fetch(`http://localhost:5056/Tasks/${id}`);
     const task = await getTask.json();
 
@@ -355,14 +395,9 @@ async function showUpdateTask(id, event) {
     updateCurStatus.value = task.status;
     updateCurUrgency.value = task.urgency;
 
-    const response = await fetch(`http://localhost:5056/Tasks/${id}`, {
-        method: "Put",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify(task)
-    });
-    event.stopPropagation();
+    changeStatus(task.status, updateCurStatus);
+    changeUrgency(task.urgency, updateCurUrgency);
+
     if(updatePopUp.classList.contains("opacity-0")) {
         updatePopUp.classList.remove("opacity-0");
         updatePopUp.classList.remove("pointer-events-none");
@@ -370,7 +405,6 @@ async function showUpdateTask(id, event) {
         updatePopUp.classList.add("opacity-100");
         updatePopUp.classList.add("pointer-events-auto");
     }
-
 }
 
 
@@ -437,3 +471,8 @@ function switchOption(choice, o1, o2, o3, o4, o1c, o2c, o3c, o4c, o1tc, o2tc, o3
             break;
     }
 }
+
+//TO DO FOR NEXT TIME:
+//MAKE IT SO THAT WHEN I UPDATE STATUS IT MOVES THE TASK TO THAT COLUMN
+//MAKE IT SO THAT WHEN I UPDATE URGENCY IT ADDS A EXTRA "!"
+//CONNECT API TO ACTUAL DB SO WE CAN UPDATE TASKS PROPERLY
