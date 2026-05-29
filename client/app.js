@@ -1,8 +1,10 @@
 const createTaskform = document.getElementById("createTask");
+const updateTaskform = document.getElementById("updateTask");
 const statusDropDown = document.getElementById("statusDropDownOptions");
 const urgencyDropDown = document.getElementById("urgencyDropDownOptions");
 
 const popUp = document.getElementById("popUp");
+const updatePopUp = document.getElementById("updatePopUp");
 
 //FORM INPUTS
 const title = document.getElementById("title");
@@ -13,8 +15,20 @@ const parentTask = document.getElementById("parent");
 const startDate = document.getElementById("start_date");
 const dueDate = document.getElementById("due_date");
 const owner = document.getElementById("owner");
-const curStatus = document.getElementById("currentStatus");
+const curStatus = document.getElementById("curStatus");
 const curUrgency = document.getElementById("curUrgency");
+
+//FORM INPUTS FOR UPDATING
+const updateTitle = document.getElementById("updateTitle");
+const updateSummary = document.getElementById("updateSummary");
+const updateDescription = document.getElementById("updateDescription");
+const updateAssignee = document.getElementById("updateAssignee");
+const updateParentTask = document.getElementById("updateParent");
+const updateStartDate = document.getElementById("updateStartDate");
+const updateDueDate = document.getElementById("updateDueDate");
+const updateOwner = document.getElementById("updateOwner");
+const updateCurStatus = document.getElementById("updateCurStatus");
+const updateCurUrgency = document.getElementById("updateCurUrgency");
 
 //SORTABLE
 const todo_col = document.getElementById("todo_col");
@@ -73,6 +87,8 @@ async function fetchAllTasks() {
         const newTask = document.createElement("div");
         const title = document.createElement("span");
         const urgency = document.createElement("span");
+        newTask.setAttribute("onclick", `showUpdateTask(${task.id.toString()}, event)`);
+        newTask.setAttribute("id", task.id.toString());
         
         switch (task.status) {
             case "TO DO":
@@ -196,7 +212,8 @@ document.addEventListener("click", function(e) {
 
         //DEBUGGING MESSAGE
         console.log("hiding statusDropDown");
-    } 
+    }
+    console.log(urgencyDropDown);
     if(urgencyDropDown.classList.contains("opacity-100")) {
         urgencyDropDown.classList.remove("opacity-100");
         urgencyDropDown.classList.add("opacity-0");
@@ -217,22 +234,35 @@ document.addEventListener("click", function(e) {
         createTaskform.reset();
 
         //DEBUGGING MESSAGE
-        console.log("hiding urgencyDropDown");
+        console.log("hiding create task pop up");
+    }
+
+    if(updatePopUp.classList.contains("opacity-100")) {
+        updatePopUp.classList.remove("opacity-100");
+        updatePopUp.classList.add("opacity-0");
+
+        updatePopUp.classList.remove("pointer-events-auto");
+        updatePopUp.classList.add("pointer-events-none");
+
+        updateTaskform.reset();
+
+        //DEBUGGING MESSAGE
+        console.log("hiding update task pop up");
     }
 })
 
-function activateStatusDropBox(event) {
-    if(statusDropDown.classList.contains("opacity-0")) {
+function activateStatusDropBox(event, statDropDown, urgentDropDown) {
+    if(statDropDown.classList.contains("opacity-0")) {
         event.stopPropagation();
         
-        statusDropDown.classList.remove("opacity-0");
-        statusDropDown.classList.remove("pointer-events-none");
+        statDropDown.classList.remove("opacity-0");
+        statDropDown.classList.remove("pointer-events-none");
 
-        if(urgencyDropDown.classList.contains("opacity-100")) urgencyDropDown.classList.remove("opacity-100"); urgencyDropDown.classList.add("opacity-0")
-        if(urgencyDropDown.classList.contains("pointer-events-auto")) urgencyDropDown.classList.remove("pointer-events-auto"); urgencyDropDown.classList.add("pointer-events-none")
+        if(urgentDropDown.classList.contains("opacity-100")) urgentDropDown.classList.remove("opacity-100"); urgentDropDown.classList.add("opacity-0")
+        if(urgentDropDown.classList.contains("pointer-events-auto")) urgentDropDown.classList.remove("pointer-events-auto"); urgentDropDown.classList.add("pointer-events-none")
 
-        statusDropDown.classList.add("opacity-100");
-        statusDropDown.classList.add("pointer-events-auto");
+        statDropDown.classList.add("opacity-100");
+        statDropDown.classList.add("pointer-events-auto");
 
         //DEBUGGING MESSAGE
         console.log("openning statusDropDown");
@@ -242,18 +272,18 @@ function activateStatusDropBox(event) {
     }
 }
 
-function activateUrgencyDropBox(event) {
-    if(urgencyDropDown.classList.contains("opacity-0")) {
+function activateUrgencyDropBox(event, urgentDropDown, statDropDown) {
+    if(urgentDropDown.classList.contains("opacity-0")) {
         event.stopPropagation();
         
-        urgencyDropDown.classList.remove("opacity-0");
-        urgencyDropDown.classList.remove("pointer-events-none");
+        urgentDropDown.classList.remove("opacity-0");
+        urgentDropDown.classList.remove("pointer-events-none");
 
-        if(statusDropDown.classList.contains("opacity-100")) statusDropDown.classList.remove("opacity-100"); statusDropDown.classList.add("opacity-0")
-        if(statusDropDown.classList.contains("pointer-events-auto")) statusDropDown.classList.remove('pointer-events-auto'); statusDropDown.classList.add("pointer-events-none")
+        if(statDropDown.classList.contains("opacity-100")) statDropDown.classList.remove("opacity-100"); statDropDown.classList.add("opacity-0")
+        if(statDropDown.classList.contains("pointer-events-auto")) statDropDown.classList.remove('pointer-events-auto'); statDropDown.classList.add("pointer-events-none")
 
-        urgencyDropDown.classList.add("opacity-100");
-        urgencyDropDown.classList.add("pointer-events-auto");
+        urgentDropDown.classList.add("opacity-100");
+        urgentDropDown.classList.add("pointer-events-auto");
 
         //DEBUGGING MESSAGE
         console.log("openning urgencyDropDown");
@@ -291,6 +321,7 @@ function changeUrgency(urgency) {
     console.log(urg);
 }
 
+//FUNCTION TO SHOW CREATE TASK POP UP
 function showCreateTask(status, event){
     event.stopPropagation();
     switchOption(status, "TO DO", "IN PROGRESS", "REVIEWING", "DONE", "bg-blue-800", "bg-green-800", "bg-yellow-800", "bg-red-800", "text-blue-500", "text-green-500", "text-yellow-500", "text-red-500", curStatus);
@@ -305,6 +336,42 @@ function showCreateTask(status, event){
     }
 }
 
+//FUNCTION TO SHOW UPDATE TASK POP UP
+async function showUpdateTask(id, event) {
+    const getTask = await fetch(`http://localhost:5056/Tasks/${id}`);
+    const task = await getTask.json();
+
+    console.log(task);
+    console.log(task.urgency);
+
+    updateTitle.value = task.title;
+    updateSummary.value = task.summary;
+    updateDescription.value = task.description;
+    updateAssignee.value = task.assignee;
+    updateParentTask.value = task.parentTask;
+    updateStartDate.value = task.startDate;
+    updateDueDate.value = task.dueDate;
+    updateOwner.value = task.owner;
+    updateCurStatus.value = task.status;
+    updateCurUrgency.value = task.urgency;
+
+    const response = await fetch(`http://localhost:5056/Tasks/${id}`, {
+        method: "Put",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(task)
+    });
+    event.stopPropagation();
+    if(updatePopUp.classList.contains("opacity-0")) {
+        updatePopUp.classList.remove("opacity-0");
+        updatePopUp.classList.remove("pointer-events-none");
+
+        updatePopUp.classList.add("opacity-100");
+        updatePopUp.classList.add("pointer-events-auto");
+    }
+
+}
 
 
 

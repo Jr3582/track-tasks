@@ -14,8 +14,8 @@ public class TasksController : ControllerBase
     private static int _newId = 1;
     private static List<TaskItem> _tasks = new()
     { 
-        new TaskItem {Id = 1, Title = "Test 1", Summary = "Test Summary", Description = "Test Description", Assignee = "John", Owner = "Jimmy", Status = "TO DO", Urgency = "LOW", IsComplete = false},
-        new TaskItem {Id = 2, Title = "Test 2", Summary = "Test Summary 2", Description = "Test Description 2", Assignee = "John", Owner = "Johnny", Status = "IN PROGRESS", Urgency = "PRIORITY", IsComplete = false}
+        new TaskItem {Id = 1, Title = "Test 1", Summary = "Test Summary", Description = "Test Description", Assignee = "John", Owner = "Jimmy", Status = "TO DO", Urgency = "LOW"},
+        new TaskItem {Id = 2, Title = "Test 2", Summary = "Test Summary 2", Description = "Test Description 2", Assignee = "John", Owner = "Johnny", Status = "IN PROGRESS", Urgency = "PRIORITY"}
     }
     ;
 
@@ -23,6 +23,12 @@ public class TasksController : ControllerBase
     public IActionResult GetAll()
     {
         return Ok(_tasks);
+    }
+    [HttpGet("{id}")]
+    public IActionResult GetTask([FromRoute] int id)
+    {
+        var searchResult = _tasks.FirstOrDefault(task => task.Id == id);
+        if(searchResult == null) return NotFound() ; return Ok(searchResult);
     }
     [HttpPost] 
     //POST == ADD
@@ -44,8 +50,18 @@ public class TasksController : ControllerBase
         {
             return NotFound();
         }
+
         searchResult.Title = updatedTask.Title;
-        searchResult.IsComplete = updatedTask.IsComplete;
+        searchResult.Summary = updatedTask.Summary;
+        searchResult.Description = updatedTask.Description;
+        searchResult.Assignee = updatedTask.Assignee;
+        searchResult.Parent = updatedTask.Parent;
+        searchResult.StartDate = updatedTask.StartDate;
+        searchResult.DueDate = updatedTask.DueDate;
+        searchResult.Owner = updatedTask.Owner;
+        searchResult.Status = updatedTask.Status;
+        searchResult.Urgency = updatedTask.Urgency;
+
         return Ok(searchResult);
     }
 
@@ -76,5 +92,4 @@ public class TaskItem
     public string Owner { get; set; } = "";
     public string Status { get; set; } = "";
     public string Urgency { get; set; } = "";
-    public bool IsComplete { get; set; }
 }

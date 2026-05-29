@@ -32,7 +32,7 @@
         - viewport: what is visible on your screen right now
     -->
 
-    <!-- POP UP FOR MAKING THE TAS -->
+    <!-- POP UP FOR MAKING THE TASKS -->
     <div id="popUp" class="flex absolute w-full h-full z-[999] bg-black/50 justify-center items-center opacity-0 transition-opacity duration-300 pointer-events-none">
         <!-- INNER BOX (THIS IS WHERE ALL THE INPUT INFO GOES)-->
         <form id="createTask" class="flex w-2/3 h-2/3">
@@ -58,14 +58,13 @@
                     </div>
                 </div>
                 <div class="grid grid-rows-5 h-full gap-2">
-                    <!-- STATUS, ASSIGNMENT, URGENCY, START DATE, AND END DATE AREA-->
                     <div class="row-span-4">
                         <!-- STATUS, URGENCY, ASSIGNMENT COL, START DATE, AND END DATE -->
                         <div class="flex flex-col">
                             <!-- STATUS DROP BOXES-->
                             <span class="font-playfair">STATUS<span class="text-red-600">*</span></span>
                             <div class="flex relative flex-row items-start pb-4">
-                                <div required id="currentStatus" class="flex justify-between p-1 w-3/5 bg-blue-800 items-end rounded-md cursor-pointer button-anim text-2xl" onclick="activateStatusDropBox(event)"><span class="font-playfair text-blue-500">TO DO</span><span class="pl-4 text-blue-500">▽</span></div>
+                                <div required id="curStatus" class="flex justify-between p-1 w-3/5 bg-blue-800 items-end rounded-md cursor-pointer button-anim text-2xl" onclick="activateStatusDropBox(event, document.getElementById('statusDropDownOptions'), document.getElementById('urgencyDropDownOptions'))"><span class="font-playfair text-blue-500">TO DO</span><span class="pl-4 text-blue-500">▽</span></div>
                                 <div id="statusDropDownOptions" class="absolute top-0 left-0 absolute w-1/2 z-30 opacity-0 transition-opacity duration-300 pointer-events-none shadow-[3px_3px_4px_rgba(0,0,0,0.4)]">
                                     <!-- THE STATUS OPTIONS -->
                                     <div class="bg-blue-800 button-anim cursor-pointer" onclick="changeStatus('TO DO')"><span class="font-playfair text-2xl text-blue-500 p-1">TO DO</span></div>
@@ -77,7 +76,7 @@
                             <!-- URGENCY DROP BOXES-->
                             <span class="font-playfair">URGENCY<span class="text-red-600">*</span></span>
                             <div class="flex relative flex-row items-start pb-4">
-                                <div required id="curUrgency" class="flex justify-between p-1 w-3/5 bg-green-800 items-end rounded-md cursor-pointer button-anim text-2xl" onclick="activateUrgencyDropBox(event)"><span class="font-playfair text-green-500">LOW</span><span class="pl-4 text-green-500">▽</span></div>
+                                <div required id="curUrgency" class="flex justify-between p-1 w-3/5 bg-green-800 items-end rounded-md cursor-pointer button-anim text-2xl" onclick="activateUrgencyDropBox(event, document.getElementById('urgencyDropDownOptions'), document.getElementById('statusDropDownOptions'))"><span class="font-playfair text-green-500">LOW</span><span class="pl-4 text-green-500">▽</span></div>
                                 <div id="urgencyDropDownOptions" class="absolute top-0 left-0 absolute w-1/2 z-20 opacity-0 transition-opacity duration-300 pointer-events-none shadow-[3px_3px_4px_rgba(0,0,0,0.4)]">
                                     <!-- THE URGENCY OPTIONS -->
                                     <div class="bg-green-800 button-anim cursor-pointer" onclick="changeUrgency('LOW')"><span class="font-playfair text-2xl text-green-500 p-1">LOW</span></div>
@@ -105,7 +104,7 @@
                                 <input required id="owner" type="text" class="flex bg-gray-300 ml-4 p-1 rounded-md font-playfair outline-none">
                             </div>
 
-                             <!-- OLD NON-CUSTOMIZED DROP BOX-->
+                            <!-- OLD NON-CUSTOMIZED DROP BOX-->
                             <!-- <select id="status" class="flex w-1/2">
                                 <option class="text-blue-800">To Do</option>
                                 <option class="text-green-800">In Progress</option>
@@ -126,8 +125,93 @@
             </div>
         </form>    
     </div>
-    <!-- FORM FOR UPDATING THE CURRENT TASK-->
 
+    <!-- FORM FOR UPDATING THE CURRENT TAS WIP -->
+     <div id="updatePopUp" class="flex absolute w-full h-full z-[999] bg-black/50 justify-center items-center opacity-0 transition-opacity duration-300 pointer-events-none">
+        <!-- INNER BOX (THIS IS WHERE ALL THE INPUT INFO GOES)-->
+        <form id="updateTask" class="flex w-2/3 h-2/3">
+            <div class="grid grid-cols-3 w-full h-full bg-white rounded-md p-8 gap-2">
+                <!-- (TITLE, SUMMARY, DESCRIPTION)-->
+                <div class="col-span-2 h-full border-r-4 p-2">
+                    <!-- CHANGE TITLE -->
+                    <div class="flex pb-4 flex-col gap-1">
+                        <span class="font-playfair">Title<span class="text-red-600">*</span></span>
+                        <input required id="updateTitle" type="text" class="w-full h-8 bg-gray-300 rounded-md p-1 font-playfair outline-none">
+                    </div>
+                    
+                    <!-- CHANGE SUMARY -->
+                    <div class="flex pb-4 flex-col gap-1">
+                        <span class="font-playfair">Summary<span class="text-red-600"></span></span>
+                        <input id="updateSummary" type="text" class="w-full bg-gray-300 rounded-md p-1 font-playfair outline-none">
+                    </div>
+
+                    <!-- CHANGE DESCRIPTION -->
+                    <div class="flex flex-col gap-1">
+                        <span class="font-playfair">Description<span class="text-red-600">*</span></span>
+                        <textarea id="updateDescription" type="text" class="w-full min-h-64 bg-gray-300 rounded-md p-1 font-playfair outline-none"></textarea>
+                    </div>
+                </div>
+                <div class="grid grid-rows-5 h-full gap-2">
+                    <div class="row-span-4">
+                        <!-- STATUS, URGENCY, ASSIGNMENT COL, START DATE, AND END DATE -->
+                        <div class="flex flex-col">
+                            <!-- STATUS DROP BOXES-->
+                            <span class="font-playfair">STATUS<span class="text-red-600">*</span></span>
+                            <div class="flex relative flex-row items-start pb-4">
+                                <div required id="updateCurStatus" class="flex justify-between p-1 w-3/5 bg-blue-800 items-end rounded-md cursor-pointer button-anim text-2xl" onclick="activateStatusDropBox(event, document.getElementById('updateStatusDropDownOptions'), document.getElementById('updateUrgencyDropDownOptions'))"><span class="font-playfair text-blue-500">TO DO</span><span class="pl-4 text-blue-500">▽</span></div>
+                                <div id="updateStatusDropDownOptions" class="absolute top-0 left-0 absolute w-1/2 z-30 opacity-0 transition-opacity duration-300 pointer-events-none shadow-[3px_3px_4px_rgba(0,0,0,0.4)]">
+                                    <!-- THE STATUS OPTIONS -->
+                                    <div class="bg-blue-800 button-anim cursor-pointer" onclick="changeStatus('TO DO')"><span class="font-playfair text-2xl text-blue-500 p-1">TO DO</span></div>
+                                    <div class="bg-green-800 button-anim cursor-pointer" onclick="changeStatus('IN PROGRESS')"><span class="font-playfair text-2xl text-green-500 p-1">IN PROGRESS</span></div>
+                                    <div class="bg-yellow-800 button-anim cursor-pointer" onclick="changeStatus('REVIEWING')"><span class="font-playfair text-2xl text-yellow-500 p-1">REVIEWING</span></div>
+                                    <div class="bg-red-800 button-anim cursor-pointer" onclick="changeStatus('DONE')"><span class="font-playfair text-2xl text-red-500 p-1">DONE</span></div>
+                                </div>
+                            </div>
+                            <!-- URGENCY DROP BOXES-->
+                            <span class="font-playfair">URGENCY<span class="text-red-600">*</span></span>
+                            <div class="flex relative flex-row items-start pb-4">
+                                <div required id="updateCurUrgency" class="flex justify-between p-1 w-3/5 bg-green-800 items-end rounded-md cursor-pointer button-anim text-2xl" onclick="activateUrgencyDropBox(event, document.getElementById('updateUrgencyDropDownOptions'), document.getElementById('updateStatusDropDownOptions'))"><span class="font-playfair text-green-500">LOW</span><span class="pl-4 text-green-500">▽</span></div>
+                                <div id="updateUrgencyDropDownOptions" class="absolute top-0 left-0 absolute w-1/2 z-20 opacity-0 transition-opacity duration-300 pointer-events-none shadow-[3px_3px_4px_rgba(0,0,0,0.4)]">
+                                    <!-- THE URGENCY OPTIONS -->
+                                    <div class="bg-green-800 button-anim cursor-pointer" onclick="changeUrgency('LOW')"><span class="font-playfair text-2xl text-green-500 p-1">LOW</span></div>
+                                    <div class="bg-yellow-800 button-anim cursor-pointer" onclick="changeUrgency('URGENT')"><span class="font-playfair text-2xl text-yellow-500 p-1">URGENT</span></div>
+                                    <div class="bg-orange-800 button-anim cursor-pointer" onclick="changeUrgency('CRITICAL')"><span class="font-playfair text-2xl text-orange-500 p-1">CRITICAL</span></div>
+                                    <div class="bg-red-800 button-anim cursor-pointer" onclick="changeUrgency('PRIORITY')"><span class="font-playfair text-2xl text-red-500 p-1">PRIORITY</span></div>
+                                </div>
+                            </div>
+                            <!-- TEXT INPUTS -->
+                            <div class="grid grid-cols-2 gap-4">
+                                <!-- ASSIGNEE TEXT-BOX -->
+                                <span class="font-playfair">ASSIGNEE</span>
+                                <input id="updateAssignee" type="text" class="flex bg-gray-300 ml-4 p-1 rounded-md font-playfair outline-none">
+                                <!-- PARENT TASK TEXT-BOX -->
+                                <span class="font-playfair">PARENT TASK<span class="text-red-600"></span></span>
+                                <input id="updateParent" type="text" class="flex bg-gray-300 ml-4 p-1 rounded-md font-playfair outline-none">
+                                <!-- START DATE TEXT-BOX -->
+                                <span class="font-playfair">START DATE<span class="text-red-600"></span></span>
+                                <input id="updateStartDate" type="date" class="flex bg-gray-300 ml-4 p-1 rounded-md font-playfair outline-none">
+                                <!-- DUE DATE TEXT-BOX -->
+                                <span class="font-playfair">DUE DATE<span class="text-red-600"></span></span>
+                                <input id="updateDueDate" type="date" class="flex bg-gray-300 ml-4 p-1 rounded-md font-playfair outline-none">
+                                <!-- OWNER -->
+                                <span class="font-playfair">OWNER<span class="text-red-600">*</span></span>
+                                <input required id="updateOwner" type="text" class="flex bg-gray-300 ml-4 p-1 rounded-md font-playfair outline-none">
+                            </div>
+                        </div>
+                    </div>
+                    <!-- (UPDATE BUTTON)-->
+                    <div class="row-span-1 border-t-4 p-2">
+                        <button class="flex w-full h-full bg-blue-600 rounded-md justify-center items-center cursor-pointer button-anim">
+                            <span class="font-playfair text-4xl">Update Task</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </form>    
+    </div>
+
+
+    <!-- COLUMNS FOR TASKS -->
     <div class="flex grid-cols-4 flex-row h-screen justify-evenly gap-2 p-2">
         <!-- TO DO COLUMN -->
         <div class="flex w-full h-full bg-blue-800 rounded-md flex-col gap-2 p-2">
@@ -137,7 +221,7 @@
                     <span class="font-playfair">TO DO</span>
                 </div>
                 <!-- NEW TASKS GOES HERE -->
-                <div class="relative bg-blue-600 rounded-md p-2 font-playfair text-2xl text-bold task-card cursor-pointer button-anim mb-2"><span class="flex w-1/2">Task Title </span><span class="absolute right-2 bottom-1 text-2xl text-red-800">!</span></div>
+                <div class="relative bg-blue-600 rounded-md p-2 font-playfair text-2xl text-bold task-card cursor-pointer button-anim mb-2" onclick="showUpdateTask(1, event)"><span class="flex w-1/2">Task Title </span><span class="absolute right-2 bottom-1 text-2xl text-red-800">!</span></div>
             </div>
             <!-- BUTTON TO CREATE NEW TASKS -->
             <button onclick="showCreateTask('TO DO', event)" class="flex w-full h-fit bg-blue-500 text-xl rounded-md item-center justify-center cursor-pointer button-anim">
