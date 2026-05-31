@@ -55,6 +55,7 @@ new Sortable(todo_col, {
     onAdd: function(event) {
         removeBg(event.item);
         addBg(event.item, "bg-blue-600");
+        updateStatusOnColSwitch(event.item.id, "TO DO");
     },
 });
 
@@ -65,6 +66,7 @@ new Sortable(inprog_col, {
     onAdd: function(event) {
         removeBg(event.item);
         addBg(event.item, "bg-green-600");
+        updateStatusOnColSwitch(event.item.id, "IN PROGRESS");
     },
 });
 
@@ -75,6 +77,7 @@ new Sortable(inrew_col, {
     onAdd: function(event) {
         removeBg(event.item);
         addBg(event.item, "bg-yellow-600");
+        updateStatusOnColSwitch(event.item.id, "REVIEWING");
     },
 });
 new Sortable(done_col, {
@@ -84,6 +87,7 @@ new Sortable(done_col, {
     onAdd: function(event) {
         removeBg(event.item);
         addBg(event.item, "bg-red-600");
+        updateStatusOnColSwitch(event.item.id, "DONE");
     },
 });
 
@@ -238,8 +242,8 @@ createTaskform.addEventListener("submit", async function(event) {
         startDate: fullISOStart,
         dueDate: fullISODue,
         owner: owner.value,
-        curStatus: st,
-        curUrgency: urg
+        status: st,
+        urgency: urg
     }
     console.log(task);
     const response = await fetch("http://localhost:5056/Tasks", {
@@ -270,8 +274,8 @@ updateTaskform.addEventListener("submit", async function(event) {
         startDate: fullISOStart,
         dueDate: fullISODue,
         owner: updateOwner.value,
-        curStatus: st,
-        curUrgency: urg
+        status: st,
+        urgency: urg
     }
     const response = await fetch(`http://localhost:5056/Tasks/${curTaskId}`, {
         method: "Put",
@@ -292,6 +296,7 @@ confirmDel.addEventListener("click", async function (event) {
     })
 
     document.getElementById(curTaskIdToDelete).remove();
+
     if(delPopUp.classList.contains("opacity-100")) {
         delPopUp.classList.remove("opacity-100");
         delPopUp.classList.add("opacity-0");
@@ -375,6 +380,38 @@ document.addEventListener("click", function(e) {
         console.log("hiding delete task pop up");
     }
 })
+
+async function updateStatusOnColSwitch(taskId, newStatus) {
+    const taskToUpdate = await fetch(`http://localhost:5056/Tasks/${taskId}`);
+    const taskJSON = await taskToUpdate.json();
+    console.log(taskJSON);
+
+    //CONVERTING THE TIME FORMAT TO FULL ISO
+    const fullISOStart = taskJSON.startDate ? new Date(taskJSON.startDate).toISOString() : null;
+    const fullISODue = taskJSON.dueDate ? new Date(taskJSON.dueDate).toISOString() : null;
+
+    const task = {
+        title: taskJSON.title,
+        summary: taskJSON.summary,
+        description: taskJSON.description,
+        assignee: taskJSON.assignee,
+        parentTask: taskJSON.parentTask,
+        startDate: fullISOStart,
+        dueDate: fullISODue,
+        owner: taskJSON.owner,
+        status: newStatus,
+        urgency: urg
+    }
+    const response = await fetch(`http://localhost:5056/Tasks/${taskId}`, {
+        method: "Put",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(task)
+    });
+
+    console.log(await response.json());
+}
 
 function activateStatusDropBox(event, statDropDown, urgentDropDown) {
     if(statDropDown.classList.contains("opacity-0")) {
@@ -573,19 +610,13 @@ function switchOption(choice, o1, o2, o3, o4, o1c, o2c, o3c, o4c, o1tc, o2tc, o3
 }
 
 //TO DO FOR NEXT TIME:
-//1. MAKE IT SO WHEN I MOVE THE TASKS AROUND TO A NEW COLUMN, IT UPDATES THE STATUS
 //2. MAKE IT SO THAT WHEN I UPDATE STATUS IT MOVES THE TASK TO THAT COLUMN
 //3. MAKE IT SO THAT WHEN I UPDATE URGENCY IT ADDS A EXTRA "!"
 //4. CONNECT API TO ACTUAL DB SO WE CAN UPDATE TASKS PROPERLY
-//5. CREATE POP UP FOR DELETE TASK, ALSO MAKE X BUTTON ON TASKS WHEN HOVERING
-
-//EASIEST:
-//5.
 
 //MEDIUM:
 //2.
 //3.
 
 //HARD:
-//1.
 //4.
