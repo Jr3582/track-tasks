@@ -5,8 +5,9 @@ const urgencyDropDown = document.getElementById("urgencyDropDownOptions");
 
 const popUp = document.getElementById("popUp");
 const updatePopUp = document.getElementById("updatePopUp");
+const delPopUp = document.getElementById("deletePopUp");
 
-//FORM INPUTS
+//FORM INPUTS TO CREATE
 const title = document.getElementById("title");
 const summary = document.getElementById("summary");
 const description = document.getElementById("description");
@@ -30,6 +31,11 @@ const updateOwner = document.getElementById("updateOwner");
 const updateCurStatus = document.getElementById("updateCurStatus");
 const updateCurUrgency = document.getElementById("updateCurUrgency");
 
+//BUTTON TO DELETE TASK
+const deleteBtn = document.getElementById("deleteBtn");
+const confirmDel = document.getElementById("confirmDel");
+const projectNameText = document.getElementById("deleteProjectName");
+
 //SORTABLE
 const todo_col = document.getElementById("todo_col");
 const inprog_col = document.getElementById("inprog_col");
@@ -39,6 +45,7 @@ const done_col = document.getElementById("done_col");
 let st = "TO DO";
 let urg = "LOW";
 let curTaskId = 0;
+let curTaskIdToDelete = 0;
 
 // VVV THIS IS FOR MOVING TASK AROUND TO EACH COL VVV
 new Sortable(todo_col, {
@@ -86,58 +93,105 @@ async function fetchAllTasks() {
     const tasks = await fetch("http://localhost:5056/Tasks");
     for(task of await tasks.json()) {
         const newTask = document.createElement("div");
+        const titleDiv = document.createElement("div");
+        const projNameDiv = document.createElement("div");
+        const deleteButton = document.createElement("button");
+        const projName = document.createElement("span");
         const title = document.createElement("span");
         const urgency = document.createElement("span");
+        const taskId = task.id;
         newTask.setAttribute("onclick", `showUpdateTask(${task.id.toString()}, event)`);
         newTask.setAttribute("id", task.id.toString());
+
+        //ADDING ATTRIBUTES TO THE DELETE BUTTON
+        deleteButton.setAttribute("id", "deleteBtn");
+        deleteButton.setAttribute("name", `PROJ_${task.id.toString()}`);
+        deleteButton.addEventListener("click", function(event) {
+            showDeletePopUp(deleteButton, taskId);
+            event.stopPropagation();
+        })
+
+        //ADDING CLASS STYLING
+        titleDiv.className = "flex h-fit";
+        projNameDiv.className = "flex";
+
+        deleteButton.className = "flex leading-none text-2xl ml-auto opacity-0 group-hover:opacity-100 transition-opacity duration-700 font-sans";
+
+        urgency.className = "text-2xl text-red-800 ml-auto pr-1";
+        title.className = "flex w-1/2";
+        projName.className = "text-lg";
+
+        //CHANGING TEXT
+        title.textContent = task.title;
+        deleteButton.textContent = "X";
+        urgency.textContent = fetchUrgency(task.urgency);
+        //~~~ PROJ_ IS JUST FILLER FOR NOW, I'LL CHANGE LATER TO REFLECT ACTUAL PROJECTS ~~~
+        projName.textContent = `PROJ-${task.id}`;
+
         
         switch (task.status) {
             case "TO DO":
-                newTask.className = "relative bg-blue-600 rounded-md p-2 font-playfair text-2xl text-bold task-card cursor-pointer button-anim mb-2";
-                urgency.className = "absolute right-2 bottom-1 text-2xl text-red-800";
-                title.className = "flex w-1/2";
+                //ADDING CLASSES
+                newTask.className = "relative bg-blue-600 rounded-md p-2 font-playfair text-2xl text-bold task-card cursor-pointer button-anim mb-2 group";
 
-                title.textContent = task.title;
-                urgency.textContent = fetchUrgency(task.urgency);
+                //APPENDING EVERYTHING TOGETHER
+                titleDiv.appendChild(title);
+                titleDiv.appendChild(deleteButton);
 
-                newTask.appendChild(title);
-                newTask.appendChild(urgency);
+                projNameDiv.appendChild(projName);
+                projNameDiv.appendChild(urgency);
+
+                newTask.appendChild(titleDiv);
+                newTask.appendChild(projNameDiv);
+
                 todo_col.appendChild(newTask);
                 break;
             case "IN PROGRESS":
-                newTask.className = "relative bg-green-600 rounded-md p-2 font-playfair text-2xl text-bold task-card cursor-pointer button-anim mb-2";
-                urgency.className = "absolute right-2 bottom-1 text-2xl text-red-800";
-                title.className = "flex w-1/2";
+                //ADDING CLASSES
+                newTask.className = "relative bg-green-600 rounded-md p-2 font-playfair text-2xl text-bold task-card cursor-pointer button-anim mb-2 group";
 
-                title.textContent = task.title;
-                urgency.textContent = fetchUrgency(task.urgency);
+                //APPENDING EVERYTHING TOGETHER
+                titleDiv.appendChild(title);
+                titleDiv.appendChild(deleteButton);
 
-                newTask.appendChild(title);
-                newTask.appendChild(urgency);
+                projNameDiv.appendChild(projName);
+                projNameDiv.appendChild(urgency);
+
+                newTask.appendChild(titleDiv);
+                newTask.appendChild(projNameDiv);
+
                 inprog_col.appendChild(newTask);
                 break;
             case "REVIEWING":
-                newTask.className = "relative bg-yellow-600 rounded-md p-2 font-playfair text-2xl text-bold task-card cursor-pointer button-anim mb-2";
-                urgency.className = "absolute right-2 bottom-1 text-2xl text-red-800";
-                title.className = "flex w-1/2";
+                //ADDING CLASSES
+                newTask.className = "relative bg-yellow-600 rounded-md p-2 font-playfair text-2xl text-bold task-card cursor-pointer button-anim mb-2 group";
 
-                title.textContent = task.title;
-                urgency.textContent = fetchUrgency(task.urgency);
+                //APPENDING EVERYTHING TOGETHER
+                titleDiv.appendChild(title);
+                titleDiv.appendChild(deleteButton);
 
-                newTask.appendChild(title);
-                newTask.appendChild(urgency);
+                projNameDiv.appendChild(projName);
+                projNameDiv.appendChild(urgency);
+
+                newTask.appendChild(titleDiv);
+                newTask.appendChild(projNameDiv);
+
                 inrew_col.appendChild(newTask);
                 break;
             case "DONE":
-                newTask.className = "relative bg-red-600 rounded-md p-2 font-playfair text-2xl text-bold task-card cursor-pointer button-anim mb-2";
-                urgency.className = "absolute right-2 bottom-1 text-2xl text-red-800";
-                title.className = "flex w-1/2";
+                //ADDING CLASSES
+                newTask.className = "relative bg-red-600 rounded-md p-2 font-playfair text-2xl text-bold task-card cursor-pointer button-anim mb-2 group";
 
-                title.textContent = task.title;
-                urgency.textContent = fetchUrgency(task.urgency);
+                //APPENDING EVERYTHING TOGETHER
+                titleDiv.appendChild(title);
+                titleDiv.appendChild(deleteButton);
 
-                newTask.appendChild(title);
-                newTask.appendChild(urgency);
+                projNameDiv.appendChild(projName);
+                projNameDiv.appendChild(urgency);
+
+                newTask.appendChild(titleDiv);
+                newTask.appendChild(projNameDiv);
+
                 done_col.appendChild(newTask);
                 break;
         }
@@ -231,6 +285,23 @@ updateTaskform.addEventListener("submit", async function(event) {
 
 })
 
+confirmDel.addEventListener("click", async function (event) {
+    event.stopPropagation();
+    const response = await fetch(`http://localhost:5056/Tasks/${curTaskIdToDelete}`, {
+        method: "Delete"
+    })
+
+    document.getElementById(curTaskIdToDelete).remove();
+    if(delPopUp.classList.contains("opacity-100")) {
+        delPopUp.classList.remove("opacity-100");
+        delPopUp.classList.add("opacity-0");
+
+        delPopUp.classList.remove("pointer-events-auto");
+        delPopUp.classList.add("pointer-events-none");
+    }
+    console.log(response.status);
+})
+
 
 //STOPS THE FORM FROM DISAPPEARING IF CLICKED INSIDE
 createTaskform.addEventListener("click", function(event) {
@@ -238,6 +309,11 @@ createTaskform.addEventListener("click", function(event) {
 })
 
 updateTaskform.addEventListener("click", function(event) {
+    event.stopPropagation();
+})
+
+deleteBtn.addEventListener("click", function(event) {
+    console.log("test text");
     event.stopPropagation();
 })
 
@@ -286,6 +362,17 @@ document.addEventListener("click", function(e) {
 
         //DEBUGGING MESSAGE
         console.log("hiding update task pop up");
+    }
+
+    if(delPopUp.classList.contains("opacity-100")) {
+        delPopUp.classList.remove("opacity-100");
+        delPopUp.classList.add("opacity-0");
+
+        delPopUp.classList.remove("pointer-events-auto");
+        delPopUp.classList.add("pointer-events-none");
+
+        //DEBUGGING MESSAGE
+        console.log("hiding delete task pop up");
     }
 })
 
@@ -407,6 +494,19 @@ async function showUpdateTask(id, event) {
     }
 }
 
+function showDeletePopUp(proj, projId) {
+    if(delPopUp.classList.contains("opacity-0")) {
+        delPopUp.classList.remove("opacity-0");
+        delPopUp.classList.remove("pointer-events-none");
+
+        delPopUp.classList.add("opacity-100");
+        delPopUp.classList.add("pointer-events-auto");
+        
+        projectNameText.textContent = proj.name;
+        curTaskIdToDelete = projId;
+    }
+}
+
 
 
 //HELPER FUNCTIONS FOR REMOVING BACKGROUND COLOR
@@ -473,6 +573,19 @@ function switchOption(choice, o1, o2, o3, o4, o1c, o2c, o3c, o4c, o1tc, o2tc, o3
 }
 
 //TO DO FOR NEXT TIME:
-//MAKE IT SO THAT WHEN I UPDATE STATUS IT MOVES THE TASK TO THAT COLUMN
-//MAKE IT SO THAT WHEN I UPDATE URGENCY IT ADDS A EXTRA "!"
-//CONNECT API TO ACTUAL DB SO WE CAN UPDATE TASKS PROPERLY
+//1. MAKE IT SO WHEN I MOVE THE TASKS AROUND TO A NEW COLUMN, IT UPDATES THE STATUS
+//2. MAKE IT SO THAT WHEN I UPDATE STATUS IT MOVES THE TASK TO THAT COLUMN
+//3. MAKE IT SO THAT WHEN I UPDATE URGENCY IT ADDS A EXTRA "!"
+//4. CONNECT API TO ACTUAL DB SO WE CAN UPDATE TASKS PROPERLY
+//5. CREATE POP UP FOR DELETE TASK, ALSO MAKE X BUTTON ON TASKS WHEN HOVERING
+
+//EASIEST:
+//5.
+
+//MEDIUM:
+//2.
+//3.
+
+//HARD:
+//1.
+//4.
