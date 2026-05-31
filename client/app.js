@@ -2,6 +2,8 @@ const createTaskform = document.getElementById("createTask");
 const updateTaskform = document.getElementById("updateTask");
 const statusDropDown = document.getElementById("statusDropDownOptions");
 const urgencyDropDown = document.getElementById("urgencyDropDownOptions");
+const updateStatusDropDown = document.getElementById("updateStatusDropDownOptions");
+const updateUrgencyDropDown = document.getElementById("updateUrgencyDropDownOptions");
 
 const popUp = document.getElementById("popUp");
 const updatePopUp = document.getElementById("updatePopUp");
@@ -261,6 +263,9 @@ updateTaskform.addEventListener("submit", async function(event) {
     //STOPS THE PAGE FROM REFRESHING AFTER SUBMITTING
     event.preventDefault();
 
+    const taskBeforeUpdate = await fetch(`http://localhost:5056/Tasks/${curTaskId}`);
+    const taskBeforeUpdateJson = await taskBeforeUpdate.json();
+
     //CONVERTING THE TIME FORMAT TO FULL ISO
     const fullISOStart = startDate.value ? new Date(updateStartDate.value).toISOString() : null;
     const fullISODue = dueDate.value ? new Date(updateDueDate.value).toISOString() : null;
@@ -284,8 +289,48 @@ updateTaskform.addEventListener("submit", async function(event) {
         },
         body: JSON.stringify(task)
     });
+    const responseJSON = await response.json();
 
-    console.log(await response.json());
+    // STORE CURRENT
+    // DELETE PREVIOUS
+    // PUT CURRENT IN THE CORRECT COL
+    if(taskBeforeUpdateJson.status !== responseJSON.status) {
+        const savedCurElement = document.getElementById(curTaskId);
+        document.getElementById(curTaskId).remove();
+        switch(responseJSON.status) {
+            case "TO DO":
+                removeBg(savedCurElement);
+                addBg(savedCurElement, "bg-blue-600");
+                todo_col.appendChild(savedCurElement);
+                break;
+            case "IN PROGRESS":
+                removeBg(savedCurElement);
+                addBg(savedCurElement, "bg-green-600");
+                inprog_col.appendChild(savedCurElement);
+                break;
+            case "REVIEWING":
+                removeBg(savedCurElement);
+                addBg(savedCurElement, "bg-yellow-600");
+                inrew_col.appendChild(savedCurElement);
+                break;
+            case "DONE":
+                removeBg(savedCurElement);
+                addBg(savedCurElement, "bg-red-600");
+                done_col.appendChild(savedCurElement);
+                break;
+        }
+    }
+
+    //GETS RID OF POPUP AFTER UPDATING
+    if(updatePopUp.classList.contains("opacity-100")) {
+        updatePopUp.classList.remove("opacity-100");
+        updatePopUp.classList.add("opacity-0");
+
+        updatePopUp.classList.remove("pointer-events-auto");
+        updatePopUp.classList.add("pointer-events-none");
+    }
+
+    console.log(responseJSON);
 
 })
 
@@ -322,29 +367,44 @@ deleteBtn.addEventListener("click", function(event) {
     event.stopPropagation();
 })
 
-
-document.addEventListener("click", function(e) {
+createTaskform.addEventListener("click", function() {
     if(statusDropDown.classList.contains("opacity-100")) {
         statusDropDown.classList.remove("opacity-100");
         statusDropDown.classList.add("opacity-0");
 
         statusDropDown.classList.remove("pointer-events-auto");
         statusDropDown.classList.add("pointer-events-none");
-
-        //DEBUGGING MESSAGE
-        console.log("hiding statusDropDown");
     }
-    console.log(urgencyDropDown);
+
     if(urgencyDropDown.classList.contains("opacity-100")) {
         urgencyDropDown.classList.remove("opacity-100");
         urgencyDropDown.classList.add("opacity-0");
 
         urgencyDropDown.classList.remove("pointer-events-auto");
         urgencyDropDown.classList.add("pointer-events-none");
-
-        //DEBUGGING MESSAGE
-        console.log("hiding urgencyDropDown");
     }
+})
+
+updateTaskform.addEventListener("click", function() {
+    if(updateStatusDropDown.classList.contains("opacity-100")) {
+        updateStatusDropDown.classList.remove("opacity-100");
+        updateStatusDropDown.classList.add("opacity-0");
+
+        updateStatusDropDown.classList.remove("pointer-events-auto");
+        updateStatusDropDown.classList.add("pointer-events-none");
+    }
+
+    if(updateUrgencyDropDown.classList.contains("opacity-100")) {
+        updateUrgencyDropDown.classList.remove("opacity-100");
+        updateUrgencyDropDown.classList.add("opacity-0");
+
+        updateUrgencyDropDown.classList.remove("pointer-events-auto");
+        updateUrgencyDropDown.classList.add("pointer-events-none");
+    }
+})
+
+
+document.addEventListener("click", function(e) {
     if(popUp.classList.contains("opacity-100")) {
         popUp.classList.remove("opacity-100");
         popUp.classList.add("opacity-0");
