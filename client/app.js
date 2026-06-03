@@ -259,6 +259,7 @@ createTaskform.addEventListener("submit", async function(event) {
     console.log(await response.json());
 })
 
+//FOR UPDATING FORM
 updateTaskform.addEventListener("submit", async function(event) {
     //STOPS THE PAGE FROM REFRESHING AFTER SUBMITTING
     event.preventDefault();
@@ -319,6 +320,11 @@ updateTaskform.addEventListener("submit", async function(event) {
                 done_col.appendChild(savedCurElement);
                 break;
         }
+    }
+
+    if(taskBeforeUpdateJson.urgency !== responseJSON.urgency) {
+        const curTask = document.getElementById(curTaskId);
+        curTask.children[1].children[1].textContent = fetchUrgency(responseJSON.urgency);
     }
 
     //GETS RID OF POPUP AFTER UPDATING
@@ -670,13 +676,7 @@ function switchOption(choice, o1, o2, o3, o4, o1c, o2c, o3c, o4c, o1tc, o2tc, o3
 }
 
 //TO DO FOR NEXT TIME:
-//2. MAKE IT SO THAT WHEN I UPDATE STATUS IT MOVES THE TASK TO THAT COLUMN
-//3. MAKE IT SO THAT WHEN I UPDATE URGENCY IT ADDS A EXTRA "!"
 //4. CONNECT API TO ACTUAL DB SO WE CAN UPDATE TASKS PROPERLY
-
-//MEDIUM:
-//2.
-//3.
 
 //HARD:
 //4.
