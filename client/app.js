@@ -5,7 +5,7 @@ const urgencyDropDown = document.getElementById("urgencyDropDownOptions");
 const updateStatusDropDown = document.getElementById("updateStatusDropDownOptions");
 const updateUrgencyDropDown = document.getElementById("updateUrgencyDropDownOptions");
 
-const popUp = document.getElementById("popUp");
+const createPopUp = document.getElementById("popUp");
 const updatePopUp = document.getElementById("updatePopUp");
 const delPopUp = document.getElementById("deletePopUp");
 
@@ -247,7 +247,7 @@ createTaskform.addEventListener("submit", async function(event) {
         status: st,
         urgency: urg
     }
-    console.log(task);
+
     const response = await fetch("http://localhost:5056/Tasks", {
         method: "Post",
         headers: {
@@ -256,7 +256,121 @@ createTaskform.addEventListener("submit", async function(event) {
         body: JSON.stringify(task)
     });
 
-    console.log(await response.json());
+    const responseJSON = await response.json();
+
+    const newTask = document.createElement("div");
+    const titleDiv = document.createElement("div");
+    const projNameDiv = document.createElement("div");
+    const deleteButton = document.createElement("button");
+    const projName = document.createElement("span");
+    const taskTitle = document.createElement("span");
+    const urgency = document.createElement("span");
+    const taskId = responseJSON.id;
+    newTask.setAttribute("onclick", `showUpdateTask(${responseJSON.id.toString()}, event)`);
+    newTask.setAttribute("id", responseJSON.id.toString());
+
+    //ADDING ATTRIBUTES TO THE DELETE BUTTON
+    deleteButton.setAttribute("id", "deleteBtn");
+    deleteButton.setAttribute("name", `PROJ_${responseJSON.id.toString()}`);
+    deleteButton.addEventListener("click", function(event) {
+        showDeletePopUp(deleteButton, taskId);
+        event.stopPropagation();
+    })
+
+    //ADDING CLASS STYLING
+    titleDiv.className = "flex h-fit";
+    projNameDiv.className = "flex";
+
+    deleteButton.className = "flex leading-none text-2xl ml-auto opacity-0 group-hover:opacity-100 transition-opacity duration-700 font-sans";
+
+    urgency.className = "text-2xl text-red-800 ml-auto pr-1";
+    taskTitle.className = "flex w-1/2";
+    projName.className = "text-lg";
+
+    //CHANGING TEXT
+    taskTitle.textContent = responseJSON.title;
+    deleteButton.textContent = "X";
+    urgency.textContent = fetchUrgency(responseJSON.urgency);
+    //~~~ PROJ_ IS JUST FILLER FOR NOW, I'LL CHANGE LATER TO REFLECT ACTUAL PROJECTS ~~~
+    projName.textContent = `PROJ-${responseJSON.id}`;
+
+    switch(task.status) {
+        case "TO DO":
+            //ADDING CLASSES
+            newTask.className = "relative bg-blue-600 rounded-md p-2 font-playfair text-2xl text-bold task-card cursor-pointer button-anim mb-2 group";
+
+            //APPENDING EVERYTHING TOGETHER
+            titleDiv.appendChild(taskTitle);
+            titleDiv.appendChild(deleteButton);
+
+            projNameDiv.appendChild(projName);
+            projNameDiv.appendChild(urgency);
+
+            newTask.appendChild(titleDiv);
+            newTask.appendChild(projNameDiv);
+
+            todo_col.appendChild(newTask);
+            break;
+        case "IN PROGRESS":
+            //ADDING CLASSES
+            newTask.className = "relative bg-green-600 rounded-md p-2 font-playfair text-2xl text-bold task-card cursor-pointer button-anim mb-2 group";
+
+            //APPENDING EVERYTHING TOGETHER
+            titleDiv.appendChild(taskTitle);
+            titleDiv.appendChild(deleteButton);
+
+            projNameDiv.appendChild(projName);
+            projNameDiv.appendChild(urgency);
+
+            newTask.appendChild(titleDiv);
+            newTask.appendChild(projNameDiv);
+
+            inprog_col.appendChild(newTask);
+            break;
+        case "IN REVIEW":
+            //ADDING CLASSES
+            newTask.className = "relative bg-yellow-600 rounded-md p-2 font-playfair text-2xl text-bold task-card cursor-pointer button-anim mb-2 group";
+
+            //APPENDING EVERYTHING TOGETHER
+            titleDiv.appendChild(taskTitle);
+            titleDiv.appendChild(deleteButton);
+
+            projNameDiv.appendChild(projName);
+            projNameDiv.appendChild(urgency);
+
+            newTask.appendChild(titleDiv);
+            newTask.appendChild(projNameDiv);
+
+            inrew_col.appendChild(newTask);
+            break;
+        case "DONE":
+            //ADDING CLASSES
+            newTask.className = "relative bg-red-600 rounded-md p-2 font-playfair text-2xl text-bold task-card cursor-pointer button-anim mb-2 group";
+
+            //APPENDING EVERYTHING TOGETHER
+            titleDiv.appendChild(taskTitle);
+            titleDiv.appendChild(deleteButton);
+
+            projNameDiv.appendChild(projName);
+            projNameDiv.appendChild(urgency);
+
+            newTask.appendChild(titleDiv);
+            newTask.appendChild(projNameDiv);
+
+            done_col.appendChild(newTask);
+            break;
+    }
+
+    //GETS RID OF POPUP AFTER UPDATING
+    if(createPopUp.classList.contains("opacity-100")) {
+        createPopUp.classList.remove("opacity-100");
+        createPopUp.classList.add("opacity-0");
+
+        createPopUp.classList.remove("pointer-events-auto");
+        createPopUp.classList.add("pointer-events-none");
+    }
+
+    console.log(responseJSON);
 })
 
 //FOR UPDATING FORM
@@ -291,6 +405,16 @@ updateTaskform.addEventListener("submit", async function(event) {
         body: JSON.stringify(task)
     });
     const responseJSON = await response.json();
+
+    if(taskBeforeUpdate.title !== responseJSON.title) {
+        const curDOM = document.getElementById(curTaskId);
+        curDOM.children[0].children[0].textContent = responseJSON.title;
+    }
+
+    if(taskBeforeUpdate.urgency !== responseJSON.urgency) {
+        const curDOM = document.getElementById(curTaskId);
+        curDOM.children[1].children[1].textContent = fetchUrgency(responseJSON.urgency);
+    }
 
     // STORE CURRENT
     // DELETE PREVIOUS
@@ -411,12 +535,12 @@ updateTaskform.addEventListener("click", function() {
 
 
 document.addEventListener("click", function(e) {
-    if(popUp.classList.contains("opacity-100")) {
-        popUp.classList.remove("opacity-100");
-        popUp.classList.add("opacity-0");
+    if(createPopUp.classList.contains("opacity-100")) {
+        createPopUp.classList.remove("opacity-100");
+        createPopUp.classList.add("opacity-0");
 
-        popUp.classList.remove("pointer-events-auto");
-        popUp.classList.add("pointer-events-none");
+        createPopUp.classList.remove("pointer-events-auto");
+        createPopUp.classList.add("pointer-events-none");
 
         createTaskform.reset();
 
@@ -552,14 +676,15 @@ function changeUrgency(urgency, urgencyDOM) {
 //FUNCTION TO SHOW CREATE TASK POP UP
 function showCreateTask(status, event){
     event.stopPropagation();
+    st = status;
     switchOption(status, "TO DO", "IN PROGRESS", "REVIEWING", "DONE", "bg-blue-800", "bg-green-800", "bg-yellow-800", "bg-red-800", "text-blue-500", "text-green-500", "text-yellow-500", "text-red-500", curStatus);
 
-    if(popUp.classList.contains("opacity-0")) {
-        popUp.classList.remove("opacity-0");
-        popUp.classList.remove("pointer-events-none");
+    if(createPopUp.classList.contains("opacity-0")) {
+        createPopUp.classList.remove("opacity-0");
+        createPopUp.classList.remove("pointer-events-none");
 
-        popUp.classList.add("opacity-100");
-        popUp.classList.add("pointer-events-auto");
+        createPopUp.classList.add("opacity-100");
+        createPopUp.classList.add("pointer-events-auto");
 
     }
 }
@@ -674,9 +799,3 @@ function switchOption(choice, o1, o2, o3, o4, o1c, o2c, o3c, o4c, o1tc, o2tc, o3
             break;
     }
 }
-
-//TO DO FOR NEXT TIME:
-//4. CONNECT API TO ACTUAL DB SO WE CAN UPDATE TASKS PROPERLY
-
-//HARD:
-//4.

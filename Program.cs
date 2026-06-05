@@ -1,3 +1,6 @@
+using Microsoft.EntityFrameworkCore;
+using track_tasks;
+
 var builder = WebApplication.CreateBuilder(args);
 
 var corsPolicy = "AllowFrontend";
@@ -15,6 +18,11 @@ builder.Services.AddCors(options =>
               .AllowAnyMethod()
               .AllowAnyHeader();
     });
+});
+
+builder.Services.AddDbContext<AppDbContext>(options =>
+{
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 
 var app = builder.Build();

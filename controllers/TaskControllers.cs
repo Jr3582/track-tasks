@@ -1,42 +1,42 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualBasic;
+using track_tasks;
+using track_tasks.Models;
 
 namespace MyFirstApp.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class TasksController : ControllerBase
+public class TasksController(AppDbContext context) : ControllerBase
 {
     //Variables need to be static because everytime a new request comes in
     //a new instance of the controller is created
     //so none of the varaibale info carries over
     //without static each variable would be a new instance, (_newId starting at 1, and empty list)
-    private static int _newId = 1;
-    private static List<TaskItem> _tasks = new()
-    { 
-        new TaskItem {Id = 1, Title = "Test 1", Summary = "Test Summary", Description = "Test Description", Assignee = "John", Owner = "Jimmy", Status = "IN PROGRESS", Urgency = "LOW"},
-        new TaskItem {Id = 2, Title = "Test 2", Summary = "Test Summary 2", Description = "Test Description 2", Assignee = "John", Owner = "Johnny", Status = "IN PROGRESS", Urgency = "PRIORITY"}
-    }
-    ;
+    private AppDbContext _context = context;
 
     [HttpGet]
     public IActionResult GetAll()
     {
-        return Ok(_tasks);
+        return Ok(_context.Tasks.ToList());
     }
+
     [HttpGet("{id}")]
     public IActionResult GetTask([FromRoute] int id)
     {
-        var searchResult = _tasks.FirstOrDefault(task => task.Id == id);
+        var searchResult = _context.Tasks.FirstOrDefault(task => task.Id == id);
         if(searchResult == null) return NotFound() ; return Ok(searchResult);
     }
+
     [HttpPost] 
     //POST == ADD
     public IActionResult Create([FromBody] TaskItem task)
     {
-        task.Id = _newId;
-        _newId++;
-        _tasks.Add(task);
+        //ADDS TO DB
+        _context.Tasks.Add(task);
+        //SAVE CHANGES
+        _context.SaveChanges();
         return StatusCode(201, task);
     }
 
@@ -45,7 +45,7 @@ public class TasksController : ControllerBase
     //("{id}") is used to get the ID in the URL
     public IActionResult Update([FromRoute] int id, [FromBody] TaskItem updatedTask)
     {
-        var searchResult = _tasks.FirstOrDefault(task => task.Id == id);
+        var searchResult = _context.Tasks.FirstOrDefault(task => task.Id == id);
         if(searchResult == null)
         {
             return NotFound();
@@ -62,6 +62,8 @@ public class TasksController : ControllerBase
         searchResult.Status = updatedTask.Status;
         searchResult.Urgency = updatedTask.Urgency;
 
+        _context.SaveChanges();
+
         return Ok(searchResult);
     }
 
@@ -69,27 +71,13 @@ public class TasksController : ControllerBase
     //DELTE the ID in the URL
     public IActionResult Delete([FromRoute] int id)
     {
-        var searchResult = _tasks.FirstOrDefault(task => task.Id == id);
+        var searchResult = _context.Tasks.FirstOrDefault(task => task.Id == id);
         if(searchResult == null)
         {
             return NotFound();
         }
-        _tasks.Remove(searchResult);
+        _context.Tasks.Remove(searchResult);
+        _context.SaveChanges();
         return Ok();
     }
-}
-
-public class TaskItem
-{
-    public int Id { get; set; }
-    public string Title { get; set; } = "";
-    public string? Summary { get; set; } = "";
-    public string? Description { get; set; } = "";
-    public string? Assignee { get; set; } = "";
-    public string? Parent { get; set; } = "";
-    public DateTime? StartDate { get; set; }
-    public DateTime? DueDate { get; set; }
-    public string Owner { get; set; } = "";
-    public string Status { get; set; } = "";
-    public string Urgency { get; set; } = "";
 }
