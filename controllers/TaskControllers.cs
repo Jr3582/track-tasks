@@ -4,7 +4,7 @@ using Microsoft.VisualBasic;
 using track_tasks;
 using track_tasks.Models;
 
-namespace MyFirstApp.Controllers;
+namespace track_tasks.Controllers;
 
 [ApiController]
 [Route("[controller]")]
@@ -20,6 +20,13 @@ public class TasksController(AppDbContext context) : ControllerBase
     public IActionResult GetAll()
     {
         return Ok(_context.Tasks.ToList());
+    }
+
+    [HttpGet("project/{projectId}")]
+    public IActionResult GetAllFromProject([FromRoute] int projectId)
+    {
+        var searchResult = _context.Tasks.Where(task => task.ProjectId == projectId).ToList();
+        return Ok(searchResult);
     }
 
     [HttpGet("{id}")]

@@ -35,3 +35,6 @@ app.UseCors(corsPolicy);
 app.MapControllers();
 
 app.Run();
+
+//PROGRAM.CS
+//PROGRAM.CS REGISTERS SERVICES, TELLS THE PROGRAM WHERE EVERYTHING IS SO WE CAN USE IT.

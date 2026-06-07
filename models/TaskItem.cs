@@ -12,4 +12,6 @@ public class TaskItem
     public string Owner { get; set; } = "";
     public string Status { get; set; } = "";
     public string Urgency { get; set; } = "";
+    public int ProjectId { get; set; }
+    public Project? Project { get; set; }
 }

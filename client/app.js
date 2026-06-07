@@ -48,6 +48,7 @@ let st = "TO DO";
 let urg = "LOW";
 let curTaskId = 0;
 let curTaskIdToDelete = 0;
+let curProjId = 4;
 
 // VVV THIS IS FOR MOVING TASK AROUND TO EACH COL VVV
 new Sortable(todo_col, {
@@ -94,9 +95,9 @@ new Sortable(done_col, {
 });
 
 //FETCHING ALL TASKS WHEN SITE IS LOADED
-async function fetchAllTasks() {
+async function fetchAllTasks(projId) {
     let task;
-    const tasks = await fetch("http://localhost:5056/Tasks");
+    const tasks = await fetch(`http://localhost:5056/Tasks/project/${projId}`);
     for(task of await tasks.json()) {
         const newTask = document.createElement("div");
         const titleDiv = document.createElement("div");
@@ -224,7 +225,7 @@ function fetchUrgency(taskUrgency) {
 
 }
 
-fetchAllTasks();
+fetchAllTasks(curProjId);
 
 //EVENT LISTENER FOR CREATE FORM
 createTaskform.addEventListener("submit", async function(event) {
@@ -245,7 +246,8 @@ createTaskform.addEventListener("submit", async function(event) {
         dueDate: fullISODue,
         owner: owner.value,
         status: st,
-        urgency: urg
+        urgency: urg,
+        projectId: curProjId
     }
 
     const response = await fetch("http://localhost:5056/Tasks", {
@@ -799,3 +801,9 @@ function switchOption(choice, o1, o2, o3, o4, o1c, o2c, o3c, o4c, o1tc, o2tc, o3
             break;
     }
 }
+
+//TO DO LIST:
+//1. ABILITY TO MAKE ACCOUNTS
+//2. MAKE DIFFERENT PROJECTS
+//3. ADD PPL TO PROJECTS
+//4. ASSIGN TASKS TO DIFFERENT PROJECTS
