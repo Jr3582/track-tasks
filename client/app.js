@@ -106,7 +106,7 @@ async function fetchAllProjects() {
     const projs = await fetch(`http://localhost:5056/Projects`);
     for(proj of await projs.json()) {
         const projNameSpan = document.createElement("span");
-        projNameSpan.className = "font-playfair text-xl";
+        projNameSpan.className = "font-playfair text-xl cursor-pointer";
         projNameSpan.textContent = proj.title;
         projNameSpan.setAttribute("onclick", `switchProj(${proj.id.toString()})`);
         listOfCurProjects.appendChild(projNameSpan);
@@ -115,8 +115,12 @@ async function fetchAllProjects() {
 
 async function switchProj(newProjId) {
     curProjId = newProjId;
-    const tasks = await fetch(`http://localhost:5056/Tasks/project/${newProjId}`);
+    todo_col.innerHTML = "";
+    inprog_col.innerHTML = "";
+    inrew_col.innerHTML = "";
+    done_col.innerHTML = "";
 
+    fetchAllTasks(newProjId); 
 }
 
 //FETCHING ALL TASKS WHEN SITE IS LOADED
@@ -128,6 +132,7 @@ async function fetchAllTasks(projId) {
     }
 }
 
+//HELPER FUNCTION TO CHANGE URGENCY TEXT
 function fetchUrgency(taskUrgency) {
     let res = "";
     switch(taskUrgency) {
@@ -198,6 +203,7 @@ createTaskform.addEventListener("submit", async function(event) {
     console.log(responseJSON);
 })
 
+//HELPER FUNCTION TO CREATE TASK CARDS
 function createTaskCard(task) {
     const newTask = document.createElement("div");
     const titleDiv = document.createElement("div");
@@ -240,6 +246,7 @@ function createTaskCard(task) {
     switchTaskStatus(task, titleDiv, title, deleteButton, projNameDiv, projName, urgency, newTask);
 }
 
+//HELPER FUNCTION TO APPLY BG COLOR AND APPENDING TASK TO CORRECT COLUMN
 function switchTaskStatus(task, titleDiv, taskTitle, deleteButton, projNameDiv, projName, urgency, newTask) {
     let bgColor;
     let column;
@@ -252,6 +259,7 @@ function switchTaskStatus(task, titleDiv, taskTitle, deleteButton, projNameDiv, 
 
     newTask.appendChild(titleDiv);
     newTask.appendChild(projNameDiv);
+    console.log(task.status);
     switch(task.status) {
         case "TO DO":
             //ADDING CLASSES
