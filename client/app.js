@@ -47,6 +47,8 @@ const done_col = document.getElementById("done_col");
 //SIDE MENU
 const sideMenu = document.getElementById("sideMenu");
 const toggleSideMenuText = document.getElementById("toggleSideMenuText");
+const listOfCurProjects = document.getElementById("listOfProjects");
+const curProjectName = document.getElementById("curProjectName");
 
 
 let st = "TO DO";
@@ -99,114 +101,30 @@ new Sortable(done_col, {
     },
 });
 
+async function fetchAllProjects() {
+    let proj;
+    const projs = await fetch(`http://localhost:5056/Projects`);
+    for(proj of await projs.json()) {
+        const projNameSpan = document.createElement("span");
+        projNameSpan.className = "font-playfair text-xl";
+        projNameSpan.textContent = proj.title;
+        projNameSpan.setAttribute("onclick", `switchProj(${proj.id.toString()})`);
+        listOfCurProjects.appendChild(projNameSpan);
+    }
+}
+
+async function switchProj(newProjId) {
+    curProjId = newProjId;
+    const tasks = await fetch(`http://localhost:5056/Tasks/project/${newProjId}`);
+
+}
+
 //FETCHING ALL TASKS WHEN SITE IS LOADED
 async function fetchAllTasks(projId) {
     let task;
     const tasks = await fetch(`http://localhost:5056/Tasks/project/${projId}`);
-    for(task of await tasks.json()) {
-        const newTask = document.createElement("div");
-        const titleDiv = document.createElement("div");
-        const projNameDiv = document.createElement("div");
-        const deleteButton = document.createElement("button");
-        const projName = document.createElement("span");
-        const title = document.createElement("span");
-        const urgency = document.createElement("span");
-        const taskId = task.id;
-        newTask.setAttribute("onclick", `showUpdateTask(${task.id.toString()}, event)`);
-        newTask.setAttribute("id", task.id.toString());
-
-        //ADDING ATTRIBUTES TO THE DELETE BUTTON
-        deleteButton.setAttribute("id", "deleteBtn");
-        deleteButton.setAttribute("name", `PROJ_${task.id.toString()}`);
-        deleteButton.addEventListener("click", function(event) {
-            showDeletePopUp(deleteButton, taskId);
-            event.stopPropagation();
-        })
-
-        //ADDING CLASS STYLING
-        titleDiv.className = "flex h-fit";
-        projNameDiv.className = "flex";
-
-        deleteButton.className = "flex leading-none text-2xl ml-auto opacity-0 group-hover:opacity-100 transition-opacity duration-700 font-sans";
-
-        urgency.className = "text-2xl text-red-800 ml-auto pr-1";
-        title.className = "flex w-1/2";
-        projName.className = "text-lg";
-
-        //CHANGING TEXT
-        title.textContent = task.title;
-        deleteButton.textContent = "X";
-        urgency.textContent = fetchUrgency(task.urgency);
-        //~~~ PROJ_ IS JUST FILLER FOR NOW, I'LL CHANGE LATER TO REFLECT ACTUAL PROJECTS ~~~
-        projName.textContent = `PROJ-${task.id}`;
-
-        
-        switch (task.status) {
-            case "TO DO":
-                //ADDING CLASSES
-                newTask.className = "relative bg-blue-600 rounded-md p-2 font-playfair text-2xl text-bold task-card cursor-pointer button-anim mb-2 group";
-
-                //APPENDING EVERYTHING TOGETHER
-                titleDiv.appendChild(title);
-                titleDiv.appendChild(deleteButton);
-
-                projNameDiv.appendChild(projName);
-                projNameDiv.appendChild(urgency);
-
-                newTask.appendChild(titleDiv);
-                newTask.appendChild(projNameDiv);
-
-                todo_col.appendChild(newTask);
-                break;
-            case "IN PROGRESS":
-                //ADDING CLASSES
-                newTask.className = "relative bg-green-600 rounded-md p-2 font-playfair text-2xl text-bold task-card cursor-pointer button-anim mb-2 group";
-
-                //APPENDING EVERYTHING TOGETHER
-                titleDiv.appendChild(title);
-                titleDiv.appendChild(deleteButton);
-
-                projNameDiv.appendChild(projName);
-                projNameDiv.appendChild(urgency);
-
-                newTask.appendChild(titleDiv);
-                newTask.appendChild(projNameDiv);
-
-                inprog_col.appendChild(newTask);
-                break;
-            case "REVIEWING":
-                //ADDING CLASSES
-                newTask.className = "relative bg-yellow-600 rounded-md p-2 font-playfair text-2xl text-bold task-card cursor-pointer button-anim mb-2 group";
-
-                //APPENDING EVERYTHING TOGETHER
-                titleDiv.appendChild(title);
-                titleDiv.appendChild(deleteButton);
-
-                projNameDiv.appendChild(projName);
-                projNameDiv.appendChild(urgency);
-
-                newTask.appendChild(titleDiv);
-                newTask.appendChild(projNameDiv);
-
-                inrew_col.appendChild(newTask);
-                break;
-            case "DONE":
-                //ADDING CLASSES
-                newTask.className = "relative bg-red-600 rounded-md p-2 font-playfair text-2xl text-bold task-card cursor-pointer button-anim mb-2 group";
-
-                //APPENDING EVERYTHING TOGETHER
-                titleDiv.appendChild(title);
-                titleDiv.appendChild(deleteButton);
-
-                projNameDiv.appendChild(projName);
-                projNameDiv.appendChild(urgency);
-
-                newTask.appendChild(titleDiv);
-                newTask.appendChild(projNameDiv);
-
-                done_col.appendChild(newTask);
-                break;
-        }
+    for(task of await tasks.json()){
+        createTaskCard(task);
     }
 }
 
@@ -231,6 +149,7 @@ function fetchUrgency(taskUrgency) {
 }
 
 fetchAllTasks(curProjId);
+fetchAllProjects();
 
 //EVENT LISTENER FOR CREATE FORM
 createTaskform.addEventListener("submit", async function(event) {
@@ -265,108 +184,7 @@ createTaskform.addEventListener("submit", async function(event) {
 
     const responseJSON = await response.json();
 
-    const newTask = document.createElement("div");
-    const titleDiv = document.createElement("div");
-    const projNameDiv = document.createElement("div");
-    const deleteButton = document.createElement("button");
-    const projName = document.createElement("span");
-    const taskTitle = document.createElement("span");
-    const urgency = document.createElement("span");
-    const taskId = responseJSON.id;
-    newTask.setAttribute("onclick", `showUpdateTask(${responseJSON.id.toString()}, event)`);
-    newTask.setAttribute("id", responseJSON.id.toString());
-
-    //ADDING ATTRIBUTES TO THE DELETE BUTTON
-    deleteButton.setAttribute("id", "deleteBtn");
-    deleteButton.setAttribute("name", `PROJ_${responseJSON.id.toString()}`);
-    deleteButton.addEventListener("click", function(event) {
-        showDeletePopUp(deleteButton, taskId);
-        event.stopPropagation();
-    })
-
-    //ADDING CLASS STYLING
-    titleDiv.className = "flex h-fit";
-    projNameDiv.className = "flex";
-
-    deleteButton.className = "flex leading-none text-2xl ml-auto opacity-0 group-hover:opacity-100 transition-opacity duration-700 font-sans";
-
-    urgency.className = "text-2xl text-red-800 ml-auto pr-1";
-    taskTitle.className = "flex w-1/2";
-    projName.className = "text-lg";
-
-    //CHANGING TEXT
-    taskTitle.textContent = responseJSON.title;
-    deleteButton.textContent = "X";
-    urgency.textContent = fetchUrgency(responseJSON.urgency);
-    //~~~ PROJ_ IS JUST FILLER FOR NOW, I'LL CHANGE LATER TO REFLECT ACTUAL PROJECTS ~~~
-    projName.textContent = `PROJ-${responseJSON.id}`;
-
-    switch(task.status) {
-        case "TO DO":
-            //ADDING CLASSES
-            newTask.className = "relative bg-blue-600 rounded-md p-2 font-playfair text-2xl text-bold task-card cursor-pointer button-anim mb-2 group";
-
-            //APPENDING EVERYTHING TOGETHER
-            titleDiv.appendChild(taskTitle);
-            titleDiv.appendChild(deleteButton);
-
-            projNameDiv.appendChild(projName);
-            projNameDiv.appendChild(urgency);
-
-            newTask.appendChild(titleDiv);
-            newTask.appendChild(projNameDiv);
-
-            todo_col.appendChild(newTask);
-            break;
-        case "IN PROGRESS":
-            //ADDING CLASSES
-            newTask.className = "relative bg-green-600 rounded-md p-2 font-playfair text-2xl text-bold task-card cursor-pointer button-anim mb-2 group";
-
-            //APPENDING EVERYTHING TOGETHER
-            titleDiv.appendChild(taskTitle);
-            titleDiv.appendChild(deleteButton);
-
-            projNameDiv.appendChild(projName);
-            projNameDiv.appendChild(urgency);
-
-            newTask.appendChild(titleDiv);
-            newTask.appendChild(projNameDiv);
-
-            inprog_col.appendChild(newTask);
-            break;
-        case "IN REVIEW":
-            //ADDING CLASSES
-            newTask.className = "relative bg-yellow-600 rounded-md p-2 font-playfair text-2xl text-bold task-card cursor-pointer button-anim mb-2 group";
-
-            //APPENDING EVERYTHING TOGETHER
-            titleDiv.appendChild(taskTitle);
-            titleDiv.appendChild(deleteButton);
-
-            projNameDiv.appendChild(projName);
-            projNameDiv.appendChild(urgency);
-
-            newTask.appendChild(titleDiv);
-            newTask.appendChild(projNameDiv);
-
-            inrew_col.appendChild(newTask);
-            break;
-        case "DONE":
-            //ADDING CLASSES
-            newTask.className = "relative bg-red-600 rounded-md p-2 font-playfair text-2xl text-bold task-card cursor-pointer button-anim mb-2 group";
-
-            //APPENDING EVERYTHING TOGETHER
-            titleDiv.appendChild(taskTitle);
-            titleDiv.appendChild(deleteButton);
-
-            projNameDiv.appendChild(projName);
-            projNameDiv.appendChild(urgency);
-
-            newTask.appendChild(titleDiv);
-            newTask.appendChild(projNameDiv);
-
-            done_col.appendChild(newTask);
-            break;
-    }
+    createTaskCard(responseJSON);
 
     //GETS RID OF POPUP AFTER UPDATING
     if(createPopUp.classList.contains("opacity-100")) {
@@ -379,6 +197,84 @@ createTaskform.addEventListener("submit", async function(event) {
 
     console.log(responseJSON);
 })
+
+function createTaskCard(task) {
+    const newTask = document.createElement("div");
+    const titleDiv = document.createElement("div");
+    const projNameDiv = document.createElement("div");
+    const deleteButton = document.createElement("button");
+    const projName = document.createElement("span");
+    const title = document.createElement("span");
+    const urgency = document.createElement("span");
+    const taskId = task.id;
+    newTask.setAttribute("onclick", `showUpdateTask(${task.id.toString()}, event)`);
+    newTask.setAttribute("id", task.id.toString());
+
+    //ADDING ATTRIBUTES TO THE DELETE BUTTON
+    deleteButton.setAttribute("id", "deleteBtn");
+    deleteButton.setAttribute("name", `PROJ_${task.id.toString()}`);
+    deleteButton.addEventListener("click", function(event) {
+        showDeletePopUp(deleteButton, taskId);
+        event.stopPropagation();
+    })
+
+    newTask.className = "relative rounded-md p-2 font-playfair text-2xl text-bold task-card cursor-pointer button-anim mb-2 group";
+
+    //ADDING CLASS STYLING
+    titleDiv.className = "flex h-fit";
+    projNameDiv.className = "flex";
+
+    deleteButton.className = "flex leading-none text-2xl ml-auto opacity-0 group-hover:opacity-100 transition-opacity duration-700 font-sans";
+
+    urgency.className = "text-2xl text-red-800 ml-auto pr-1";
+    title.className = "flex w-1/2";
+    projName.className = "text-lg";
+
+    //CHANGING TEXT
+    title.textContent = task.title;
+    deleteButton.textContent = "X";
+    urgency.textContent = fetchUrgency(task.urgency);
+    //~~~ PROJ_ IS JUST FILLER FOR NOW, I'LL CHANGE LATER TO REFLECT ACTUAL PROJECTS ~~~
+    projName.textContent = `PROJ-${task.id}`;
+
+    switchTaskStatus(task, titleDiv, title, deleteButton, projNameDiv, projName, urgency, newTask);
+}
+
+function switchTaskStatus(task, titleDiv, taskTitle, deleteButton, projNameDiv, projName, urgency, newTask) {
+    let bgColor;
+    let column;
+    //APPENDING EVERYTHING TOGETHER
+    titleDiv.appendChild(taskTitle);
+    titleDiv.appendChild(deleteButton);
+
+    projNameDiv.appendChild(projName);
+    projNameDiv.appendChild(urgency);
+
+    newTask.appendChild(titleDiv);
+    newTask.appendChild(projNameDiv);
+    switch(task.status) {
+        case "TO DO":
+            //ADDING CLASSES
+            bgColor = "bg-blue-600";
+            column = todo_col;
+            break;
+        case "IN PROGRESS":
+            //ADDING CLASSES
+            bgColor = "bg-green-600";
+            column = inprog_col;
+            break;
+        case "IN REVIEW":
+            bgColor = "bg-yellow-600";
+            column = inrew_col;
+            break;
+        case "DONE":
+            bgColor = "bg-red-600";
+            column = done_col;
+            break;
+    }
+    newTask.classList.add(bgColor);
+    column.appendChild(newTask);
+}
 
 //FOR UPDATING FORM
 updateTaskform.addEventListener("submit", async function(event) {
@@ -427,30 +323,31 @@ updateTaskform.addEventListener("submit", async function(event) {
     // DELETE PREVIOUS
     // PUT CURRENT IN THE CORRECT COL
     if(taskBeforeUpdateJson.status !== responseJSON.status) {
+        let curBg;
+        let curCol;
         const savedCurElement = document.getElementById(curTaskId);
         document.getElementById(curTaskId).remove();
         switch(responseJSON.status) {
             case "TO DO":
-                removeBg(savedCurElement);
-                addBg(savedCurElement, "bg-blue-600");
-                todo_col.appendChild(savedCurElement);
+                curBg = "bg-blue-600";
+                curCol = todo_col;
                 break;
             case "IN PROGRESS":
-                removeBg(savedCurElement);
-                addBg(savedCurElement, "bg-green-600");
-                inprog_col.appendChild(savedCurElement);
+                curBg = "bg-green-600";
+                curCol = inprog_col;
                 break;
             case "REVIEWING":
-                removeBg(savedCurElement);
-                addBg(savedCurElement, "bg-yellow-600");
-                inrew_col.appendChild(savedCurElement);
+                curBg = "bg-yellow-600";
+                curCol = inrew_col;
                 break;
             case "DONE":
-                removeBg(savedCurElement);
-                addBg(savedCurElement, "bg-red-600");
-                done_col.appendChild(savedCurElement);
+                curBg = "bg-red-600";
+                curCol = done_col;
                 break;
         }
+        removeBg(savedCurElement);
+        addBg(savedCurElement, curBg);
+        curCol.appendChild(savedCurElement);
     }
 
     if(taskBeforeUpdateJson.urgency !== responseJSON.urgency) {

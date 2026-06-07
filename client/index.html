@@ -39,6 +39,7 @@
     <div id="sideMenu" class="flex fixed top-0 left-0 bottom-0 z-[99] drop-shadow-[5px_5px_5px_rgba(0,0,0,0.5)] transition duration-300 ease-in-out -translate-x-64">
         <!-- SIDE MENU CONTENT -->
         <div class="flex flex-col h-full bg-gray-300 w-64 rounded-md">
+            <!-- TITLE -->
             <div class="mx-auto mt-4 bg-gray-400 p-4 drop-shadow-[2px_2px_5px_rgba(0,0,0,1)] rounded-md w-fit h-fit">
                 <span class="font-playfair text-4xl">
                     Just Tracks
@@ -47,18 +48,20 @@
 
             <hr class="border-black border-t-2 mx-2 mt-4">
 
+            <!-- CURRENT PROJECT DIRECTORY -->
             <div class="flex flex-col mx-auto mt-4 justify-center items-center">
                 <span class="font-playfair text-2xl">Current Project:</span>
-                <span class="font-playfair text-xl">[Current_Project_Name]</span>
+                <span id="curProjec" class="font-playfair text-xl">[Current_Project_Name]</span>
             </div>
 
             <hr class="border-black border-t-2 mx-2 mt-4">
 
-            <div class="flex flex-col mx-auto mt-4 justify-center items-center">
+            <!-- LIST OF ALL CURRENT PROJECTS -->
+            <div id="listOfProjects" class="flex flex-col mx-auto mt-4 justify-center items-center">
                 <span class="font-playfair text-2xl">Your Projects:</span>
-                <span class="font-playfair text-xl">[New Project Name]</span>
             </div>
 
+            <!-- BUTTON TO CREATE NEW PROJECTS -->
             <hr class="border-black border-t-2 mx-2 mt-4">
             <div class="flex flex-col mx-auto mt-4 justify-center items-center">
                 <button class="bg-blue-600 p-2 rounded-md">
