@@ -44,6 +44,11 @@ const inprog_col = document.getElementById("inprog_col");
 const inrew_col = document.getElementById("inrew_col");
 const done_col = document.getElementById("done_col");
 
+//SIDE MENU
+const sideMenu = document.getElementById("sideMenu");
+const toggleSideMenuText = document.getElementById("toggleSideMenuText");
+
+
 let st = "TO DO";
 let urg = "LOW";
 let curTaskId = 0;
@@ -734,6 +739,16 @@ function showDeletePopUp(proj, projId) {
         
         projectNameText.textContent = proj.name;
         curTaskIdToDelete = projId;
+    }
+}
+
+function toggleSideMenu() {
+    if(sideMenu.classList.contains("-translate-x-64")) {
+        sideMenu.classList.remove("-translate-x-64");
+        toggleSideMenuText.textContent = "< \n < \n <";
+    } else {
+        sideMenu.classList.add("-translate-x-64");
+        toggleSideMenuText.textContent = "> \n > \n >";
     }
 }
 
