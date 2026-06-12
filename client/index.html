@@ -9,7 +9,11 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display&display=swap">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
-    <script src="app.js" defer></script>
+    <script src="../backend/dom.js" defer></script>
+    <script src="../backend/api.js" defer></script>
+    <script src="../backend/ui.js" defer></script>
+    <script src="../backend/popups.js" defer></script>
+    <script src="../backend/app.js" defer></script>
     <script>
         tailwind.config = {
             theme: {
@@ -289,10 +293,12 @@
                                 <!-- OWNER -->
                                 <span class="font-playfair">OWNER<span class="text-red-600">*</span></span>
                                 <input required id="projOwner" type="text" class="flex bg-gray-300 ml-4 p-1 rounded-md font-playfair outline-none">
+                                
+                                <span class="font-playfair">TAGS<span class="text-red-600"></span></span>
+                                <input id="projTags" type="text" class="flex bg-gray-300 ml-4 p-1 rounded-md font-playfair outline-none">
 
                                 <span class="font-playfair">MEMBERS<span class="text-red-600"></span></span>
                                 <input id="projMembers" type="text" class="flex bg-gray-300 ml-4 p-1 rounded-md font-playfair outline-none">
-
 
                                 <span class="font-playfair">DATE CREATED<span class="text-red-600"></span></span>
                                 <input id="projectCreateDate" disabled type="text" class="flex bg-gray-500 ml-4 p-1 rounded-md font-playfair outline-none placeholder-black">

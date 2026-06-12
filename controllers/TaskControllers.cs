@@ -40,6 +40,9 @@ public class TasksController(AppDbContext context) : ControllerBase
     //POST == ADD
     public IActionResult Create([FromBody] TaskItem task)
     {
+        var projectTasks = _context.Tasks.Where(t => t.ProjectId == task.ProjectId).ToList();
+        task.TaskNumber = projectTasks.Any() ? projectTasks.Max(t => t.TaskNumber) + 1 : 1;
+        
         //ADDS TO DB
         _context.Tasks.Add(task);
         //SAVE CHANGES

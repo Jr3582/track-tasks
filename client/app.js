@@ -63,6 +63,7 @@ let urg = "LOW";
 let curTaskId = 0;
 let curTaskIdToDelete = 0;
 let curProjId = 4;
+let curProjectDirectory;
 
 // VVV THIS IS FOR MOVING TASK AROUND TO EACH COL VVV
 new Sortable(todo_col, {
@@ -129,6 +130,8 @@ async function switchProj(newProjId) {
     const response = await fetch(`http://localhost:5056/Projects/${curProjId}`);
     const project = await response.json();
     curProjectName.textContent = project.title;
+    curProjectDirectory = project.title;
+    console.log(curProjectDirectory);
 
     fetchAllTasks(newProjId); 
 }
@@ -186,7 +189,8 @@ createTaskform.addEventListener("submit", async function(event) {
         owner: owner.value,
         status: st,
         urgency: urg,
-        projectId: curProjId
+        projectId: curProjId,
+        projectName: curProjectDirectory
     }
 
     const response = await fetch("http://localhost:5056/Tasks", {
@@ -199,6 +203,8 @@ createTaskform.addEventListener("submit", async function(event) {
 
     const responseJSON = await response.json();
 
+    console.log(responseJSON);
+
     createTaskCard(responseJSON);
 
     //GETS RID OF POPUP AFTER UPDATING
@@ -209,6 +215,8 @@ createTaskform.addEventListener("submit", async function(event) {
         createPopUp.classList.remove("pointer-events-auto");
         createPopUp.classList.add("pointer-events-none");
     }
+
+    createTaskform.reset();
 
     console.log(responseJSON);
 })
@@ -251,7 +259,8 @@ function createTaskCard(task) {
     deleteButton.textContent = "X";
     urgency.textContent = fetchUrgency(task.urgency);
     //~~~ PROJ_ IS JUST FILLER FOR NOW, I'LL CHANGE LATER TO REFLECT ACTUAL PROJECTS ~~~
-    projName.textContent = `PROJ-${task.id}`;
+    const projectName = task.projectName;
+    projName.textContent = `${projectName.substring(0,4).toUpperCase()}-${task.taskNumber}`;
 
     switchTaskStatus(task, titleDiv, title, deleteButton, projNameDiv, projName, urgency, newTask);
 }
@@ -538,6 +547,8 @@ document.addEventListener("click", function(e) {
         createNewProjectPopUp.classList.remove("pointer-events-auto");
         createNewProjectPopUp.classList.add("pointer-events-none");
 
+        createProjectForm.reset();
+
         //DEBUGGING MESSAGE
         console.log("hiding delete task pop up");
     }
@@ -562,7 +573,7 @@ async function updateStatusOnColSwitch(taskId, newStatus) {
         dueDate: fullISODue,
         owner: taskJSON.owner,
         status: newStatus,
-        urgency: urg
+        urgency: urg,
     }
     const response = await fetch(`http://localhost:5056/Tasks/${taskId}`, {
         method: "Put",
@@ -809,8 +820,9 @@ function switchOption(choice, o1, o2, o3, o4, o1c, o2c, o3c, o4c, o1tc, o2tc, o3
     }
 }
 
+//BUGS / FEATURES TO FIX OR ADD LATER:
+//RIGHT NOW CUR DIRECTORY NAME ONLY WORKS WHEN WE SWITCH DIRECTORIES
+
 //TO DO LIST:
 //1. ABILITY TO MAKE ACCOUNTS
-//2. MAKE DIFFERENT PROJECTS
 //3. ADD PPL TO PROJECTS
-//4. ASSIGN TASKS TO DIFFERENT PROJECTS
