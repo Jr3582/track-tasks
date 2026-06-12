@@ -51,7 +51,7 @@
             <!-- CURRENT PROJECT DIRECTORY -->
             <div class="flex flex-col mx-auto mt-4 justify-center items-center">
                 <span class="font-playfair text-2xl">Current Project:</span>
-                <span id="curProjec" class="font-playfair text-xl">[Current_Project_Name]</span>
+                <span id="curProjectName" class="font-playfair text-xl">[Current_Project_Name]</span>
             </div>
 
             <hr class="border-black border-t-2 mx-2 mt-4">
@@ -64,7 +64,7 @@
             <!-- BUTTON TO CREATE NEW PROJECTS -->
             <hr class="border-black border-t-2 mx-2 mt-4">
             <div class="flex flex-col mx-auto mt-4 justify-center items-center">
-                <button class="bg-blue-600 p-2 rounded-md">
+                <button class="bg-blue-600 p-2 rounded-md" onclick="showCreateProject(event)">
                     <span class="font-playfair text-xl">Create New Project!</span>
                 </button>
             </div>
@@ -72,7 +72,7 @@
         </div>
 
         <!-- BUTTON TO OPEN SIDE MENU -->
-        <div class="flex bg-gray-300 w-8 h-32 justify-center items-center self-center -translate-x-2 rounded-md">
+        <div class="flex bg-gray-300 w-8 h-32 justify-center items-center self-center -translate-x-2 rounded-md pl-2">
             <button class="w-full h-full" onclick="toggleSideMenu()">
                 <span id="toggleSideMenuText" class="font-playfair text-2xl">
                     >
@@ -80,7 +80,6 @@
                     >
                 </span>
             </button>
-
         </div>
     </div>
 
@@ -93,19 +92,19 @@
                 <div class="col-span-2 h-full border-r-4 p-2">
                     <!-- TITLE -->
                     <div class="flex pb-4 flex-col gap-1">
-                        <span class="font-playfair">Title<span class="text-red-600">*</span></span>
+                        <span class="font-playfair">TITLE<span class="text-red-600">*</span></span>
                         <input required id="title" type="text" class="w-full h-8 bg-gray-300 rounded-md p-1 font-playfair outline-none">
                     </div>
 
                     <!-- SUMARY -->
                     <div class="flex pb-4 flex-col gap-1">
-                        <span class="font-playfair">Summary<span class="text-red-600"></span></span>
+                        <span class="font-playfair">SUMMARY<span class="text-red-600"></span></span>
                         <input id="summary" type="text" class="w-full bg-gray-300 rounded-md p-1 font-playfair outline-none">
                     </div>
 
                     <!-- DESCRIPTION -->
                     <div class="flex flex-col gap-1">
-                        <span class="font-playfair">Description<span class="text-red-600">*</span></span>
+                        <span class="font-playfair">DESCRIPTION<span class="text-red-600">*</span></span>
                         <textarea id="description" type="text" class="w-full min-h-64 bg-gray-300 rounded-md p-1 font-playfair outline-none"></textarea>
                     </div>
                 </div>
@@ -187,19 +186,19 @@
                 <div class="col-span-2 h-full border-r-4 p-2">
                     <!-- CHANGE TITLE -->
                     <div class="flex pb-4 flex-col gap-1">
-                        <span class="font-playfair">Title<span class="text-red-600">*</span></span>
+                        <span class="font-playfair">TITLE<span class="text-red-600">*</span></span>
                         <input required id="updateTitle" type="text" class="w-full h-8 bg-gray-300 rounded-md p-1 font-playfair outline-none">
                     </div>
                     
                     <!-- CHANGE SUMARY -->
                     <div class="flex pb-4 flex-col gap-1">
-                        <span class="font-playfair">Summary<span class="text-red-600"></span></span>
+                        <span class="font-playfair">SUMMARY<span class="text-red-600"></span></span>
                         <input id="updateSummary" type="text" class="w-full bg-gray-300 rounded-md p-1 font-playfair outline-none">
                     </div>
 
                     <!-- CHANGE DESCRIPTION -->
                     <div class="flex flex-col gap-1">
-                        <span class="font-playfair">Description<span class="text-red-600">*</span></span>
+                        <span class="font-playfair">DESCRIPTION<span class="text-red-600">*</span></span>
                         <textarea id="updateDescription" type="text" class="w-full min-h-64 bg-gray-300 rounded-md p-1 font-playfair outline-none"></textarea>
                     </div>
                 </div>
@@ -255,6 +254,55 @@
                     <div class="row-span-1 border-t-4 p-2">
                         <button class="flex w-full h-full bg-blue-600 rounded-md justify-center items-center cursor-pointer button-anim">
                             <span class="font-playfair text-4xl">Update Task</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </form>    
+    </div>
+
+    <!-- FORM / POP UP FOR MAKING NEW PROJECTS -->
+    <div id="createNewProjectPopUp" class="flex absolute w-full h-full z-[999] bg-black/50 justify-center items-center opacity-0 transition-opacity duration-300 pointer-events-none">
+        <!-- INNER BOX (THIS IS WHERE ALL THE INPUT INFO GOES)-->
+        <form id="createProject" class="flex w-2/3 h-2/3">
+            <div class="grid grid-cols-3 w-full h-full bg-white rounded-md p-8 gap-2">
+                <!-- (TITLE, DESCRIPTION)-->
+                <div class="col-span-2 h-full border-r-4 p-2">
+                    <!-- CHANGE TITLE -->
+                    <div class="flex pb-4 flex-col gap-1">
+                        <span class="font-playfair">PROJECT NAME<span class="text-red-600">*</span></span>
+                        <input required id="projName" type="text" class="w-full h-8 bg-gray-300 rounded-md p-1 font-playfair outline-none">
+                    </div>
+
+                    <!-- CHANGE DESCRIPTION -->
+                    <div class="flex flex-col gap-1">
+                        <span class="font-playfair">DESCRIPTION<span class="text-red-600">*</span></span>
+                        <textarea id="projDescription" type="text" class="w-full min-h-64 bg-gray-300 rounded-md p-1 font-playfair outline-none"></textarea>
+                    </div>
+                </div>
+                <div class="grid grid-rows-5 h-full gap-2">
+                    <div class="row-span-4">
+                        <!-- OWNER USER, AND MEMBER USERS-->
+                        <div class="flex flex-col">
+                            <!-- TEXT INPUTS -->
+                            <div class="grid grid-cols-2 gap-2">
+                                <!-- OWNER -->
+                                <span class="font-playfair">OWNER<span class="text-red-600">*</span></span>
+                                <input required id="projOwner" type="text" class="flex bg-gray-300 ml-4 p-1 rounded-md font-playfair outline-none">
+
+                                <span class="font-playfair">MEMBERS<span class="text-red-600"></span></span>
+                                <input id="projMembers" type="text" class="flex bg-gray-300 ml-4 p-1 rounded-md font-playfair outline-none">
+
+
+                                <span class="font-playfair">DATE CREATED<span class="text-red-600"></span></span>
+                                <input id="projectCreateDate" disabled type="text" class="flex bg-gray-500 ml-4 p-1 rounded-md font-playfair outline-none placeholder-black">
+                            </div>
+                        </div>
+                    </div>
+                    <!-- (CREATE PROJECT BUTTON)-->
+                    <div class="row-span-1 border-t-4 p-2">
+                        <button class="flex w-full h-full bg-blue-600 rounded-md justify-center items-center cursor-pointer button-anim">
+                            <span class="font-playfair text-4xl">Create Project</span>
                         </button>
                     </div>
                 </div>
@@ -326,7 +374,7 @@
                 <!-- NEW TASKS GOES HERE -->
             </div>
             <!-- BUTTON TO CREATE NEW TASKS -->
-            <button onclick="showCreateTask('REVIEWING', event)" class="flex w-full h-fit bg-yellow-500 text-xl rounded-md item-center justify-center cursor-pointer button-anim">
+            <button onclick="showCreateTask('IN REVIEW', event)" class="flex w-full h-fit bg-yellow-500 text-xl rounded-md item-center justify-center cursor-pointer button-anim">
                 <span class="font-playfair text-yellow-800">Create New Task +</span>
             </button>
         </div>

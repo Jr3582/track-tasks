@@ -1,5 +1,6 @@
 const createTaskform = document.getElementById("createTask");
 const updateTaskform = document.getElementById("updateTask");
+const createProjectForm = document.getElementById("createProject");
 const statusDropDown = document.getElementById("statusDropDownOptions");
 const urgencyDropDown = document.getElementById("urgencyDropDownOptions");
 const updateStatusDropDown = document.getElementById("updateStatusDropDownOptions");
@@ -8,6 +9,7 @@ const updateUrgencyDropDown = document.getElementById("updateUrgencyDropDownOpti
 const createPopUp = document.getElementById("popUp");
 const updatePopUp = document.getElementById("updatePopUp");
 const delPopUp = document.getElementById("deletePopUp");
+const createNewProjectPopUp = document.getElementById("createNewProjectPopUp");
 
 //FORM INPUTS TO CREATE
 const title = document.getElementById("title");
@@ -33,6 +35,12 @@ const updateOwner = document.getElementById("updateOwner");
 const updateCurStatus = document.getElementById("updateCurStatus");
 const updateCurUrgency = document.getElementById("updateCurUrgency");
 
+//FORM INPUTS FOR PROJECT CREATION
+const projectName = document.getElementById("projName");
+const projectDescription = document.getElementById("projDescription");
+const projOwner = document.getElementById("projOwner");
+const projectCreateDate = document.getElementById("projectCreateDate");
+
 //BUTTON TO DELETE TASK
 const deleteBtn = document.getElementById("deleteBtn");
 const confirmDel = document.getElementById("confirmDel");
@@ -49,7 +57,6 @@ const sideMenu = document.getElementById("sideMenu");
 const toggleSideMenuText = document.getElementById("toggleSideMenuText");
 const listOfCurProjects = document.getElementById("listOfProjects");
 const curProjectName = document.getElementById("curProjectName");
-
 
 let st = "TO DO";
 let urg = "LOW";
@@ -87,7 +94,7 @@ new Sortable(inrew_col, {
     onAdd: function(event) {
         removeBg(event.item);
         addBg(event.item, "bg-yellow-600");
-        updateStatusOnColSwitch(event.item.id, "REVIEWING");
+        updateStatusOnColSwitch(event.item.id, "IN REVIEW");
     },
 });
 new Sortable(done_col, {
@@ -119,6 +126,9 @@ async function switchProj(newProjId) {
     inprog_col.innerHTML = "";
     inrew_col.innerHTML = "";
     done_col.innerHTML = "";
+    const response = await fetch(`http://localhost:5056/Projects/${curProjId}`);
+    const project = await response.json();
+    curProjectName.textContent = project.title;
 
     fetchAllTasks(newProjId); 
 }
@@ -344,7 +354,7 @@ updateTaskform.addEventListener("submit", async function(event) {
                 curBg = "bg-green-600";
                 curCol = inprog_col;
                 break;
-            case "REVIEWING":
+            case "IN REVIEW":
                 curBg = "bg-yellow-600";
                 curCol = inrew_col;
                 break;
@@ -394,6 +404,42 @@ confirmDel.addEventListener("click", async function (event) {
     console.log(response.status);
 })
 
+createProjectForm.addEventListener("submit", async function (event) {
+    event.stopPropagation();
+    event.preventDefault();
+
+    const project= {
+        title: projectName.value,
+        description: projectDescription.value,
+        owner: projOwner.value
+    }
+
+    const response = await fetch("http://localhost:5056/Projects", {
+        method: "Post",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(project)
+    });
+
+    const responseJSON = await response.json();
+
+    //ADDING NEW PROJECT NAME TO SIDE MENU
+    const newProjectTitle = document.createElement("span");
+    newProjectTitle.textContent = responseJSON.title;
+    newProjectTitle.className = "font-playfair text-2xl cursor-pointer";
+    newProjectTitle.setAttribute("onclick", `switchProj(${responseJSON.id.toString()})`);
+    listOfCurProjects.appendChild(newProjectTitle);
+
+    //GETS RID OF POPUP AFTER CREATING PROJECT
+    if(createNewProjectPopUp.classList.contains("opacity-100")) {
+        createNewProjectPopUp.classList.remove("opacity-100");
+        createNewProjectPopUp.classList.add("opacity-0");
+
+        createNewProjectPopUp.classList.remove("pointer-events-auto");
+        createNewProjectPopUp.classList.add("pointer-events-none");
+    }
+})
 
 //STOPS THE FORM FROM DISAPPEARING IF CLICKED INSIDE
 createTaskform.addEventListener("click", function(event) {
@@ -405,7 +451,10 @@ updateTaskform.addEventListener("click", function(event) {
 })
 
 deleteBtn.addEventListener("click", function(event) {
-    console.log("test text");
+    event.stopPropagation();
+})
+
+createProjectForm.addEventListener("click", function(event) {
     event.stopPropagation();
 })
 
@@ -477,6 +526,17 @@ document.addEventListener("click", function(e) {
 
         delPopUp.classList.remove("pointer-events-auto");
         delPopUp.classList.add("pointer-events-none");
+
+        //DEBUGGING MESSAGE
+        console.log("hiding delete task pop up");
+    }
+
+    if(createNewProjectPopUp.classList.contains("opacity-100")) {
+        createNewProjectPopUp.classList.remove("opacity-100");
+        createNewProjectPopUp.classList.add("opacity-0");
+
+        createNewProjectPopUp.classList.remove("pointer-events-auto");
+        createNewProjectPopUp.classList.add("pointer-events-none");
 
         //DEBUGGING MESSAGE
         console.log("hiding delete task pop up");
@@ -557,7 +617,7 @@ function activateUrgencyDropBox(event, urgentDropDown, statDropDown) {
 //CHANGE STATUS FOR DROPDOWN
 function changeStatus(status, statusDOM) {
     st = status;
-    switchOption(status, "TO DO", "IN PROGRESS", "REVIEWING", "DONE", "bg-blue-800", "bg-green-800", "bg-yellow-800", "bg-red-800", "text-blue-500", "text-green-500", "text-yellow-500", "text-red-500", statusDOM);
+    switchOption(status, "TO DO", "IN PROGRESS", "IN REVIEW", "DONE", "bg-blue-800", "bg-green-800", "bg-yellow-800", "bg-red-800", "text-blue-500", "text-green-500", "text-yellow-500", "text-red-500", statusDOM);
     
     //REMOVING THE DROPDOWN AFTER MAKING A CHOICE
     statusDropDown.classList.remove("opacity-100");
@@ -585,11 +645,13 @@ function changeUrgency(urgency, urgencyDOM) {
     console.log(urg);
 }
 
+//***** ALL THE POP UPS BELONG HERE ******
+
 //FUNCTION TO SHOW CREATE TASK POP UP
 function showCreateTask(status, event){
     event.stopPropagation();
     st = status;
-    switchOption(status, "TO DO", "IN PROGRESS", "REVIEWING", "DONE", "bg-blue-800", "bg-green-800", "bg-yellow-800", "bg-red-800", "text-blue-500", "text-green-500", "text-yellow-500", "text-red-500", curStatus);
+    switchOption(status, "TO DO", "IN PROGRESS", "IN REVIEW", "DONE", "bg-blue-800", "bg-green-800", "bg-yellow-800", "bg-red-800", "text-blue-500", "text-green-500", "text-yellow-500", "text-red-500", curStatus);
 
     if(createPopUp.classList.contains("opacity-0")) {
         createPopUp.classList.remove("opacity-0");
@@ -634,6 +696,8 @@ async function showUpdateTask(id, event) {
     }
 }
 
+
+
 function showDeletePopUp(proj, projId) {
     if(delPopUp.classList.contains("opacity-0")) {
         delPopUp.classList.remove("opacity-0");
@@ -645,6 +709,29 @@ function showDeletePopUp(proj, projId) {
         projectNameText.textContent = proj.name;
         curTaskIdToDelete = projId;
     }
+}
+
+function showCreateProject(event) {
+    var today = new Date();
+    var dd = String(today.getDate()).padStart(2, '0');
+    var mm = String(today.getMonth() + 1).padStart(2, '0');
+    var yyyy = today.getFullYear();
+
+    today = mm + '/' + dd + '/' + yyyy;
+    console.log(today);
+
+    //SHOWING USERS THAT THE CREATE DATE WILL ALWAYS BE TODAY
+    projectCreateDate.placeholder = today;
+
+    event.stopPropagation();
+    if(createNewProjectPopUp.classList.contains("opacity-0")) {
+        createNewProjectPopUp.classList.remove("opacity-0");
+        createNewProjectPopUp.classList.remove("pointer-events-none");
+
+        createNewProjectPopUp.classList.add("opacity-100");
+        createNewProjectPopUp.classList.add("pointer-events-auto");
+    }
+
 }
 
 function toggleSideMenu() {

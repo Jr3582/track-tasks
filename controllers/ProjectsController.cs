@@ -28,6 +28,8 @@ public class ProjectsController(AppDbContext context) : ControllerBase
     //POST == ADD
     public IActionResult CreateProject([FromBody] Project project)
     {
+        //SET DATE TO CURRENT DATE
+        project.DateCreated = DateTime.UtcNow;
         //ADDS TO DB
         _context.Projects.Add(project);
         //SAVE CHANGES
