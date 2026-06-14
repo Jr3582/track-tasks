@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="../backend/register.js" defer></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        playfair: ['"Playfair Display"', 'serif'],
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body>
+    <!-- LOGIN FORM -->
+    <div class="flex justify-center items-center h-screen w-screen bg-gray-300">
+        <div class="w-1/4 h-fit bg-white border-r-2 border-b-2 rounded-md p-6 drop-shadow-[16px_16px_16px_rgba(0,0,0,0.5)]">
+            <form class="flex flex-col w-full h-full">
+                <span class="flex text-5xl font-playfair pt-2 mb-4">Forgot Password?</span>
+                <span class="text-xs text-gray-600 italic text-center">Forgot password? Enter the email you used for your account and we'll send you a link to reset your password</span>
+                <hr class="mt-2 mb-2">
+                <!-- DIV FOR INPUTS -->
+                <div class="flex flex-col gap-2 mt-2 flex-1">
+                    <!-- INPUT FOR EMAIL -->
+                    <div class="flex flex-col gap-1">
+                        <span class="font-playfair">Email<span class="text-red-800">*</span></span>
+                        <input id="emailInput" class="w-full rounded-md border-black border p-1 font-playfair">
+                        <span id="emailValidationMsg" class="text-red-500 text-sm font-playfair hidden">[Error Message]</span>
+                    </div>
+
+                    <hr class="mt-2 mb-2">
+
+                    <!-- SUBMIT BUTTON -->
+                    <div class="flex justify-evenly">
+                        <button class="h-fit bg-green-500 rounded-xl pl-6 pr-6 pt-3 pb-3 self-center button-anim">
+                            <span class="text-xl font-playfair">Reset Password</span>
+                        </button>
+
+                        <button class="h-fit rounded-xl pl-6 pr-6 pt-3 pb-3 self-center button-anim border-2 border-black">
+                            <span class="text-xl font-playfair">Cancel</span>
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="../backend/login.js" defer></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        playfair: ['"Playfair Display"', 'serif'],
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body>
+    <!-- LOGIN FORM -->
+    <div class="flex justify-center items-center h-screen w-screen bg-gray-300">
+        <div class="w-1/4 h-2/3 bg-white border-r-2 border-b-2 rounded-md p-6 drop-shadow-[16px_16px_16px_rgba(0,0,0,0.5)]">
+            <form class="flex flex-col w-full h-full">
+                <span class="flex text-6xl font-playfair pt-2 mb-4">Log in</span>
+                <span class="font-playfair">Need a JustTask Account? <a href="/register_account" class="text-blue-500 underline cursor-pointer">Create an account</a></span>
+
+                <hr class="mt-2">
+                
+                <!-- DIV FOR INPUTS -->
+                <div class="flex flex-col gap-6 mt-6 flex-1">
+                    <!-- INPUT FOR USERNAME -->
+                    <div class="flex flex-col gap-1">
+                        <span class="font-playfair">Username</span>
+                        <input class="w-full rounded-md border-black border p-1 font-playfair">
+                    </div>
+
+                    <!-- INPUT FOR PASSWORD -->
+                    <div class="flex flex-col gap-1">
+                        <span class="font-playfair">Password</span>
+                        <div class="relative">
+                            <input type="password" id="passwordInput" class="w-full rounded-md border-black border p-1 font-playfair">
+                            <i id="showPassBtn" class="fa-regular fa-eye-slash absolute right-2 top-1/2 -translate-y-1/2 cursor-pointer" onclick="showPassword()"></i>
+                        </div>
+                    </div>
+                    <div>
+                        <input type="checkbox">
+                        <span class="font-playfair font-bold pl-1">Keep me logged in</span>
+
+                    </div>
+                    <!-- SUBMIT BUTTON -->
+                    <button class="w-5/6 h-fit bg-green-500 rounded-xl pl-6 pr-6 pt-3 pb-3 self-center button-anim">
+                        <span class="text-xl font-playfair">Log in</span>
+                    </button>
+
+                    <hr class="mt-2">
+
+                    <div class="flex flex-col gap-2">
+                        <a href="/forgot_username" class="text-blue-500 underline cursor-pointer font-playfair w-fit">
+                            Forgot Username?
+                        </a>
+                        <a href="/forgot_password" class="text-blue-500 underline cursor-pointer font-playfair w-fit">
+                            Forgot Password?
+                        </a>
+                        <a href="/support" class="text-blue-500 underline cursor-pointer font-playfair w-fit">
+                            Can't Login?
+                        </a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
