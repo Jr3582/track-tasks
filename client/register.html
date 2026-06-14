@@ -7,7 +7,9 @@
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="../backend/register.js" defer></script>
+    <script src="../backend/email.js" defer></script>
+    <script src="../backend/password.js" defer></script>
+    <script src="../backend/register.js"defer></script>
 
     <script>
         tailwind.config = {
@@ -25,11 +27,15 @@
     <!-- LOGIN FORM -->
     <div class="flex justify-center items-center h-screen w-screen bg-gray-300">
         <div class="w-1/4 h-fit bg-white border-r-2 border-b-2 rounded-md p-6 drop-shadow-[16px_16px_16px_rgba(0,0,0,0.5)]">
-            <form class="flex flex-col w-full h-full">
+            <form id="registerForm" class="flex flex-col w-full h-full">
                 <span class="flex text-6xl font-playfair pt-2 mb-4">Sign Up</span>
-                <hr>
+                
+                <hr class="mt-2">
+
+                <span id="registerErrorMsg" class="text-red-500 text-sm font-playfair hidden">[Error Message]</span>
+
                 <!-- DIV FOR INPUTS -->
-                <div class="flex flex-col gap-2 mt-6 flex-1">
+                <div class="flex flex-col gap-2 mt-2 flex-1">
                     <!-- INPUT FOR EMAIL -->
                     <div class="flex flex-col gap-1">
                         <span class="font-playfair">Email<span class="text-red-800">*</span></span>
@@ -40,7 +46,7 @@
                     
                     <div class="flex flex-col gap-1">
                         <span class="font-playfair">Username<span class="text-red-800">*</span></span>
-                        <input class="w-full rounded-md border-black border p-1 font-playfair">
+                        <input id="usernameInput" class="w-full rounded-md border-black border p-1 font-playfair">
                         <span class="text-red-500 text-sm font-playfair hidden">[Error Message]</span>
                     </div>
 
@@ -69,8 +75,8 @@
                             <span class="text-xl font-playfair">Sign Up</span>
                         </button>
 
-                        <button class="h-fit rounded-xl pl-6 pr-6 pt-3 pb-3 self-center button-anim border-2 border-black">
-                            <span class="text-xl font-playfair">Cancel</span>
+                        <button class="h-fit rounded-xl pl-6 pr-6 pt-3 pb-3 self-center button-anim border-2 border-black" onclick="window.location.href='login.html'">
+                            <span class="text-xl font-playfair">Login</span>
                         </button>
                     </div>
                 </div>

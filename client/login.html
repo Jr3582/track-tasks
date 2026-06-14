@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="../backend/login.js" defer></script>
+    <script src="../backend/password.js" defer></script>
 
     <script>
         tailwind.config = {
@@ -25,25 +26,28 @@
     <!-- LOGIN FORM -->
     <div class="flex justify-center items-center h-screen w-screen bg-gray-300">
         <div class="w-1/4 h-2/3 bg-white border-r-2 border-b-2 rounded-md p-6 drop-shadow-[16px_16px_16px_rgba(0,0,0,0.5)]">
-            <form class="flex flex-col w-full h-full">
+            <form id="loginForm" class="flex flex-col w-full h-full">
                 <span class="flex text-6xl font-playfair pt-2 mb-4">Log in</span>
-                <span class="font-playfair">Need a JustTask Account? <a href="/register_account" class="text-blue-500 underline cursor-pointer">Create an account</a></span>
+                <span class="font-playfair">Need a JustTask Account? <a href="register.html" class="text-blue-500 underline cursor-pointer">Create an account</a></span>
 
                 <hr class="mt-2">
-                
+
+                <span id="loginErrorMsg" class="text-red-500 text-sm font-playfair hidden">[Error Message]</span>
+
+
                 <!-- DIV FOR INPUTS -->
-                <div class="flex flex-col gap-6 mt-6 flex-1">
+                <div class="flex flex-col gap-6 mt-2 flex-1">
                     <!-- INPUT FOR USERNAME -->
                     <div class="flex flex-col gap-1">
                         <span class="font-playfair">Username</span>
-                        <input class="w-full rounded-md border-black border p-1 font-playfair">
+                        <input id="usernameInput" class="w-full rounded-md border-black border p-1 font-playfair">
                     </div>
 
                     <!-- INPUT FOR PASSWORD -->
                     <div class="flex flex-col gap-1">
                         <span class="font-playfair">Password</span>
                         <div class="relative">
-                            <input type="password" id="passwordInput" class="w-full rounded-md border-black border p-1 font-playfair">
+                            <input id="passwordInput" type="password" id="passwordInput" class="w-full rounded-md border-black border p-1 font-playfair">
                             <i id="showPassBtn" class="fa-regular fa-eye-slash absolute right-2 top-1/2 -translate-y-1/2 cursor-pointer" onclick="showPassword()"></i>
                         </div>
                     </div>

@@ -1,14 +1,30 @@
-const showPassBtn = document.getElementById("showPassBtn");
-const passwordInput = document.getElementById("passwordInput");
+const loginForm = document.getElementById("loginForm");
+const usernameInput = document.getElementById("usernameInput");
+const loginErrorMsg = document.getElementById("loginErrorMsg");
 
-function showPassword() {
-    if(passwordInput.type === "password") {
-        passwordInput.type = "text";
-        showPassBtn.classList.remove("fa-eye-slash");
-        showPassBtn.classList.add("fa-eye");
+loginForm.addEventListener("submit", async function(event) {
+    event.preventDefault();
+    let user = {
+        username: usernameInput.value,
+        password: passwordInput.value
+    };
+
+    const response = await fetch("http://localhost:5056/Users/login", {
+        method: "Post",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(user)
+    });
+
+    const responseJSON = await response.json();
+    if(!response.ok) {
+        loginErrorMsg.classList.remove("hidden");
+        loginErrorMsg.textContent = "Invalid username or password!";
     } else {
-        passwordInput.type = "password";
-        showPassBtn.classList.remove("fa-eye");
-        showPassBtn.classList.add("fa-eye-slash");
+        localStorage.setItem("token", responseJSON.token);
+        loginErrorMsg.classList.add("hidden");
+        window.location.href = "index.html";
     }
-}
+
+})
