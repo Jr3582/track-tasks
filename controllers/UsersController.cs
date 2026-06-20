@@ -1,6 +1,7 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -65,8 +66,8 @@ public class UsersController(AppDbContext context, IConfiguration configuration)
         {
             Subject = new ClaimsIdentity(claims),
             Expires = DateTime.UtcNow.AddHours(2), // Set expiration time
-            Issuer = "YourAppIssuer",
-            Audience = "YourAppAudience",
+            Issuer = "JustTasks",
+            Audience = "JustTasksUser",
             SigningCredentials = credentials
         };
 

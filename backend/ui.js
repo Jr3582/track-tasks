@@ -200,6 +200,8 @@ function createTaskCard(task) {
     const taskId = task.id;
     newTask.setAttribute("onclick", `showUpdateTask(${task.id.toString()}, event)`);
     newTask.setAttribute("id", task.id.toString());
+    let projectName;
+
 
     //ADDING ATTRIBUTES TO THE DELETE BUTTON
     deleteButton.setAttribute("id", "deleteBtn");
@@ -226,8 +228,12 @@ function createTaskCard(task) {
     deleteButton.textContent = "X";
     urgency.textContent = fetchUrgency(task.urgency);
     //~~~ PROJ_ IS JUST FILLER FOR NOW, I'LL CHANGE LATER TO REFLECT ACTUAL PROJECTS ~~~
-    const projectName = task.projectName;
-    projName.textContent = `${projectName.substring(0,4).toUpperCase()}-${task.taskNumber}`;
+    if(task.projectName.length >= 4) {
+        projectName = task.projectName.slice(0,4).toUpperCase();
+    } else {
+        projectName = task.projectName.slice(0, task.projName.length).toUpperCase();
+    }
+    projName.textContent = `${projectName.replace(/\s/g, "")}-${task.taskNumber}`;
 
     switchTaskStatus(task, titleDiv, title, deleteButton, projNameDiv, projName, urgency, newTask);
 }

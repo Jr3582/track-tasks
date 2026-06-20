@@ -67,7 +67,6 @@ function showCreateProject(event) {
     var yyyy = today.getFullYear();
 
     today = mm + '/' + dd + '/' + yyyy;
-    console.log(today);
 
     //SHOWING USERS THAT THE CREATE DATE WILL ALWAYS BE TODAY
     projectCreateDate.placeholder = today;

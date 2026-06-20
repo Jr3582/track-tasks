@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualBasic;
@@ -6,6 +7,7 @@ using track_tasks.Models;
 
 namespace track_tasks.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("[controller]")]
 public class TasksController(AppDbContext context) : ControllerBase

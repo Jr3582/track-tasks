@@ -7,4 +7,6 @@ public class Project
     public string? Description { get; set; } = "";
     public string Owner { get; set; } = "";
     public DateTime DateCreated { get; set; } = DateTime.UtcNow;
+    public int UserId { get; set; }
+    public User? User { get; set; }
 }

@@ -40,6 +40,9 @@ const projectName = document.getElementById("projName");
 const projectDescription = document.getElementById("projDescription");
 const projOwner = document.getElementById("projOwner");
 const projectCreateDate = document.getElementById("projectCreateDate");
+const invalidProjTitleMsg = document.getElementById("invalidProjTitleMsg");
+const invalidProjDescriptionMsg = document.getElementById("invalidProjDescriptionMsg");
+const invalidOwnerMsg = document.getElementById("invalidOwnerMsg");
 
 //BUTTON TO DELETE TASK
 const deleteBtn = document.getElementById("deleteBtn");

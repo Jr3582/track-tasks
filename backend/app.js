@@ -1,10 +1,11 @@
-
 let st = "TO DO";
 let urg = "LOW";
 let curTaskId = 0;
 let curTaskIdToDelete = 0;
 let curProjId = 4;
 let curProjectDirectory;
+let previousProject = localStorage.getItem("previousDirectory");
+
 
 new Sortable(todo_col, {
     group: "tasks",
@@ -72,7 +73,7 @@ createTaskform.addEventListener("submit", async function(event) {
         projectName: curProjectDirectory
     }
 
-    const response = await fetch("http://localhost:5056/Tasks", {
+    const response = await authFetch("http://localhost:5056/Tasks", {
         method: "Post",
         headers: {
             "Content-Type": "application/json"
@@ -105,7 +106,7 @@ updateTaskform.addEventListener("submit", async function(event) {
     //STOPS THE PAGE FROM REFRESHING AFTER SUBMITTING
     event.preventDefault();
 
-    const taskBeforeUpdate = await fetch(`http://localhost:5056/Tasks/${curTaskId}`);
+    const taskBeforeUpdate = await authFetch(`http://localhost:5056/Tasks/${curTaskId}`);
     const taskBeforeUpdateJson = await taskBeforeUpdate.json();
 
     //CONVERTING THE TIME FORMAT TO FULL ISO
@@ -124,7 +125,7 @@ updateTaskform.addEventListener("submit", async function(event) {
         status: st,
         urgency: urg
     }
-    const response = await fetch(`http://localhost:5056/Tasks/${curTaskId}`, {
+    const response = await authFetch(`http://localhost:5056/Tasks/${curTaskId}`, {
         method: "Put",
         headers: {
             "Content-Type": "application/json"
@@ -194,7 +195,7 @@ updateTaskform.addEventListener("submit", async function(event) {
 
 confirmDel.addEventListener("click", async function (event) {
     event.stopPropagation();
-    const response = await fetch(`http://localhost:5056/Tasks/${curTaskIdToDelete}`, {
+    const response = await authFetch(`http://localhost:5056/Tasks/${curTaskIdToDelete}`, {
         method: "Delete"
     })
 
@@ -213,6 +214,35 @@ confirmDel.addEventListener("click", async function (event) {
 createProjectForm.addEventListener("submit", async function (event) {
     event.stopPropagation();
     event.preventDefault();
+    if(projectName.value.length === 0) {
+        invalidProjTitleMsg.classList.remove("hidden");
+        invalidProjTitleMsg.textContent = "Please enter a name for your project!"
+        return;
+    } else {
+        invalidOwnerMsg.classList.add("hidden");
+    }
+
+    if(projectDescription.value.length === 0) {
+        invalidProjDescriptionMsg.classList.remove("hidden");
+        invalidProjDescriptionMsg.textContent = "Please enter a short description of your project!"
+        return;
+    } else {
+        invalidProjDescriptionMsg.classList.add("hidden");
+    }
+
+    if(projOwner.value.length === 0) {
+        invalidOwnerMsg.classList.remove("opacity-0");
+        invalidOwnerMsg.textContent = "Please enter a valid owner for the project!";
+        return;
+    } else {
+        invalidOwnerMsg.classList.add("opacity-0");
+    }
+
+    if(projectName.value.length >= 12) {
+        projectName.value = projectName.value.slice(0,12)+"...";
+    }
+
+    console.log(projectName.value);
 
     const project= {
         title: projectName.value,
@@ -220,7 +250,7 @@ createProjectForm.addEventListener("submit", async function (event) {
         owner: projOwner.value
     }
 
-    const response = await fetch("http://localhost:5056/Projects", {
+    const response = await authFetch("http://localhost:5056/Projects", {
         method: "Post",
         headers: {
             "Content-Type": "application/json"
@@ -231,11 +261,24 @@ createProjectForm.addEventListener("submit", async function (event) {
     const responseJSON = await response.json();
 
     //ADDING NEW PROJECT NAME TO SIDE MENU
+    const moreOptionsBtn = document.createElement("button");
+    moreOptionsBtn.className = "hidden group-hover:flex rounded-md pl-1 pr-1 h-full w-full items-center";
+    const i = document.createElement("i");
+    i.className = "fa-solid fa-ellipsis";
+    const buttonDiv = document.createElement("div");
+    buttonDiv.className = "absolute right-0 rounded-m hover:bg-gray-400 w-fit h-full rounded-md";
+    const projDiv = document.createElement("div");
+    projDiv.className = "group relative flex items-center justify-between bg-gray-300 w-full rounded-md hover:bg-gray-500 hover:scale-105 cursor-pointer transition ease-in-out duration-300 px-1";
     const newProjectTitle = document.createElement("span");
     newProjectTitle.textContent = responseJSON.title;
-    newProjectTitle.className = "font-playfair text-2xl cursor-pointer";
-    newProjectTitle.setAttribute("onclick", `switchProj(${responseJSON.id.toString()})`);
-    listOfCurProjects.appendChild(newProjectTitle);
+    newProjectTitle.className = "font-playfair text-2xl";
+
+    moreOptionsBtn.appendChild(i);
+    buttonDiv.appendChild(moreOptionsBtn);
+    projDiv.appendChild(newProjectTitle);
+    projDiv.appendChild(buttonDiv);
+    projDiv.setAttribute("onclick", `switchProj(${responseJSON.id.toString()})`);
+    listOfCurProjects.appendChild(projDiv);
 
     //GETS RID OF POPUP AFTER CREATING PROJECT
     if(createNewProjectPopUp.classList.contains("opacity-100")) {
@@ -350,5 +393,12 @@ document.addEventListener("click", function(e) {
     }
 })
 
-fetchAllTasks(curProjId);
+function logout() {
+    localStorage.removeItem("token");
+    window.location.href = "login.html";
+
+}
+
+//FETCH ALL TASKS NOW REMEMBERS WHERE YOU LEFT OFF
+fetchAllTasks(previousProject);
 fetchAllProjects();

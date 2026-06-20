@@ -1,24 +1,41 @@
 async function fetchAllTasks(projId) {
     let task;
-    const tasks = await fetch(`http://localhost:5056/Tasks/project/${projId}`);
+    const tasks = await authFetch(`http://localhost:5056/Tasks/project/${projId}`);
     for(task of await tasks.json()){
         createTaskCard(task);
     }
 }
 
 async function fetchAllProjects() {
-    const projs = await fetch(`http://localhost:5056/Projects`);
+    const projs = await authFetch(`http://localhost:5056/Projects`);
     for(let proj of await projs.json()) {
+        const moreOptionsBtn = document.createElement("button");
+        moreOptionsBtn.className = "hidden group-hover:flex rounded-md pl-1 pr-1 h-full w-full items-center";
+        const i = document.createElement("i");
+        i.className = "fa-solid fa-ellipsis";
+        const buttonDiv = document.createElement("div");
+        buttonDiv.className = "absolute right-0 rounded-m hover:bg-gray-400 w-fit h-full rounded-md";
+        const projDiv = document.createElement("div");
+        projDiv.className = "group relative flex items-center justify-between bg-gray-300 w-full rounded-md hover:bg-gray-500 hover:scale-105 cursor-pointer transition ease-in-out duration-300 px-1";
         const projNameSpan = document.createElement("span");
-        projNameSpan.className = "font-playfair text-xl cursor-pointer";
+        projNameSpan.className = "font-playfair text-xl";
         projNameSpan.textContent = proj.title;
-        projNameSpan.addEventListener("click", () => switchProj(proj.id));
-        listOfCurProjects.appendChild(projNameSpan);
+
+        moreOptionsBtn.appendChild(i);
+        buttonDiv.appendChild(moreOptionsBtn);
+        projDiv.appendChild(projNameSpan);
+        projDiv.appendChild(buttonDiv);
+        projDiv.addEventListener("click", () => switchProj(proj.id));
+        listOfCurProjects.appendChild(projDiv);
+
+        //REMEMBERS THE CURRENT DIRECTORY NAME
+        const previousProjectTitle = localStorage.getItem("previousDirectoryTitle");
+        curProjectName.textContent = previousProjectTitle;
     }
 }
 
 async function updateStatusOnColSwitch(taskId, newStatus) {
-    const taskToUpdate = await fetch(`http://localhost:5056/Tasks/${taskId}`);
+    const taskToUpdate = await authFetch(`http://localhost:5056/Tasks/${taskId}`);
     const taskJSON = await taskToUpdate.json();
     console.log(taskJSON);
 
@@ -38,7 +55,7 @@ async function updateStatusOnColSwitch(taskId, newStatus) {
         status: newStatus,
         urgency: urg,
     }
-    const response = await fetch(`http://localhost:5056/Tasks/${taskId}`, {
+    const response = await authFetch(`http://localhost:5056/Tasks/${taskId}`, {
         method: "Put",
         headers: {
             "Content-Type": "application/json"
@@ -55,11 +72,12 @@ async function switchProj(newProjId) {
     inprog_col.innerHTML = "";
     inrew_col.innerHTML = "";
     done_col.innerHTML = "";
-    const response = await fetch(`http://localhost:5056/Projects/${curProjId}`);
+    const response = await authFetch(`http://localhost:5056/Projects/${curProjId}`);
     const project = await response.json();
     curProjectName.textContent = project.title;
     curProjectDirectory = project.title;
-    console.log(curProjectDirectory);
+    localStorage.setItem("previousDirectory", curProjId);
+    localStorage.setItem("previousDirectoryTitle", project.title);
 
     fetchAllTasks(newProjId); 
 }

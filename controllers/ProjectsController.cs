@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using track_tasks;
@@ -5,6 +6,7 @@ using track_tasks.Models;
 
 namespace track_tasks.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("[controller]")]
 public class ProjectsController(AppDbContext context) : ControllerBase
@@ -13,8 +15,12 @@ public class ProjectsController(AppDbContext context) : ControllerBase
 
     [HttpGet]
     public IActionResult GetAll()
-    {
-        return Ok(_context.Projects.ToList());
+    {        
+        var userIdClaim = User.FindFirst("userId")?.Value;
+        var userIdClaimInt = int.Parse(userIdClaim);
+        var searchResult = _context.Projects.Where(project => project.UserId == userIdClaimInt).ToList();
+
+        return Ok(searchResult);
     }
 
     [HttpGet("{id}")]
@@ -28,6 +34,8 @@ public class ProjectsController(AppDbContext context) : ControllerBase
     //POST == ADD
     public IActionResult CreateProject([FromBody] Project project)
     {
+        var userIdClaim = User.FindFirst("userId")?.Value;
+        project.UserId = int.Parse(userIdClaim);
         //SET DATE TO CURRENT DATE
         project.DateCreated = DateTime.UtcNow;
         //ADDS TO DB

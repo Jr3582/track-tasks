@@ -6,8 +6,10 @@
     <title>Document</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+    <script src="../backend/auth.js" defer></script>
     <script src="../backend/dom.js" defer></script>
     <script src="../backend/api.js" defer></script>
     <script src="../backend/ui.js" defer></script>
@@ -60,16 +62,35 @@
             <hr class="border-black border-t-2 mx-2 mt-4">
 
             <!-- LIST OF ALL CURRENT PROJECTS -->
-            <div id="listOfProjects" class="flex flex-col mx-auto mt-4 justify-center items-center">
+            <div class="flex flex-col mx-4 mt-4 justify-center items-center">
                 <span class="font-playfair text-2xl">Your Projects:</span>
+                <div id="listOfProjects" class="flex flex-col overflow-y-auto overflow-x-hidden max-h-64 w-full p-2 gap-1 pr-4">
+                    <div class="group relative flex items-center justify-between bg-gray-300 w-full rounded-md hover:bg-gray-500 hover:scale-105 cursor-pointer transition ease-in-out duration-300 px-1">
+                        <span class="font-playfair text-xl">Kebab Menu Test</span>
+                        <div class="absolute right-0 rounded-m hover:bg-gray-400 w-fit h-full rounded-md">
+                            <button class="hidden group-hover:flex rounded-md pl-1 pr-1 h-full w-full items-center">
+                                <i class="fa-solid fa-ellipsis"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            <!-- BUTTON TO CREATE NEW PROJECTS -->
             <hr class="border-black border-t-2 mx-2 mt-4">
+
+            <!-- BUTTON TO CREATE NEW PROJECTS -->
             <div class="flex flex-col mx-auto mt-4 justify-center items-center">
                 <button class="bg-blue-600 p-2 rounded-md" onclick="showCreateProject(event)">
                     <span class="font-playfair text-xl">Create New Project!</span>
                 </button>
+            </div>
+            
+            <div class="flex flex-col mt-auto border-t-2 border-black pt-4 mx-2">
+                <div class="flex ml-auto mt-4 mt-auto mb-4">
+                    <button class="bg-blue-600 p-2 rounded-md w-fit h-fit" onclick="logout()">
+                        <span class="font-playfair text-xl">Logout</span>
+                    </button>
+                </div>
             </div>
 
         </div>
@@ -274,13 +295,15 @@
                     <!-- CHANGE TITLE -->
                     <div class="flex pb-4 flex-col gap-1">
                         <span class="font-playfair">PROJECT NAME<span class="text-red-600">*</span></span>
-                        <input required id="projName" type="text" class="w-full h-8 bg-gray-300 rounded-md p-1 font-playfair outline-none">
+                        <input id="projName" type="text" class="w-full h-8 bg-gray-300 rounded-md p-1 font-playfair outline-none">
+                        <span id="invalidProjTitleMsg" class="text-red-500 text-sm font-playfair hidden">[Error Message]</span>
                     </div>
 
                     <!-- CHANGE DESCRIPTION -->
                     <div class="flex flex-col gap-1">
                         <span class="font-playfair">DESCRIPTION<span class="text-red-600">*</span></span>
                         <textarea id="projDescription" type="text" class="w-full min-h-64 bg-gray-300 rounded-md p-1 font-playfair outline-none"></textarea>
+                        <span id="invalidProjDescriptionMsg" class="text-red-500 text-sm font-playfair hidden">[Error Message]</span>
                     </div>
                 </div>
                 <div class="grid grid-rows-5 h-full gap-2">
@@ -288,19 +311,29 @@
                         <!-- OWNER USER, AND MEMBER USERS-->
                         <div class="flex flex-col">
                             <!-- TEXT INPUTS -->
-                            <div class="grid grid-cols-2 gap-2">
+                            <div class="flex flex-col gap-2">
                                 <!-- OWNER -->
-                                <span class="font-playfair">OWNER<span class="text-red-600">*</span></span>
-                                <input required id="projOwner" type="text" class="flex bg-gray-300 ml-4 p-1 rounded-md font-playfair outline-none">
+                                <!-- TODO: ERROR MSG WHEN NO OWNER -->
+                                <span id="invalidOwnerMsg" class="text-red-500 text-sm font-playfair opacity-0">[Error Message]</span>
+                                <div class="flex flex-row justify-between mt-1">
+                                    <span class="font-playfair">OWNER<span class="text-red-600">*</span></span>
+                                    <input id="projOwner" type="text" class="flex bg-gray-300 ml-4 p-1 rounded-md font-playfair outline-none">
+                                </div>
                                 
-                                <span class="font-playfair">TAGS<span class="text-red-600"></span></span>
-                                <input id="projTags" type="text" class="flex bg-gray-300 ml-4 p-1 rounded-md font-playfair outline-none">
+                                <div class="flex flex-row justify-between">
+                                    <span class="font-playfair">TAGS<span class="text-red-600"></span></span>
+                                    <input id="projTags" type="text" class="flex bg-gray-300 ml-4 p-1 rounded-md font-playfair outline-none">
+                                </div>
 
-                                <span class="font-playfair">MEMBERS<span class="text-red-600"></span></span>
-                                <input id="projMembers" type="text" class="flex bg-gray-300 ml-4 p-1 rounded-md font-playfair outline-none">
+                                <div class="flex flex-row justify-between">
+                                    <span class="font-playfair">MEMBERS<span class="text-red-600"></span></span>
+                                    <input id="projMembers" type="text" class="flex bg-gray-300 ml-4 p-1 rounded-md font-playfair outline-none">
+                                </div>
 
-                                <span class="font-playfair">DATE CREATED<span class="text-red-600"></span></span>
-                                <input id="projectCreateDate" disabled type="text" class="flex bg-gray-500 ml-4 p-1 rounded-md font-playfair outline-none placeholder-black">
+                                <div class="flex flex-row justify-between">
+                                    <span class="font-playfair">DATE CREATED<span class="text-red-600"></span></span>
+                                    <input id="projectCreateDate" disabled type="text" class="flex bg-gray-500 ml-4 p-1 rounded-md font-playfair outline-none placeholder-black">
+                                </div>
                             </div>
                         </div>
                     </div>
