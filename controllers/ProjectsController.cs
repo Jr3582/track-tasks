@@ -45,6 +45,28 @@ public class ProjectsController(AppDbContext context) : ControllerBase
         return StatusCode(201, project);
     }
 
+    [HttpPost("{projectId}/members")]
+    public IActionResult AddUserToProject([FromBody] string username, [FromRoute] int projectId)
+    {
+        var searchResult = _context.Users.FirstOrDefault(u => u.Username == username);
+        if(searchResult == null) return NotFound();
+
+        var searchUser = _context.UsersToProjects.FirstOrDefault(p => p.UserId == searchResult.Id && p.ProjectId == projectId);
+        if(searchUser != null) return Conflict("User already part of this project!");
+
+        var newMembership = new UsersToProjects
+        {
+            UserId = searchResult.Id,
+            ProjectId = projectId
+        };
+
+        _context.UsersToProjects.Add(newMembership);
+        _context.SaveChanges();
+
+
+        return StatusCode(201,newMembership);
+    }
+
     [HttpPut("{id}")] 
     //PUT == UPDATE 
     //("{id}") is used to get the ID in the URL
