@@ -5,6 +5,9 @@ let curTaskIdToDelete = 0;
 let curProjId = 4;
 let curProjectDirectory;
 let previousProject = localStorage.getItem("previousDirectory");
+let activeProjDiv = null;
+let activeButton = null;
+let activeProjectId = null;
 
 
 new Sortable(todo_col, {
@@ -193,7 +196,7 @@ updateTaskform.addEventListener("submit", async function(event) {
 
 })
 
-confirmDel.addEventListener("click", async function (event) {
+confirmDelTask.addEventListener("click", async function (event) {
     event.stopPropagation();
     const response = await authFetch(`http://localhost:5056/Tasks/${curTaskIdToDelete}`, {
         method: "Delete"
@@ -208,7 +211,16 @@ confirmDel.addEventListener("click", async function (event) {
         delPopUp.classList.remove("pointer-events-auto");
         delPopUp.classList.add("pointer-events-none");
     }
-    console.log(response.status);
+})
+
+confirmKeepTask.addEventListener("click", function() {
+    if(delPopUp.classList.contains("opacity-100")) {
+        delPopUp.classList.remove("opacity-100");
+        delPopUp.classList.add("opacity-0");
+
+        delPopUp.classList.remove("pointer-events-auto");
+        delPopUp.classList.add("pointer-events-none");
+    }
 })
 
 createProjectForm.addEventListener("submit", async function (event) {
@@ -268,10 +280,16 @@ createProjectForm.addEventListener("submit", async function (event) {
     const buttonDiv = document.createElement("div");
     buttonDiv.className = "absolute right-0 rounded-m hover:bg-gray-400 w-fit h-full rounded-md";
     const projDiv = document.createElement("div");
-    projDiv.className = "group relative flex items-center justify-between bg-gray-300 w-full rounded-md hover:bg-gray-500 hover:scale-105 cursor-pointer transition ease-in-out duration-300 px-1";
+    projDiv.className = "group relative flex items-center justify-between bg-gray-300 w-full rounded-md hover:bg-gray-500 hover:scale-105 hover:z-20 cursor-pointer transition ease-in-out duration-300 px-1";
     const newProjectTitle = document.createElement("span");
     newProjectTitle.textContent = responseJSON.title;
-    newProjectTitle.className = "font-playfair text-2xl";
+    newProjectTitle.className = "font-playfair text-xl";
+    projDiv.id = "projDivId_" + responseJSON.id;
+
+    moreOptionsBtn.onclick = function(event) {
+        toggleKebabMenu(event);
+    }
+
 
     moreOptionsBtn.appendChild(i);
     buttonDiv.appendChild(moreOptionsBtn);
@@ -304,6 +322,10 @@ deleteBtn.addEventListener("click", function(event) {
 })
 
 createProjectForm.addEventListener("click", function(event) {
+    event.stopPropagation();
+})
+
+addMembersPopUp.addEventListener("click", function(event) {
     event.stopPropagation();
 })
 
@@ -352,9 +374,6 @@ document.addEventListener("click", function(e) {
         createPopUp.classList.add("pointer-events-none");
 
         createTaskform.reset();
-
-        //DEBUGGING MESSAGE
-        console.log("hiding create task pop up");
     }
 
     if(updatePopUp.classList.contains("opacity-100")) {
@@ -364,8 +383,7 @@ document.addEventListener("click", function(e) {
         updatePopUp.classList.remove("pointer-events-auto");
         updatePopUp.classList.add("pointer-events-none");
 
-        //DEBUGGING MESSAGE
-        console.log("hiding update task pop up");
+        updatePopUp.reset();
     }
 
     if(delPopUp.classList.contains("opacity-100")) {
@@ -375,8 +393,7 @@ document.addEventListener("click", function(e) {
         delPopUp.classList.remove("pointer-events-auto");
         delPopUp.classList.add("pointer-events-none");
 
-        //DEBUGGING MESSAGE
-        console.log("hiding delete task pop up");
+        delPopUp.reset();
     }
 
     if(createNewProjectPopUp.classList.contains("opacity-100")) {
@@ -387,10 +404,25 @@ document.addEventListener("click", function(e) {
         createNewProjectPopUp.classList.add("pointer-events-none");
 
         createProjectForm.reset();
-
-        //DEBUGGING MESSAGE
-        console.log("hiding delete task pop up");
     }
+
+    if(!kebabMenu.classList.contains("hidden") && !kebabMenu.contains(e.target) && !addMembersPopUp.contains(e.target)) {
+        kebabMenu.classList.add("hidden");
+
+        activeProjDiv.classList.remove("scale-105", "bg-gray-500");
+        activeProjDiv.classList.add("hover:scale-105", "hover:bg-gray-500");
+
+        activeButton.classList.add("hidden");
+    }
+
+    if(addMembersPopUp.classList.contains("opacity-100") && e.target === addMembersPopUp) {
+        addMembersPopUp.classList.remove("opacity-100");
+        addMembersPopUp.classList.add("opacity-0");
+
+        addMembersPopUp.classList.remove("pointer-events-auto");
+        addMembersPopUp.classList.add("pointer-events-none");
+    }
+    console.log("document click fired", e.target);
 })
 
 function logout() {
@@ -398,6 +430,33 @@ function logout() {
     window.location.href = "login.html";
 
 }
+
+//ADD MEMBER BUTTON
+addMemButton.addEventListener("click", async function(event) {
+    event.stopPropagation();
+    const username = memberUsername.value;
+    const response = await addMemberToProject(activeProjectId, username);
+    memberPopUpText.classList.remove("opacity-0");
+    if(response.status != 201) {
+        memberPopUpText.classList.remove("text-green-600");
+        memberPopUpText.classList.add("text-red-600");
+    } else {
+        memberPopUpText.classList.remove("text-red-600");
+        memberPopUpText.classList.add("text-green-600");
+    }
+    if(response.status == 404) {
+        memberPopUpText.textContent = "User not found";
+    } else if (response.status == 409) {
+        memberPopUpText.textContent = "User already part of this project!"
+    } else if (response.status == 401) {
+        memberPopUpText.textContent = "Unauthorized directory";
+    } else if(response.status == 201) {
+        memberPopUpText.textContent = "The member have been sucessfully added";
+    } else {
+        memberPopUpText.textContent = "There was a error adding your member";
+    }
+    
+})
 
 //FETCH ALL TASKS NOW REMEMBERS WHERE YOU LEFT OFF
 fetchAllTasks(previousProject);

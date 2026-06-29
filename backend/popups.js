@@ -90,3 +90,24 @@ function toggleSideMenu() {
         toggleSideMenuText.textContent = "> \n > \n >";
     }
 }
+
+function openAddMembersPopUp(event) {
+    event.stopPropagation();
+    if(addMembersPopUp.classList.contains("opacity-0")) {
+        addMembersPopUp.classList.remove("opacity-0")
+        addMembersPopUp.classList.add("opacity-100");
+
+        addMembersPopUp.classList.remove("pointer-events-none");
+        addMembersPopUp.classList.add("pointer-events-auto");
+    }
+}
+
+function closeAddMemPopUp() {
+    if(addMembersPopUp.classList.contains("opacity-100")) {
+        addMembersPopUp.classList.remove("opacity-100")
+        addMembersPopUp.classList.add("opacity-0");
+
+        addMembersPopUp.classList.add("pointer-events-none");
+        addMembersPopUp.classList.remove("pointer-events-auto");
+    }
+}

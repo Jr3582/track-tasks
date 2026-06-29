@@ -18,7 +18,13 @@ public class ProjectsController(AppDbContext context) : ControllerBase
     {        
         var userIdClaim = User.FindFirst("userId")?.Value;
         var userIdClaimInt = int.Parse(userIdClaim);
-        var searchResult = _context.Projects.Where(project => project.UserId == userIdClaimInt).ToList();
+        var searchResult = _context.Projects.Where(
+            project => project.UserId == userIdClaimInt || 
+            _context.UsersToProjects.Any(
+                p => p.UserId == userIdClaimInt && 
+                p.ProjectId == project.Id
+                )
+            ).ToList();
 
         return Ok(searchResult);
     }
@@ -42,17 +48,43 @@ public class ProjectsController(AppDbContext context) : ControllerBase
         _context.Projects.Add(project);
         //SAVE CHANGES
         _context.SaveChanges();
+
+        var newMembership = new UsersToProjects
+        {
+            UserId = project.UserId,
+            ProjectId = project.Id
+        };
+
+        _context.UsersToProjects.Add(newMembership);
+        _context.SaveChanges();
         return StatusCode(201, project);
     }
 
     [HttpPost("{projectId}/members")]
-    public IActionResult AddUserToProject([FromBody] string username, [FromRoute] int projectId)
+    public IActionResult AddUserToProject([FromBody] AddMemberRequest request, [FromRoute] int projectId)
     {
-        var searchResult = _context.Users.FirstOrDefault(u => u.Username == username);
-        if(searchResult == null) return NotFound();
+        //CHECKS BEFORE MAKING USER TABLES
+        //CHECKS IF USERNAME EXISTS
+        var searchResult = _context.Users.FirstOrDefault(u => u.Username == request.Username);
+        if(searchResult == null) return NotFound("User not found.");
 
+        //CHECKS IF PROJECT EXIST
+        var searchProject = _context.Projects.FirstOrDefault(p => p.Id == projectId);
+        if(searchProject == null) return NotFound("Project not found.");
+
+        //CHECK IF THE PERSON BEING ADDED IS PART OF THIS PROEJCT
         var searchUser = _context.UsersToProjects.FirstOrDefault(p => p.UserId == searchResult.Id && p.ProjectId == projectId);
-        if(searchUser != null) return Conflict("User already part of this project!");
+        if(searchUser != null) return Conflict("User already part of this project.");
+
+        //IF USER ID ISN'T FOUND RETURN ERROR MSG
+        var userIdClaim = User.FindFirst("userId")?.Value;
+        if(userIdClaim == null) return Unauthorized("Unauthorized directory");
+
+        var callerId = int.Parse(userIdClaim);
+        //CHECKS IF THE PERSON MAKING THE REQUEST IS ALREADY A MEMEBER OF THE PROEJCT
+        var callerMembership = _context.UsersToProjects.FirstOrDefault(p => p.UserId == callerId && p.ProjectId == projectId);
+        if(callerMembership == null) return StatusCode(403, "You are not a member of this proejct!");
+
 
         var newMembership = new UsersToProjects
         {
@@ -64,7 +96,7 @@ public class ProjectsController(AppDbContext context) : ControllerBase
         _context.SaveChanges();
 
 
-        return StatusCode(201,newMembership);
+        return StatusCode(201, $"Successfully added user {request.Username}");
     }
 
     [HttpPut("{id}")] 
@@ -101,4 +133,12 @@ public class ProjectsController(AppDbContext context) : ControllerBase
         _context.SaveChanges();
         return Ok();
     }
+}
+
+//DTO (DATA TRANSFER OBJECT): 
+//CLASS WHOSE ONLY JOB IS TO CARRY DATA BETWEEN TWO PLACES
+//USED IN ADD USER FUNCTION
+public class AddMemberRequest
+{
+    public string Username { get; set; }
 }

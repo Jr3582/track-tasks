@@ -11,6 +11,12 @@ const updatePopUp = document.getElementById("updatePopUp");
 const delPopUp = document.getElementById("deletePopUp");
 const createNewProjectPopUp = document.getElementById("createNewProjectPopUp");
 
+//ADDING MEMBERS
+const memberUsername = document.getElementById("memberUsername");
+const addMembersPopUp = document.getElementById("addMembersPopUp");
+const addMemButton = document.getElementById("addMemButton");
+const memberPopUpText = document.getElementById("memberPopUpText");
+
 //FORM INPUTS TO CREATE
 const title = document.getElementById("title");
 const summary = document.getElementById("summary");
@@ -46,7 +52,8 @@ const invalidOwnerMsg = document.getElementById("invalidOwnerMsg");
 
 //BUTTON TO DELETE TASK
 const deleteBtn = document.getElementById("deleteBtn");
-const confirmDel = document.getElementById("confirmDel");
+const confirmDelTask = document.getElementById("confirmDelTask");
+const confirmKeepTask = document.getElementById("confirmKeepTask");
 const projectNameText = document.getElementById("deleteProjectName");
 
 //SORTABLE
@@ -60,3 +67,4 @@ const sideMenu = document.getElementById("sideMenu");
 const toggleSideMenuText = document.getElementById("toggleSideMenuText");
 const listOfCurProjects = document.getElementById("listOfProjects");
 const curProjectName = document.getElementById("curProjectName");
+const kebabMenu = document.getElementById("kebabDropdown");

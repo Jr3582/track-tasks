@@ -16,10 +16,15 @@ async function fetchAllProjects() {
         const buttonDiv = document.createElement("div");
         buttonDiv.className = "absolute right-0 rounded-m hover:bg-gray-400 w-fit h-full rounded-md";
         const projDiv = document.createElement("div");
-        projDiv.className = "group relative flex items-center justify-between bg-gray-300 w-full rounded-md hover:bg-gray-500 hover:scale-105 cursor-pointer transition ease-in-out duration-300 px-1";
+        projDiv.className = "group relative flex items-center justify-between bg-gray-300 w-full rounded-md hover:bg-gray-500 hover:scale-105 hover:z-20 cursor-pointer transition ease-in-out duration-300 px-1";
         const projNameSpan = document.createElement("span");
         projNameSpan.className = "font-playfair text-xl";
         projNameSpan.textContent = proj.title;
+        projDiv.id = "projDivId_" + proj.id;
+
+        moreOptionsBtn.onclick = function(event) {
+            toggleKebabMenu(event);
+        }
 
         moreOptionsBtn.appendChild(i);
         buttonDiv.appendChild(moreOptionsBtn);
@@ -80,4 +85,15 @@ async function switchProj(newProjId) {
     localStorage.setItem("previousDirectoryTitle", project.title);
 
     fetchAllTasks(newProjId); 
+}
+
+async function addMemberToProject(projectId, username) {
+    const response = await authFetch(`http://localhost:5056/Projects/${projectId}/members`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json"},
+        body: JSON.stringify({ username: username })
+
+    });
+    return response;
+
 }

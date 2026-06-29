@@ -237,3 +237,45 @@ function createTaskCard(task) {
 
     switchTaskStatus(task, titleDiv, title, deleteButton, projNameDiv, projName, urgency, newTask);
 }
+
+function toggleKebabMenu(event) {
+    event.stopPropagation()
+    const rect = event.currentTarget.getBoundingClientRect();
+    kebabMenu.style.top = rect.bottom + "px";
+    kebabMenu.style.left = rect.left + "px";
+    const parentDiv = event.target.closest(".group");
+    const currentButton = event.currentTarget;
+    const buttonParent = event.target.closest(".absolute");
+    activeProjDiv = parentDiv;
+    activeButton = currentButton;
+    //GET THE ID OF THE PROJECT DIV
+    const projectId = parseInt(parentDiv.id.replace("projDivId_", ""));
+    activeProjectId = projectId;
+    if(kebabMenu.classList.contains("hidden")) {
+        kebabMenu.classList.remove("hidden");
+
+        parentDiv.classList.remove("hover:scale-105");
+        parentDiv.classList.remove("hover:bg-gray-500");
+
+        parentDiv.classList.add("scale-105");
+        parentDiv.classList.add("bg-gray-500");
+
+        currentButton.classList.remove("hidden");
+        buttonParent.classList.remove("hover:bg-gray-400");
+
+        buttonParent.classList.add("bg-gray-400");
+    } else if (!kebabMenu.classList.contains("hidden")) {
+        kebabMenu.classList.add("hidden");
+
+        parentDiv.classList.remove("scale-105");
+        parentDiv.classList.remove("bg-gray-500");
+
+        parentDiv.classList.add("hover:scale-105");
+        parentDiv.classList.add("hover:bg-gray-500");
+
+        currentButton.classList.add("hidden");
+        buttonParent.classList.remove("bg-gray-400");
+
+        buttonParent.classList.add("hover:bg-gray-400");
+    }
+}
