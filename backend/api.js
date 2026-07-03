@@ -21,6 +21,8 @@ async function fetchAllProjects() {
         projNameSpan.className = "font-playfair text-xl";
         projNameSpan.textContent = proj.title;
         projDiv.id = "projDivId_" + proj.id;
+        const projNameWrapper = document.createElement("div");
+        projNameWrapper.className = "nameWrapper";
 
         moreOptionsBtn.onclick = function(event) {
             toggleKebabMenu(event);
@@ -28,7 +30,8 @@ async function fetchAllProjects() {
 
         moreOptionsBtn.appendChild(i);
         buttonDiv.appendChild(moreOptionsBtn);
-        projDiv.appendChild(projNameSpan);
+        projNameWrapper.appendChild(projNameSpan);
+        projDiv.appendChild(projNameWrapper);
         projDiv.appendChild(buttonDiv);
         projDiv.addEventListener("click", () => switchProj(proj.id));
         listOfCurProjects.appendChild(projDiv);
@@ -96,4 +99,59 @@ async function addMemberToProject(projectId, username) {
     });
     return response;
 
+}
+
+async function deleteProject(projectId) {
+    const response = await authFetch(`http://localhost:5056/Projects/${projectId}`, {
+        method: "DELETE",
+    })
+    return response;
+}
+
+async function deleteTask(taskId){
+    const response = await authFetch(`http://localhost:5056/Tasks/${taskId}`, {
+        method: "DELETE"
+    })
+    return response
+}
+
+async function changeName(newName, projectId) {
+    const projectToUpdate = await authFetch(`http://localhost:5056/Projects/${projectId}`)
+    const projectJSON = await projectToUpdate.json();
+
+    const project = {
+        title: newName,
+        description: projectJSON.description,
+        owner: projectJSON.owner
+    }
+    const response = await authFetch(`http://localhost:5056/Projects/${projectId}`, {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(project)
+    })
+    return response;
+}
+
+async function getListOfMembers(projectId) {
+    const response = await authFetch(`http://localhost:5056/Projects/${projectId}/members`);
+    const members = await response.json();
+    for(let member of members) {
+        const memberLi = document.createElement("li");
+        const memberName = document.createElement("span");
+        const deleteMemberButton = document.createElement("button");
+
+        memberName.textContent = member;
+        deleteMemberButton.textContent = "x";
+
+        memberLi.className = "before:content-['•'] before:mr-2 before:text-4xl flex items-center";
+        memberName.className = "bg-gray-300 rounded-md px-3";
+        deleteMemberButton.className = "ml-2 text-red-600 text-2xl font-sans cursor-pointer hover:scale-110 transition ease-in-out duration-300";
+        memberLi.appendChild(memberName);
+        memberLi.appendChild(deleteMemberButton);
+        listOfMembers.appendChild(memberLi);
+    }
+
+    return response;
 }

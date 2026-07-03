@@ -16,7 +16,7 @@ public class UsersController(AppDbContext context, IConfiguration configuration)
 {
     private AppDbContext _context = context;
     private IConfiguration _configuration = configuration;
-
+    
     [HttpPost("register")] 
     //POST == ADD
     public IActionResult RegisterUser([FromBody] User user)

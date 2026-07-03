@@ -8,6 +8,7 @@ let previousProject = localStorage.getItem("previousDirectory");
 let activeProjDiv = null;
 let activeButton = null;
 let activeProjectId = null;
+let activeProjectName = null;
 
 
 new Sortable(todo_col, {
@@ -196,11 +197,10 @@ updateTaskform.addEventListener("submit", async function(event) {
 
 })
 
+//DELETE TASK / PROJECT PROMPTS
 confirmDelTask.addEventListener("click", async function (event) {
     event.stopPropagation();
-    const response = await authFetch(`http://localhost:5056/Tasks/${curTaskIdToDelete}`, {
-        method: "Delete"
-    })
+    await deleteTask(curTaskIdToDelete);
 
     document.getElementById(curTaskIdToDelete).remove();
 
@@ -213,6 +213,24 @@ confirmDelTask.addEventListener("click", async function (event) {
     }
 })
 
+confirmDelProj.addEventListener("click", async function (event) {
+    event.stopPropagation();
+    await deleteProject(activeProjectId);
+
+    document.getElementById("projDivId_"+activeProjectId).remove();
+
+    if(deleteProjectsPopUp.classList.contains("opacity-100")) {
+        deleteProjectsPopUp.classList.remove("opacity-100");
+        deleteProjectsPopUp.classList.add("opacity-0");
+
+        deleteProjectsPopUp.classList.remove("pointer-events-auto");
+        deleteProjectsPopUp.classList.add("pointer-events-none");
+    }
+
+    kebabMenu.classList.add("hidden");
+    activeProjDiv = null;
+})
+
 confirmKeepTask.addEventListener("click", function() {
     if(delPopUp.classList.contains("opacity-100")) {
         delPopUp.classList.remove("opacity-100");
@@ -222,6 +240,17 @@ confirmKeepTask.addEventListener("click", function() {
         delPopUp.classList.add("pointer-events-none");
     }
 })
+
+confirmKeepProj.addEventListener("click", function() {
+    if(deleteProjectsPopUp.classList.contains("opacity-100")) {
+        deleteProjectsPopUp.classList.remove("opacity-100");
+        deleteProjectsPopUp.classList.add("opacity-0");
+
+        deleteProjectsPopUp.classList.remove("pointer-events-auto");
+        deleteProjectsPopUp.classList.add("pointer-events-none");
+    }
+})
+//~~~~~~~~~~~~~~~END OF DELETE TASK AND PROJECT PROMPTS~~~~~~~~~~~~~~~
 
 createProjectForm.addEventListener("submit", async function (event) {
     event.stopPropagation();
@@ -273,6 +302,8 @@ createProjectForm.addEventListener("submit", async function (event) {
     const responseJSON = await response.json();
 
     //ADDING NEW PROJECT NAME TO SIDE MENU
+    const projNameWrapper = document.createElement("div");
+    projNameWrapper.className = "nameWrapper"
     const moreOptionsBtn = document.createElement("button");
     moreOptionsBtn.className = "hidden group-hover:flex rounded-md pl-1 pr-1 h-full w-full items-center";
     const i = document.createElement("i");
@@ -293,7 +324,8 @@ createProjectForm.addEventListener("submit", async function (event) {
 
     moreOptionsBtn.appendChild(i);
     buttonDiv.appendChild(moreOptionsBtn);
-    projDiv.appendChild(newProjectTitle);
+    projNameWrapper.appendChild(newProjectTitle);
+    projDiv.appendChild(projNameWrapper);
     projDiv.appendChild(buttonDiv);
     projDiv.setAttribute("onclick", `switchProj(${responseJSON.id.toString()})`);
     listOfCurProjects.appendChild(projDiv);
@@ -455,7 +487,16 @@ addMemButton.addEventListener("click", async function(event) {
     } else {
         memberPopUpText.textContent = "There was a error adding your member";
     }
-    
+})
+
+closeViewMemPopUp.addEventListener("click", function() {
+    if(viewMembersPopUp.classList.contains("opacity-100")) {
+        viewMembersPopUp.classList.remove("opacity-100");
+        viewMembersPopUp.classList.add("opacity-0");
+
+        viewMembersPopUp.classList.remove("pointer-events-auto");
+        viewMembersPopUp.classList.add("pointer-events-none");
+    }
 })
 
 //FETCH ALL TASKS NOW REMEMBERS WHERE YOU LEFT OFF

@@ -17,6 +17,17 @@ const addMembersPopUp = document.getElementById("addMembersPopUp");
 const addMemButton = document.getElementById("addMemButton");
 const memberPopUpText = document.getElementById("memberPopUpText");
 
+//VIEWING MEMBERS
+const viewMembersPopUp = document.getElementById("viewMembersPopUp");
+const listOfMembers = document.getElementById("listOfMembers");
+const closeViewMemPopUp = document.getElementById("closeViewMemPopUp");
+
+//DELETE PROJECT POPUP
+const deleteProjectsPopUp = document.getElementById("deleteProjectsPopUp");
+const deleteProjectName = document.getElementById("deleteProjectName");
+const confirmDelProj = document.getElementById("confirmDelProj");
+const confirmKeepProj = document.getElementById("confirmKeepProj");
+
 //FORM INPUTS TO CREATE
 const title = document.getElementById("title");
 const summary = document.getElementById("summary");
@@ -50,11 +61,11 @@ const invalidProjTitleMsg = document.getElementById("invalidProjTitleMsg");
 const invalidProjDescriptionMsg = document.getElementById("invalidProjDescriptionMsg");
 const invalidOwnerMsg = document.getElementById("invalidOwnerMsg");
 
-//BUTTON TO DELETE TASK
+//DELETE TASK
 const deleteBtn = document.getElementById("deleteBtn");
 const confirmDelTask = document.getElementById("confirmDelTask");
 const confirmKeepTask = document.getElementById("confirmKeepTask");
-const projectNameText = document.getElementById("deleteProjectName");
+const taskName = document.getElementById("deleteTaskName");
 
 //SORTABLE
 const todo_col = document.getElementById("todo_col");

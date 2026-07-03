@@ -207,7 +207,7 @@ function createTaskCard(task) {
     deleteButton.setAttribute("id", "deleteBtn");
     deleteButton.setAttribute("name", `PROJ_${task.id.toString()}`);
     deleteButton.addEventListener("click", function(event) {
-        showDeletePopUp(deleteButton, taskId);
+        showDeleteTaskPopUp(deleteButton, taskId);
         event.stopPropagation();
     })
 
@@ -251,6 +251,7 @@ function toggleKebabMenu(event) {
     //GET THE ID OF THE PROJECT DIV
     const projectId = parseInt(parentDiv.id.replace("projDivId_", ""));
     activeProjectId = projectId;
+    activeProjectName = parentDiv.children[0].textContent;
     if(kebabMenu.classList.contains("hidden")) {
         kebabMenu.classList.remove("hidden");
 
@@ -278,4 +279,33 @@ function toggleKebabMenu(event) {
 
         buttonParent.classList.add("hover:bg-gray-400");
     }
+}
+
+function renameProject() {
+    const nameSpan = activeProjDiv.querySelector("span");
+    const curNameText = nameSpan.textContent;
+    const nameWrapper = activeProjDiv.querySelector(".nameWrapper");
+    nameWrapper.innerHTML = `<input type="text" value="${curNameText}" class="font-playfair text-xl w-full bg-white rounded-md outline-none px-1">`;
+
+    activeProjDiv.classList.remove("hover:bg-gray-500", "hover:scale-105", "scale-105", "bg-gray-500", "hover:z-20", "cursor-pointer", "bg-gray-300");
+
+    const nameInput = nameWrapper.querySelector("input");
+
+    //STOPS THE INPUT FROM CHANGING IF CLICKED ON
+    nameInput.addEventListener("click", function(event) {
+        event.stopPropagation();
+    });
+
+    //WHEN PRESS ENTER BUTTON MAKE THE NAME CHANGES
+    nameInput.addEventListener("keydown", function(event) {
+        if(event.key == "Enter") {
+            changeName(nameInput.value, activeProjectId);
+            nameWrapper.innerHTML = `<span class="font-playfair text-xl">${nameInput.value}</span>`;
+        }
+    });
+
+    //WHEN CLICKING OUT OF THE INPUT, RETURN TO A SPAN
+    nameInput.addEventListener("blur", function() {
+        nameWrapper.innerHTML = `<span class="font-playfair text-xl">${nameInput.value}</span>`;
+    });
 }

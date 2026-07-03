@@ -36,6 +36,17 @@ public class ProjectsController(AppDbContext context) : ControllerBase
         if(searchResult == null) return NotFound() ; return Ok(searchResult);
     }
 
+    [HttpGet("{projectId}/members")]
+    public IActionResult GetMembers([FromRoute] int projectId)
+    {
+        var members = _context.UsersToProjects
+            .Where(u => u.ProjectId == projectId)
+            .Select(u => u.User.Username)
+            .ToList();
+            
+        return Ok(members);
+    }
+
     [HttpPost] 
     //POST == ADD
     public IActionResult CreateProject([FromBody] Project project)
@@ -81,9 +92,9 @@ public class ProjectsController(AppDbContext context) : ControllerBase
         if(userIdClaim == null) return Unauthorized("Unauthorized directory");
 
         var callerId = int.Parse(userIdClaim);
-        //CHECKS IF THE PERSON MAKING THE REQUEST IS ALREADY A MEMEBER OF THE PROEJCT
+        //CHECKS IF THE PERSON MAKING THE REQUEST IS THE OWNER OR A MEMBER OF THE PROJECT
         var callerMembership = _context.UsersToProjects.FirstOrDefault(p => p.UserId == callerId && p.ProjectId == projectId);
-        if(callerMembership == null) return StatusCode(403, "You are not a member of this proejct!");
+        if(callerMembership == null && searchProject.UserId != callerId) return StatusCode(403, "You are not a member of this project!");
 
 
         var newMembership = new UsersToProjects
@@ -112,7 +123,6 @@ public class ProjectsController(AppDbContext context) : ControllerBase
 
         searchResult.Title = updatedProject.Title;
         searchResult.Description = updatedProject.Description;
-        searchResult.DateCreated = updatedProject.DateCreated;
         searchResult.Owner = updatedProject.Owner;
 
         _context.SaveChanges();

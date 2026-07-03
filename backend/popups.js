@@ -47,7 +47,7 @@ async function showUpdateTask(id, event) {
     }
 }
 
-function showDeletePopUp(proj, projId) {
+function showTaskDeletePopUp(task, taskId) {
     if(delPopUp.classList.contains("opacity-0")) {
         delPopUp.classList.remove("opacity-0");
         delPopUp.classList.remove("pointer-events-none");
@@ -55,8 +55,8 @@ function showDeletePopUp(proj, projId) {
         delPopUp.classList.add("opacity-100");
         delPopUp.classList.add("pointer-events-auto");
         
-        projectNameText.textContent = proj.name;
-        curTaskIdToDelete = projId;
+        taskName.textContent = task.name;
+        curTaskIdToDelete = taskId;
     }
 }
 
@@ -109,5 +109,30 @@ function closeAddMemPopUp() {
 
         addMembersPopUp.classList.add("pointer-events-none");
         addMembersPopUp.classList.remove("pointer-events-auto");
+    }
+}
+
+function toggleDeletePopup() {
+    if(deleteProjectsPopUp.classList.contains("opacity-0")) {
+        deleteProjectsPopUp.classList.remove("opacity-0");
+        deleteProjectsPopUp.classList.remove("pointer-events-none");
+
+        deleteProjectsPopUp.classList.add("opacity-100");
+        deleteProjectsPopUp.classList.add("pointer-events-auto");
+        
+        deleteProjectName.textContent = activeProjectName;
+    }
+}
+
+function toggleViewMembersPopUp(event) {
+    if(viewMembersPopUp.classList.contains("opacity-0")) {
+        viewMembersPopUp.classList.remove("opacity-0");
+        viewMembersPopUp.classList.remove("pointer-events-none");
+
+        viewMembersPopUp.classList.add("opacity-100");
+        viewMembersPopUp.classList.add("pointer-events-auto");
+
+        listOfMembers.innerHTML = "";
+        getListOfMembers(activeProjectId);
     }
 }

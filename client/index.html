@@ -66,7 +66,9 @@
                 <span class="font-playfair text-2xl">Your Projects:</span>
                 <div id="listOfProjects" class="flex flex-col overflow-y-auto max-h-64 w-full p-2 gap-1 pr-4">
                     <div class="group relative flex items-center justify-between bg-gray-300 w-full rounded-md hover:bg-gray-500 hover:scale-105 hover:z-20 cursor-pointer transition ease-in-out duration-300 px-1">
-                        <span class="font-playfair text-xl">Kebab Menu Test</span>
+                        <div id="nameWrapper">
+                            <span class="font-playfair text-xl">Kebab Menu Test</span>
+                        </div>
                         <div class="absolute right-0 rounded-m hover:bg-gray-400 w-fit h-full rounded-md">
                             <button class="hidden group-hover:flex rounded-md pl-1 pr-1 h-full w-full items-center" onclick="toggleKebabMenu(event)">
                                 <i class="fa-solid fa-ellipsis"></i>
@@ -110,13 +112,13 @@
     <!-- MENU FOR INDIVIDUAL PROJECTS -->
     <div id="kebabDropdown" class="fixed bg-gray-500 w-42 h-48 z-[999] rounded-md hidden">
         <div class="flex justify-start flex-col p-2">
-            <div class="flex flex-row cursor-pointer hover:scale-105 transition ease-in-out items-center p-1">
+            <div class="flex flex-row cursor-pointer hover:scale-105 transition ease-in-out items-center p-1" onclick="renameProject(event)">
                 <i class="fa-regular fa-pen-to-square text-center w-4"></i>
                 <span class="font-playfair pl-2">Rename Project</span>
             </div>
-            <div class="flex flex-row cursor-pointer hover:scale-105 transition ease-in-out items-center p-1">
+            <div class="flex flex-row cursor-pointer hover:scale-105 transition ease-in-out items-center p-1" onclick="toggleViewMembersPopUp(event)">
                 <i class="fa-solid fa-thumbtack text-center w-4"></i>
-                <span class="font-playfair pl-2">Pin Project (W.I.P)</span>
+                <span class="font-playfair pl-2">View Members</span>
             </div>
             <div class="flex flex-row cursor-pointer hover:scale-105 transition ease-in-out items-center p-1" onclick="openAddMembersPopUp(event)">
                 <i class="fa-solid fa-person-circle-plus text-center w-4"></i>
@@ -129,7 +131,7 @@
             </div>
             <div class="flex flex-row cursor-pointer hover:scale-105 transition ease-in-out h-4 items-center p-1">
                 <i class="fa-solid fa-trash-can text-red-800 text-center w-4"></i>
-                <span class="font-playfair pl-2 text-red-800">Delete Project</span>
+                <span class="font-playfair pl-2 text-red-800" onclick="toggleDeletePopup(this)">Delete Project</span>
             </div>
         </div>
     </div>
@@ -394,10 +396,27 @@
      <div id="deletePopUp" class="flex absolute w-full h-full z-[999] bg-black/50 justify-center items-center opacity-0 transition-opacity duration-300 pointer-events-none">
         <div class="flex w-1/3 h-1/4">
             <div class="flex w-full h-full flex-col bg-white rounded-md p-8 gap-2 justify-center items-center text-2xl">
-                <span class="text-center font-playfair mb-6">Are you sure you want to delete task <span id="deleteProjectName">[PROJECT_NAME]</span>?</span>
+                <span class="text-center font-playfair mb-6">Are you sure you want to delete task <span id="deleteTaskName">[PROJECT_NAME]</span>?</span>
                 <div class="flex flex-row gap-8">
-                    <button id="confirmKeepTask" class="flex bg-green-600 w-fit p-2 rounded-md font-playfair button-anim cursor-pointer">Keep Task</button>
+                    <button id="confirmKeepTask" class="flex bg-green-600 w-fit p-2 rounded-md font-playfair button-anim cursor-pointer">Cancel</button>
                     <button id="confirmDelTask" class="flex bg-red-600 w-fit p-2 rounded-md font-playfair button-anim cursor-pointer">Delete Task</button>
+                </div>
+            </div>
+        </div>    
+    </div>
+
+    <!-- POP UP FOR VIEWING MEMBERS -->
+     <div id="viewMembersPopUp" class="flex absolute w-full h-full z-[999] bg-black/50 justify-center items-center opacity-0 transition-opacity duration-300 pointer-events-none">
+        <div class="flex w-1/3 h-1/2">
+            <div class="flex w-full h-full flex-col bg-white rounded-md p-8 gap-2 justify-between items-center text-2xl">
+                <span class="text-center font-playfair mb-2 self-start">Current Members part of <span>[PROJECT_NAME]</span></span>
+                <div class="w-full h-full border-2 border-black max-h-64 overflow-y-auto">
+                    <ul id="listOfMembers" class="list-none text-4xl font-playfair p-1">
+                        <li class="before:content-['•'] before:mr-2 before:text-4xl flex items-center"><span class="bg-gray-300 rounded-md px-3">hi</span><button class="ml-2 text-red-600 text-2xl font-sans cursor-pointer hover:scale-110 transition ease-in-out duration-300">✕</button></li>
+                    </ul>
+                </div>
+                <div class="mt-4">
+                    <button id="closeViewMemPopUp" class="flex bg-red-600 w-fit p-2 rounded-md font-playfair button-anim cursor-pointer">Exit</button>
                 </div>
             </div>
         </div>    
@@ -407,10 +426,10 @@
      <div id="deleteProjectsPopUp" class="flex absolute w-full h-full z-[999] bg-black/50 justify-center items-center opacity-0 transition-opacity duration-300 pointer-events-none">
         <div class="flex w-1/3 h-1/4">
             <div class="flex w-full h-full flex-col bg-white rounded-md p-8 gap-2 justify-center items-center text-2xl">
-                <span class="text-center font-playfair mb-6">Are you sure you want to delete this project? <span id="deleteProjectName">[PROJECT_NAME]</span>?</span>
+                <span class="text-center font-playfair mb-6">Are you sure you want to delete this project? "<span id="deleteProjectName" class="font-bold">[PROJECT_NAME]</span>"?</span>
                 <div class="flex flex-row gap-8">
-                    <button id="confirmDelProj" class="flex bg-green-600 w-fit p-2 rounded-md font-playfair button-anim cursor-pointer">Keep project</button>
-                    <button id="confirmKeepProj" class="flex bg-red-600 w-fit p-2 rounded-md font-playfair button-anim cursor-pointer">Delete project</button>
+                    <button id="confirmKeepProj" class="flex bg-green-600 w-fit p-2 rounded-md font-playfair button-anim cursor-pointer">Cancel</button>
+                    <button id="confirmDelProj" class="flex bg-red-600 w-fit p-2 rounded-md font-playfair button-anim cursor-pointer">Delete project</button>
                 </div>
             </div>
         </div>    
@@ -431,7 +450,7 @@
                 <div class="relative bg-blue-600 rounded-md p-2 font-playfair text-2xl text-bold task-card cursor-pointer button-anim mb-2 group" onclick="showUpdateTask(1, event)">
                     <div class="flex h-fit">
                         <span class="flex w-1/2">Task Title</span>
-                        <button id="deleteBtn" name="PROJ_07" class="flex leading-none text-2xl ml-auto opacity-0 group-hover:opacity-100 transition-opacity duration-700 font-sans" onclick="showDeletePopUp(this)">X</button>
+                        <button id="deleteBtn" name="PROJ_07" class="flex leading-none text-2xl ml-auto opacity-0 group-hover:opacity-100 transition-opacity duration-700 font-sans" onclick="showTaskDeletePopUp()">X</button>
                     </div>
                     <div class="flex">
                         <span class="text-lg">PROJ-01</span>
