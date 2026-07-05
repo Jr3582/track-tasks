@@ -145,7 +145,7 @@ updateTaskform.addEventListener("submit", async function(event) {
 
     if(taskBeforeUpdate.urgency !== responseJSON.urgency) {
         const curDOM = document.getElementById(curTaskId);
-        curDOM.children[1].children[1].textContent = fetchUrgency(responseJSON.urgency);
+        curDOM.children[1].children[1].children[1].textContent = fetchUrgency(responseJSON.urgency);
     }
 
     // STORE CURRENT
@@ -181,8 +181,11 @@ updateTaskform.addEventListener("submit", async function(event) {
 
     if(taskBeforeUpdateJson.urgency !== responseJSON.urgency) {
         const curTask = document.getElementById(curTaskId);
-        curTask.children[1].children[1].textContent = fetchUrgency(responseJSON.urgency);
+        curTask.children[1].children[1].children[1].textContent = fetchUrgency(responseJSON.urgency);
     }
+
+    const curTask = document.getElementById(curTaskId);
+    curTask.children[1].children[0].textContent = responseJSON.owner;
 
     //GETS RID OF POPUP AFTER UPDATING
     if(updatePopUp.classList.contains("opacity-100")) {
@@ -255,6 +258,9 @@ confirmKeepProj.addEventListener("click", function() {
 createProjectForm.addEventListener("submit", async function (event) {
     event.stopPropagation();
     event.preventDefault();
+    const token = localStorage.getItem("token");
+    const payload = JSON.parse(atob(token.split(".")[1]));
+    const username = payload.sub;
     if(projectName.value.length === 0) {
         invalidProjTitleMsg.classList.remove("hidden");
         invalidProjTitleMsg.textContent = "Please enter a name for your project!"
@@ -279,16 +285,15 @@ createProjectForm.addEventListener("submit", async function (event) {
         invalidOwnerMsg.classList.add("opacity-0");
     }
 
-    if(projectName.value.length >= 12) {
-        projectName.value = projectName.value.slice(0,12)+"...";
-    }
-
-    console.log(projectName.value);
-
+    //WHERE IM SETTING THE TITLE, DESCRIPTION, AND OWNER OF THE PROJECT
     const project= {
         title: projectName.value,
         description: projectDescription.value,
-        owner: projOwner.value
+        owner: username
+    }
+
+    if(projectName.value.length >= 12) {
+        projectName.value = projectName.value.slice(0,12)+"...";
     }
 
     const response = await authFetch("http://localhost:5056/Projects", {
@@ -365,7 +370,6 @@ createTaskform.addEventListener("click", function() {
     if(statusDropDown.classList.contains("opacity-100")) {
         statusDropDown.classList.remove("opacity-100");
         statusDropDown.classList.add("opacity-0");
-
         statusDropDown.classList.remove("pointer-events-auto");
         statusDropDown.classList.add("pointer-events-none");
     }
@@ -373,9 +377,15 @@ createTaskform.addEventListener("click", function() {
     if(urgencyDropDown.classList.contains("opacity-100")) {
         urgencyDropDown.classList.remove("opacity-100");
         urgencyDropDown.classList.add("opacity-0");
-
         urgencyDropDown.classList.remove("pointer-events-auto");
         urgencyDropDown.classList.add("pointer-events-none");
+    }
+
+    if(ownerDropDown.classList.contains("opacity-100")) {
+        ownerDropDown.classList.remove("opacity-100");
+        ownerDropDown.classList.add("opacity-0");
+        ownerDropDown.classList.remove("pointer-events-auto");
+        ownerDropDown.classList.add("pointer-events-none");
     }
 })
 
@@ -383,7 +393,6 @@ updateTaskform.addEventListener("click", function() {
     if(updateStatusDropDown.classList.contains("opacity-100")) {
         updateStatusDropDown.classList.remove("opacity-100");
         updateStatusDropDown.classList.add("opacity-0");
-
         updateStatusDropDown.classList.remove("pointer-events-auto");
         updateStatusDropDown.classList.add("pointer-events-none");
     }
@@ -391,9 +400,15 @@ updateTaskform.addEventListener("click", function() {
     if(updateUrgencyDropDown.classList.contains("opacity-100")) {
         updateUrgencyDropDown.classList.remove("opacity-100");
         updateUrgencyDropDown.classList.add("opacity-0");
-
         updateUrgencyDropDown.classList.remove("pointer-events-auto");
         updateUrgencyDropDown.classList.add("pointer-events-none");
+    }
+
+    if(updateOwnerDropDown.classList.contains("opacity-100")) {
+        updateOwnerDropDown.classList.remove("opacity-100");
+        updateOwnerDropDown.classList.add("opacity-0");
+        updateOwnerDropDown.classList.remove("pointer-events-auto");
+        updateOwnerDropDown.classList.add("pointer-events-none");
     }
 })
 
@@ -454,7 +469,10 @@ document.addEventListener("click", function(e) {
         addMembersPopUp.classList.remove("pointer-events-auto");
         addMembersPopUp.classList.add("pointer-events-none");
     }
-    console.log("document click fired", e.target);
+
+    if(!toolTip.classList.contains("hidden")) {
+        toolTip.classList.add("hidden");
+    }
 })
 
 function logout() {
@@ -499,6 +517,30 @@ closeViewMemPopUp.addEventListener("click", function() {
     }
 })
 
+function getCurrentUser() {
+    const token = localStorage.getItem("token");
+    const payload = JSON.parse(atob(token.split(".")[1]));
+    let username = payload.sub;
+    toolTip.textContent = "Username: " + username;
+    if(username.length > 12) {
+        username = username.slice(0,9) + "...";
+    }
+    console.log(username);
+    displayUsername.textContent = username;
+}
+
+usernamePill.addEventListener("click", function(event) {
+    event.stopPropagation();
+    toolTip.classList.toggle("hidden");
+    usernamePill.classList.toggle("ring-4");
+    usernamePill.classList.toggle("ring-blue-800");
+})
+
+toolTip.addEventListener("click", function(event) {
+    event.stopPropagation();
+})
+
 //FETCH ALL TASKS NOW REMEMBERS WHERE YOU LEFT OFF
+getCurrentUser();
 fetchAllTasks(previousProject);
 fetchAllProjects();

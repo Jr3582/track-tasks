@@ -1,9 +1,3 @@
-const showPassBtn = document.getElementById("showPassBtn");
-const passwordInput = document.getElementById("passwordInput");
-const confirmPasswordInput = document.getElementById("confirmPasswordInput");
-const passwordValidationMsg = document.getElementById("passwordValidationMsg");
-const confirmPassMsg = document.getElementById("confirmPassValidationMsg");
-
 function showPassword() {
     if(confirmPasswordInput && passwordInput) {
         if(passwordInput.type === "password" && confirmPasswordInput.type === "password") {
@@ -39,20 +33,39 @@ if(passwordInput){
 
         //PASSWORD VALIDATION LOGIC
         if(passwordInput.value.length < 8) {
-            passwordValidationMsg.classList.remove("hidden");
+            passwordValidationMsg.classList.remove("opacity-0");
+            passwordValidationMsg.classList.add("opacity-100");
+            passwordInput.classList.remove("border-green-600");
+            passwordInput.classList.add("border-red-600");
             passwordValidationMsg.textContent = "Password too short!";
+            validPass = false;
         } else if(!oneUpper.test(passwordInput.value)) {
-            passwordValidationMsg.classList.remove("hidden");
+            passwordValidationMsg.classList.remove("opacity-0");
+            passwordValidationMsg.classList.add("opacity-100");
+            passwordInput.classList.remove("border-green-600");
+            passwordInput.classList.add("border-red-600");
             passwordValidationMsg.textContent = "Please include at least 1 uppercase letter!"
+            validPass = false;
         } else if(!hasTwoSpecial.test(passwordInput.value)) {
-            passwordValidationMsg.classList.remove("hidden");
+            passwordValidationMsg.classList.remove("opacity-0");
+            passwordValidationMsg.classList.add("opacity-100");
+            passwordInput.classList.remove("border-green-600");
+            passwordInput.classList.add("border-red-600");
             passwordValidationMsg.textContent = "Please include at least 2 special characters!"
+            validPass = false;
         } else if(!hasOneNumber.test(passwordInput.value)) {
-            passwordValidationMsg.classList.remove("hidden");
+            passwordValidationMsg.classList.remove("opacity-0");
+            passwordValidationMsg.classList.add("opacity-100");
+            passwordInput.classList.remove("border-green-600");
+            passwordInput.classList.add("border-red-600");
             passwordValidationMsg.textContent = "Please include at least 1 number";
+            validPass = false;
         } else {
-            passwordValidationMsg.classList.add("hidden");
+            passwordValidationMsg.classList.add("opacity-0");
             passwordInput.classList.add("border-green-600");
+            passwordInput.classList.remove("border-red-600");
+            passwordInput.classList.add("border-green-600");
+            validPass = true;
         }
     })
 }
@@ -60,14 +73,18 @@ if(passwordInput){
 if(confirmPasswordInput){
     confirmPasswordInput.addEventListener("input", function() {
         if(confirmPasswordInput.value != passwordInput.value) {
-            confirmPassMsg.classList.remove("hidden");
+            confirmPassMsg.classList.remove("opacity-0");
+            confirmPassMsg.classList.add("opacity-100");
             confirmPasswordInput.classList.remove("border-green-600");
             confirmPasswordInput.classList.add("border-red-600");
             confirmPassMsg.textContent = "Passwords do not match!";
+            confirmPass = false;
         } else {
-            confirmPassMsg.classList.add("hidden");
+            confirmPassMsg.classList.remove("opacity-100");
+            confirmPassMsg.classList.add("opacity-0");
             confirmPasswordInput.classList.remove("border-red-600");
             confirmPasswordInput.classList.add("border-green-600");
+            confirmPass = true;
         }
     })
 }

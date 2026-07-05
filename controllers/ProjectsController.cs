@@ -41,9 +41,9 @@ public class ProjectsController(AppDbContext context) : ControllerBase
     {
         var members = _context.UsersToProjects
             .Where(u => u.ProjectId == projectId)
-            .Select(u => u.User.Username)
+            .Select(u => new { u.UserId, u.User.Username})
             .ToList();
-            
+
         return Ok(members);
     }
 
@@ -142,6 +142,15 @@ public class ProjectsController(AppDbContext context) : ControllerBase
         _context.Projects.Remove(searchResult);
         _context.SaveChanges();
         return Ok();
+    }
+
+    [HttpDelete("{projectId}/members/{userId}")] 
+    public IActionResult RemoveMember([FromRoute] int projectId, [FromRoute] int userId){
+        var searchResult = _context.UsersToProjects.FirstOrDefault(p => p.ProjectId == projectId && p.UserId == userId);
+        if(searchResult == null) return NotFound("User or Project does not exist");
+        _context.UsersToProjects.Remove(searchResult);
+        _context.SaveChanges();
+        return Ok(searchResult);
     }
 }
 

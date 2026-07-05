@@ -10,19 +10,16 @@ function showCreateTask(status, event){
 
         createPopUp.classList.add("opacity-100");
         createPopUp.classList.add("pointer-events-auto");
-
     }
+    getListOfMembersForDropDown(curProjId, ownerDropDown, document.getElementById('curOwner'), document.getElementById('owner'));
 }
 
 //FUNCTION TO SHOW UPDATE TASK POP UP
 async function showUpdateTask(id, event) {
     event.stopPropagation();
     curTaskId = id;
-    const getTask = await fetch(`http://localhost:5056/Tasks/${id}`);
+    const getTask = await authFetch(`http://localhost:5056/Tasks/${id}`);
     const task = await getTask.json();
-
-    console.log(task);
-    console.log(task.urgency);
 
     updateTitle.value = task.title;
     updateSummary.value = task.summary;
@@ -31,12 +28,12 @@ async function showUpdateTask(id, event) {
     updateParentTask.value = task.parentTask;
     updateStartDate.value = task.startDate;
     updateDueDate.value = task.dueDate;
-    updateOwner.value = task.owner;
     updateCurStatus.value = task.status;
     updateCurUrgency.value = task.urgency;
 
     changeStatus(task.status, updateCurStatus);
     changeUrgency(task.urgency, updateCurUrgency);
+    changeOwner(task.owner, updateCurOwner, updateOwner, updateOwnerDropDown);
 
     if(updatePopUp.classList.contains("opacity-0")) {
         updatePopUp.classList.remove("opacity-0");
@@ -45,6 +42,7 @@ async function showUpdateTask(id, event) {
         updatePopUp.classList.add("opacity-100");
         updatePopUp.classList.add("pointer-events-auto");
     }
+    getListOfMembersForDropDown(curProjId, updateOwnerDropDown, document.getElementById('updateCurOwner'), document.getElementById('updateOwner'));
 }
 
 function showTaskDeletePopUp(task, taskId) {
@@ -65,6 +63,11 @@ function showCreateProject(event) {
     var dd = String(today.getDate()).padStart(2, '0');
     var mm = String(today.getMonth() + 1).padStart(2, '0');
     var yyyy = today.getFullYear();
+
+    const token = localStorage.getItem("token");
+    const payload = JSON.parse(atob(token.split(".")[1]));
+    const username = payload.sub;
+    projOwner.value = username;
 
     today = mm + '/' + dd + '/' + yyyy;
 

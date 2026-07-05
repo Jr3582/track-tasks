@@ -87,8 +87,19 @@
                 </button>
             </div>
             
-            <div class="flex flex-col mt-auto border-t-2 border-black pt-4 mx-2">
-                <div class="flex ml-auto mt-4 mt-auto mb-4">
+            <div class="flex flex-row items-center mt-auto border-t-2 border-black pt-4 mx-2 mb-2">
+                <div class="flex bg-blue-800 w-12 h-12 rounded-full z-20">
+
+                </div>
+
+                <div id="usernamePill" class="relative group -ml-2 bg-blue-500 h-8 max-w-28 pl-3 pr-3 rounded-r-md flex items-center cursor-pointer">
+                    <span id="displayUsername" class="font-playfair text-sm">[USER.NAME]</span>
+                    <div id="toolTip" class="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-sm rounded-md p-2 hidden group-hover:block w-max cursor-">
+                        [TOOL TIP TEXT]
+                    </div>
+                </div>
+
+                <div class="flex ml-auto">
                     <button class="bg-blue-600 p-2 rounded-md w-fit h-fit" onclick="logout()">
                         <span class="font-playfair text-xl">Logout</span>
                     </button>
@@ -117,7 +128,7 @@
                 <span class="font-playfair pl-2">Rename Project</span>
             </div>
             <div class="flex flex-row cursor-pointer hover:scale-105 transition ease-in-out items-center p-1" onclick="toggleViewMembersPopUp(event)">
-                <i class="fa-solid fa-thumbtack text-center w-4"></i>
+                <i class="fa-solid fa-user-group text-center w-4"></i>
                 <span class="font-playfair pl-2">View Members</span>
             </div>
             <div class="flex flex-row cursor-pointer hover:scale-105 transition ease-in-out items-center p-1" onclick="openAddMembersPopUp(event)">
@@ -203,9 +214,14 @@
                                 <!-- DUE DATE TEXT-BOX -->
                                 <span class="font-playfair">DUE DATE<span class="text-red-600"></span></span>
                                 <input id="due_date" type="date" class="flex bg-gray-300 ml-4 p-1 rounded-md font-playfair outline-none">
-                                <!-- OWNER -->
+                                <!-- OWNER DROP BOX -->
                                 <span class="font-playfair">OWNER<span class="text-red-600">*</span></span>
-                                <input required id="owner" type="text" class="flex bg-gray-300 ml-4 p-1 rounded-md font-playfair outline-none">
+                                <div class="relative ml-4">
+                                    <input type="hidden" id="owner" value="Alice">
+                                    <div id="curOwner" class="flex justify-between p-1 bg-purple-800 items-center rounded-md cursor-pointer button-anim" onclick="activateOwnerDropBox(event, document.getElementById('ownerDropDownOptions'), document.getElementById('statusDropDownOptions'), document.getElementById('urgencyDropDownOptions'))"><span class="font-playfair text-purple-300">Alice</span><span class="pl-2 text-purple-300">▽</span></div>
+                                    <div id="ownerDropDownOptions" class="absolute top-full left-0 w-full z-10 opacity-0 transition-opacity duration-300 pointer-events-none shadow-[3px_3px_4px_rgba(0,0,0,0.4)] max-h-32 overflow-y-auto overflow-x-hidden">
+                                    </div>
+                                </div>
                             </div>
 
                             <!-- OLD NON-CUSTOMIZED DROP BOX-->
@@ -297,9 +313,14 @@
                                 <!-- DUE DATE TEXT-BOX -->
                                 <span class="font-playfair">DUE DATE<span class="text-red-600"></span></span>
                                 <input id="updateDueDate" type="date" class="flex bg-gray-300 ml-4 p-1 rounded-md font-playfair outline-none">
-                                <!-- OWNER -->
+                                <!-- OWNER DROP BOX -->
                                 <span class="font-playfair">OWNER<span class="text-red-600">*</span></span>
-                                <input required id="updateOwner" type="text" class="flex bg-gray-300 ml-4 p-1 rounded-md font-playfair outline-none">
+                                <div class="relative ml-4">
+                                    <input type="hidden" id="updateOwner" value="Alice">
+                                    <div id="updateCurOwner" class="flex justify-between p-1 bg-purple-800 items-center rounded-md cursor-pointer button-anim" onclick="activateOwnerDropBox(event, document.getElementById('updateOwnerDropDownOptions'), document.getElementById('updateStatusDropDownOptions'), document.getElementById('updateUrgencyDropDownOptions'))"><span class="font-playfair text-purple-300">Alice</span><span class="pl-2 text-purple-300">▽</span></div>
+                                    <div id="updateOwnerDropDownOptions" class="absolute top-full left-0 w-full z-10 opacity-0 transition-opacity duration-300 pointer-events-none shadow-[3px_3px_4px_rgba(0,0,0,0.4)] max-h-32 overflow-y-auto overflow-x-hidden">
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -346,17 +367,7 @@
                                 <span id="invalidOwnerMsg" class="text-red-500 text-sm font-playfair opacity-0">[Error Message]</span>
                                 <div class="flex flex-row justify-between mt-1">
                                     <span class="font-playfair">OWNER<span class="text-red-600">*</span></span>
-                                    <input id="projOwner" type="text" class="flex bg-gray-300 ml-4 p-1 rounded-md font-playfair outline-none">
-                                </div>
-                                
-                                <div class="flex flex-row justify-between">
-                                    <span class="font-playfair">TAGS<span class="text-red-600"></span></span>
-                                    <input id="projTags" type="text" class="flex bg-gray-300 ml-4 p-1 rounded-md font-playfair outline-none">
-                                </div>
-
-                                <div class="flex flex-row justify-between">
-                                    <span class="font-playfair">MEMBERS<span class="text-red-600"></span></span>
-                                    <input id="projMembers" type="text" class="flex bg-gray-300 ml-4 p-1 rounded-md font-playfair outline-none">
+                                    <input id="projOwner" disabled type="text" class="flex bg-gray-500 ml-4 p-1 rounded-md font-playfair outline-none placeholder-black">
                                 </div>
 
                                 <div class="flex flex-row justify-between">
@@ -411,8 +422,7 @@
             <div class="flex w-full h-full flex-col bg-white rounded-md p-8 gap-2 justify-between items-center text-2xl">
                 <span class="text-center font-playfair mb-2 self-start">Current Members part of <span>[PROJECT_NAME]</span></span>
                 <div class="w-full h-full border-2 border-black max-h-64 overflow-y-auto">
-                    <ul id="listOfMembers" class="list-none text-4xl font-playfair p-1">
-                        <li class="before:content-['•'] before:mr-2 before:text-4xl flex items-center"><span class="bg-gray-300 rounded-md px-3">hi</span><button class="ml-2 text-red-600 text-2xl font-sans cursor-pointer hover:scale-110 transition ease-in-out duration-300">✕</button></li>
+                    <ul id="listOfMembers" class="flex flex-col list-none text-4xl font-playfair p-1 gap-2">
                     </ul>
                 </div>
                 <div class="mt-4">
@@ -452,9 +462,12 @@
                         <span class="flex w-1/2">Task Title</span>
                         <button id="deleteBtn" name="PROJ_07" class="flex leading-none text-2xl ml-auto opacity-0 group-hover:opacity-100 transition-opacity duration-700 font-sans" onclick="showTaskDeletePopUp()">X</button>
                     </div>
-                    <div class="flex">
-                        <span class="text-lg">PROJ-01</span>
-                        <span class="text-2xl text-red-800 ml-auto pr-1">!</span>
+                    <div class="flex flex-col mt-4">
+                        <span class="text-xs font-playfair">Owner: [OWNER NAME]</span>
+                        <div class="flex">
+                            <span class="text-lg">PROJ-01</span>
+                            <span class="text-2xl text-red-800 ml-auto pr-1">!</span>
+                        </div>
                     </div>
                 </div>
             </div>

@@ -3,8 +3,10 @@ const updateTaskform = document.getElementById("updateTask");
 const createProjectForm = document.getElementById("createProject");
 const statusDropDown = document.getElementById("statusDropDownOptions");
 const urgencyDropDown = document.getElementById("urgencyDropDownOptions");
+const ownerDropDown = document.getElementById("ownerDropDownOptions");
 const updateStatusDropDown = document.getElementById("updateStatusDropDownOptions");
 const updateUrgencyDropDown = document.getElementById("updateUrgencyDropDownOptions");
+const updateOwnerDropDown = document.getElementById("updateOwnerDropDownOptions");
 
 const createPopUp = document.getElementById("popUp");
 const updatePopUp = document.getElementById("updatePopUp");
@@ -79,3 +81,22 @@ const toggleSideMenuText = document.getElementById("toggleSideMenuText");
 const listOfCurProjects = document.getElementById("listOfProjects");
 const curProjectName = document.getElementById("curProjectName");
 const kebabMenu = document.getElementById("kebabDropdown");
+const displayUsername = document.getElementById("displayUsername");
+const toolTip = document.getElementById("toolTip");
+const usernamePill = document.getElementById("usernamePill");
+
+//REGISTERING USERS
+const usernameInput = document.getElementById("usernameInput");
+const emailInput = document.getElementById("emailInput");
+const usernameErrorMsg = document.getElementById("usernameErrorMsg");
+const emailErrorMsg = document.getElementById("emailErrorMsg");
+const registerForm = document.getElementById("registerForm");
+const registerErrorMsg = document.getElementById("registerErrorMsg");
+const registerUserBtn = document.getElementById("registerUserBtn");
+
+//PASSWORD DOMS
+const showPassBtn = document.getElementById("showPassBtn");
+const passwordInput = document.getElementById("passwordInput");
+const confirmPasswordInput = document.getElementById("confirmPasswordInput");
+const passwordValidationMsg = document.getElementById("passwordValidationMsg");
+const confirmPassMsg = document.getElementById("confirmPassValidationMsg");

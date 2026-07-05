@@ -130,27 +130,57 @@ function activateUrgencyDropBox(event, urgentDropDown, statDropDown) {
     }
 }
 
-function switchTaskStatus(task, titleDiv, taskTitle, deleteButton, projNameDiv, projName, urgency, newTask) {
+function changeOwner(name, ownerDOM, hiddenInput, dropdownDOM) {
+    hiddenInput.value = name;
+    ownerDOM.children[0].textContent = name;
+    dropdownDOM.classList.remove("opacity-100");
+    dropdownDOM.classList.remove("pointer-events-auto");
+    dropdownDOM.classList.add("opacity-0");
+    dropdownDOM.classList.add("pointer-events-none");
+}
+
+function activateOwnerDropBox(event, ownerDropDown, statDropDown, urgentDropDown) {
+    event.stopPropagation();
+
+    if(ownerDropDown.classList.contains("opacity-100")) {
+        ownerDropDown.classList.remove("opacity-100");
+        ownerDropDown.classList.remove("pointer-events-auto");
+        ownerDropDown.classList.add("opacity-0");
+        ownerDropDown.classList.add("pointer-events-none");
+    } else {
+        if(statDropDown.classList.contains("opacity-100")) statDropDown.classList.remove("opacity-100"); statDropDown.classList.add("opacity-0")
+        if(statDropDown.classList.contains("pointer-events-auto")) statDropDown.classList.remove("pointer-events-auto"); statDropDown.classList.add("pointer-events-none")
+        if(urgentDropDown.classList.contains("opacity-100")) urgentDropDown.classList.remove("opacity-100"); urgentDropDown.classList.add("opacity-0")
+        if(urgentDropDown.classList.contains("pointer-events-auto")) urgentDropDown.classList.remove("pointer-events-auto"); urgentDropDown.classList.add("pointer-events-none")
+
+        ownerDropDown.classList.remove("opacity-0");
+        ownerDropDown.classList.remove("pointer-events-none");
+        ownerDropDown.classList.add("opacity-100");
+        ownerDropDown.classList.add("pointer-events-auto");
+    }
+}
+
+function buildAndPlaceTaskCard(task, titleDiv, taskTitle, deleteButton, projName, urgency, newTask, taskSubInfoDiv, ownerSpan, projectNameAndUrgencyDiv) {
     let bgColor;
     let column;
     //APPENDING EVERYTHING TOGETHER
     titleDiv.appendChild(taskTitle);
     titleDiv.appendChild(deleteButton);
 
-    projNameDiv.appendChild(projName);
-    projNameDiv.appendChild(urgency);
+    projectNameAndUrgencyDiv.appendChild(projName);
+    projectNameAndUrgencyDiv.appendChild(urgency);
+
+    taskSubInfoDiv.appendChild(ownerSpan);
+    taskSubInfoDiv.appendChild(projectNameAndUrgencyDiv);
 
     newTask.appendChild(titleDiv);
-    newTask.appendChild(projNameDiv);
-    console.log(task.status);
+    newTask.appendChild(taskSubInfoDiv);
     switch(task.status) {
         case "TO DO":
-            //ADDING CLASSES
             bgColor = "bg-blue-600";
             column = todo_col;
             break;
         case "IN PROGRESS":
-            //ADDING CLASSES
             bgColor = "bg-green-600";
             column = inprog_col;
             break;
@@ -185,7 +215,6 @@ function fetchUrgency(taskUrgency) {
             break;
     }
     return res;
-
 }
 
 //HELPER FUNCTION TO CREATE TASK CARDS
@@ -198,6 +227,9 @@ function createTaskCard(task) {
     const title = document.createElement("span");
     const urgency = document.createElement("span");
     const taskId = task.id;
+    const taskSubInfoDiv = document.createElement("div");
+    const ownerSpan = document.createElement("span");
+    const projectNameAndUrgencyDiv = document.createElement("div");
     newTask.setAttribute("onclick", `showUpdateTask(${task.id.toString()}, event)`);
     newTask.setAttribute("id", task.id.toString());
     let projectName;
@@ -211,9 +243,9 @@ function createTaskCard(task) {
         event.stopPropagation();
     })
 
+    //ADDING CLASS STYLING
     newTask.className = "relative rounded-md p-2 font-playfair text-2xl text-bold task-card cursor-pointer button-anim mb-2 group";
 
-    //ADDING CLASS STYLING
     titleDiv.className = "flex h-fit";
     projNameDiv.className = "flex";
 
@@ -223,10 +255,15 @@ function createTaskCard(task) {
     title.className = "flex w-1/2";
     projName.className = "text-lg";
 
+    taskSubInfoDiv.className = "flex flex-col mt-4";
+    ownerSpan.className = "text-xs font-playfair italic font-bold";
+    projectNameAndUrgencyDiv.className = "flex";
+
     //CHANGING TEXT
     title.textContent = task.title;
     deleteButton.textContent = "X";
     urgency.textContent = fetchUrgency(task.urgency);
+    ownerSpan.textContent = "Owner: " + task.owner;
     //~~~ PROJ_ IS JUST FILLER FOR NOW, I'LL CHANGE LATER TO REFLECT ACTUAL PROJECTS ~~~
     if(task.projectName.length >= 4) {
         projectName = task.projectName.slice(0,4).toUpperCase();
@@ -235,7 +272,7 @@ function createTaskCard(task) {
     }
     projName.textContent = `${projectName.replace(/\s/g, "")}-${task.taskNumber}`;
 
-    switchTaskStatus(task, titleDiv, title, deleteButton, projNameDiv, projName, urgency, newTask);
+    buildAndPlaceTaskCard(task, titleDiv, title, deleteButton, projName, urgency, newTask, taskSubInfoDiv, ownerSpan, projectNameAndUrgencyDiv);
 }
 
 function toggleKebabMenu(event) {

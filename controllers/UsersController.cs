@@ -17,6 +17,22 @@ public class UsersController(AppDbContext context, IConfiguration configuration)
     private AppDbContext _context = context;
     private IConfiguration _configuration = configuration;
     
+    [HttpGet("checkEmail")]
+    public IActionResult GetUserEmail([FromQuery] string email)
+    {
+        var checkUser = _context.Users.FirstOrDefault(u => u.Email == email);
+        if(checkUser == null) return Ok();
+        return Conflict("Email already exists!");
+    }
+
+    [HttpGet("check")]
+    public IActionResult GetUsername([FromQuery] string username)
+    {
+        var checkUser = _context.Users.FirstOrDefault(u => u.Username == username);
+        if(checkUser == null) return Ok();
+        return Conflict("Username already exists!");
+    }
+
     [HttpPost("register")] 
     //POST == ADD
     public IActionResult RegisterUser([FromBody] User user)

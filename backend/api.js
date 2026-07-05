@@ -134,24 +134,100 @@ async function changeName(newName, projectId) {
     return response;
 }
 
+async function deleteMember(projectId, userId) {
+    const response = await authFetch (`http://localhost:5056/Projects/${projectId}/members/${userId}`, {
+        method: "DELETE",
+    })
+    const member = document.getElementById("member_" + userId);
+    member.remove();
+    return response;
+}
+
 async function getListOfMembers(projectId) {
     const response = await authFetch(`http://localhost:5056/Projects/${projectId}/members`);
+    const pResponse = await authFetch(`http://localhost:5056/Projects/${projectId}`);
+    const project = await pResponse.json();
     const members = await response.json();
+    const token = localStorage.getItem("token");
+    const payload = JSON.parse(atob(token.split(".")[1]));
+    const username = payload.sub;
+
+    //ADDING THE OWNER FIRST
+    const ownerLi = document.createElement("li");
+    const ownerName = document.createElement("span");
+    const ownerBadge = document.createElement("span");
+    ownerLi.className = "before:content-['•'] before:mr-2 before:text-4xl flex items-center";
+    ownerName.className = "bg-gray-300 rounded-md px-3";
+    ownerName.textContent = project.owner;
+    ownerBadge.className = "ml-2 text-sm bg-yellow-400 text-black rounded-md px-1 font-sans";
+    ownerBadge.textContent = "Owner";
+    ownerLi.appendChild(ownerName);
+    ownerLi.appendChild(ownerBadge);
+    listOfMembers.appendChild(ownerLi);
+
+    //ADDING REST OF MEMBERS
     for(let member of members) {
         const memberLi = document.createElement("li");
         const memberName = document.createElement("span");
-        const deleteMemberButton = document.createElement("button");
 
-        memberName.textContent = member;
-        deleteMemberButton.textContent = "x";
+        memberName.textContent = member.username;
 
         memberLi.className = "before:content-['•'] before:mr-2 before:text-4xl flex items-center";
         memberName.className = "bg-gray-300 rounded-md px-3";
-        deleteMemberButton.className = "ml-2 text-red-600 text-2xl font-sans cursor-pointer hover:scale-110 transition ease-in-out duration-300";
-        memberLi.appendChild(memberName);
-        memberLi.appendChild(deleteMemberButton);
-        listOfMembers.appendChild(memberLi);
-    }
+        memberLi.id = "member_"+member.userId;
 
+
+        memberLi.appendChild(memberName);
+        listOfMembers.appendChild(memberLi);
+
+        //ONLY THE OWNER CAN SEE AND DELETE USERS
+        if(project.owner == username) {
+            const deleteMemberButton = document.createElement("button");
+            deleteMemberButton.className = "ml-2 text-red-600 text-2xl font-sans cursor-pointer hover:scale-110 transition ease-in-out duration-300";
+            deleteMemberButton.textContent = "x";
+            deleteMemberButton.addEventListener("click", function() {
+                deleteMember(projectId, member.userId);
+            })
+            memberLi.appendChild(deleteMemberButton);
+        }
+    }
+    return response;
+}
+
+async function getListOfMembersForDropDown(projectId, dropdownEl, curOwnerEl, ownerInputEl) {
+    dropdownEl.innerHTML = "";
+
+    const response = await authFetch(`http://localhost:5056/Projects/${projectId}/members`);
+    const pResponse = await authFetch(`http://localhost:5056/Projects/${projectId}`);
+    const project = await pResponse.json();
+    const members = await response.json();
+    const projectOwner = project.owner;
+
+    const ownerDiv = document.createElement("div");
+    const ownerName = document.createElement("span");
+    ownerDiv.className = "bg-purple-800 button-anim cursor-pointer";
+    ownerName.className = "font-playfair text-purple-300 p-1";
+    ownerName.textContent = projectOwner;
+    ownerDiv.appendChild(ownerName);
+    ownerDiv.addEventListener("click", function() {
+        changeOwner(projectOwner, curOwnerEl, ownerInputEl, dropdownEl);
+    });
+    dropdownEl.appendChild(ownerDiv);
+
+    for(let member of members) {
+        const memberDiv = document.createElement("div");
+        const memberName = document.createElement("span");
+
+        memberDiv.className = "bg-purple-800 button-anim cursor-pointer";
+        memberName.className = "font-playfair text-purple-300 p-1";
+        memberName.textContent = member.username;
+        memberDiv.appendChild(memberName);
+
+        memberDiv.addEventListener("click", function() {
+            changeOwner(member.username, curOwnerEl, ownerInputEl, dropdownEl);
+        });
+
+        dropdownEl.appendChild(memberDiv);
+    }
     return response;
 }
