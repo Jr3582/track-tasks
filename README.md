@@ -26,6 +26,11 @@ JustTracks allows users to create projects, manage tasks, and collaborate with t
 - **SortableJS** (Drag and drop)
 - **Playfair Display** (Google Fonts)
 
+### DevOps & Testing
+- **Docker** (Multi-stage builds) + **docker-compose**
+- **xUnit** (Unit testing with EF Core InMemory)
+- **GitHub Actions** (CI pipeline)
+
 ---
 
 ## Features
@@ -38,12 +43,36 @@ JustTracks allows users to create projects, manage tasks, and collaborate with t
 - **Unique Username Validation** — Real-time username availability check on registration.
 - **Inline Editing** — Rename projects directly in the UI without a separate form.
 - **Kebab Dropdown Menu** — Per-project context menu with portal pattern to escape overflow clipping in scrollable containers.
+- **Automated Testing** — xUnit test suite covering endpoint behavior and authorization edge cases (404/409/403/201) using an in-memory EF Core database.
+- **Continuous Integration** — GitHub Actions workflow runs the full test suite on every push.
+- **Containerized Deployment** — One-command setup with Docker Compose (API + PostgreSQL).
 
 ---
 
 ## Getting Started
 
-### Prerequisites
+### Option 1: Run with Docker (recommended)
+
+The fastest way to get JustTracks running — no local .NET or PostgreSQL setup required.
+
+**Prerequisites:** [Docker Desktop](https://www.docker.com/products/docker-desktop)
+
+```bash
+git clone git@github.com:Jr352/track-tasks.git
+cd track-tasks
+docker-compose up --build
+```
+
+Then apply the database migrations (one-time setup, with containers running):
+```bash
+dotnet ef database update --connection "Host=localhost;Database=tracktasks;Username=jimmyren;Password=postgres;Port=5432"
+```
+
+The API will be available at `http://localhost:5056` (Swagger at `/swagger`).
+
+### Option 2: Run locally
+
+**Prerequisites:**
 - [.NET 10 SDK](https://dotnet.microsoft.com/download)
 - [PostgreSQL](https://www.postgresql.org/download/) (v14+)
 - A modern web browser
@@ -84,10 +113,25 @@ Open `index.html` in your browser directly, or use a live server extension (e.g.
 
 ---
 
+## Running Tests
+
+The test suite uses xUnit with an in-memory EF Core database — no real database required.
+
+```bash
+dotnet test
+```
+
+Tests cover endpoint behavior including authorization gates (user/project existence, duplicate membership conflicts, caller permission checks). The same suite runs automatically on every push via GitHub Actions.
+
+---
+
 ## Project Structure
 
 ```
 JustTracks/
+├── .github/
+│   └── workflows/
+│       └── ci.yml              # GitHub Actions CI pipeline
 ├── Controllers/
 │   ├── ProjectsController.cs   # Project + member endpoints
 │   ├── TasksController.cs      # Task CRUD endpoints
@@ -100,6 +144,8 @@ JustTracks/
 ├── Data/
 │   └── AppDbContext.cs
 ├── Migrations/
+├── track-tasks.Tests/          # xUnit test project
+│   └── ProjectsControllerTests.cs
 ├── frontend/
 │   ├── index.html
 │   ├── login.html
@@ -110,6 +156,8 @@ JustTracks/
 │   │   ├── ui.js
 │   │   └── popups.js
 │   └── css/
+├── Dockerfile                  # Multi-stage build (SDK → runtime)
+├── docker-compose.yml          # API + PostgreSQL orchestration
 └── appsettings.json
 ```
 
@@ -139,4 +187,4 @@ JustTracks/
 ## Author
 
 **Jimmy** — Drexel University, BS Computer Science  
-[GitHub](https://github.com/Jr352) · [LinkedIn](https://linkedin.com/in/jimmy-ren-dev)
+[GitHub](https://github.com/Jr3582) · [LinkedIn](https://www.linkedin.com/in/jimmy-ren-dev/)
