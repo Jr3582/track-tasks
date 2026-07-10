@@ -1,3 +1,6 @@
+using System.Security.Claims;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using track_tasks;
@@ -18,6 +21,17 @@ public class ProjectsControllerTests
 
         return new AppDbContext(options);
     }
+    private void FakeLogin(ProjectsController controller, int userId)
+    {
+        var claims = new List<Claim> { new Claim("userId", userId.ToString()) };
+        var identity = new ClaimsIdentity(claims, "TestAuth");
+        var user = new ClaimsPrincipal(identity);
+
+        controller.ControllerContext = new ControllerContext
+        {
+            HttpContext = new DefaultHttpContext { User = user }
+        };
+    }
 
     [Fact]
     public void GetProject_ReturnsNotFound_WhenProjectDoesNotExist()
@@ -35,7 +49,7 @@ public class ProjectsControllerTests
     public void GetProject_ReturnsOk_WhenProjectExists()
     {
         var context = GetFakeDb();
-        var project = new Project { Title = "Test"};
+        var project = new Project { Title = "Test" };
         context.Projects.Add(project);
         context.SaveChanges();
         var controller = new ProjectsController(context);
@@ -62,5 +76,101 @@ public class ProjectsControllerTests
         var controller = new ProjectsController(context);
         var result = controller.DeleteProject(project.Id);
         Assert.IsType<OkResult>(result);
+    }
+
+    [Fact]
+    public void AddUserToProject_ReturnsNotFound_WhenUserDoesNotExist()
+    {
+        var context = GetFakeDb();
+        var controller = new ProjectsController(context);
+        FakeLogin(controller, 1);
+        var request = new AddMemberRequest { Username = "John Doe" };
+        var result = controller.AddUserToProject(request, 1);
+        Assert.IsType<NotFoundObjectResult>(result);
+    }
+
+    [Fact]
+    public void AddUserToProject_ReturnsNotFound_WhenProjectDoesNotExist()
+    {
+        var context = GetFakeDb();
+        //ADD FAKE USER INTO DB
+        var user = new User { Username = "John Doe", Password = "test123" };
+        context.Users.Add(user);
+        context.SaveChanges();
+        var controller = new ProjectsController(context);
+        //FAKE LOGIN WITH FAKE USER
+        FakeLogin(controller, user.Id);
+        //INITIALIZE REQUEST TO ADD FAKE USER
+        var request = new AddMemberRequest { Username = "John Doe" };
+        var result = controller.AddUserToProject(request, 999);
+        Assert.IsType<NotFoundObjectResult>(result);
+    }
+
+    [Fact]
+    public void AddUserToProject_ReturnsConflict_WhenUserAlreadyMember()
+    {
+        var context = GetFakeDb();
+        //SEED FAKE USER
+        var user = new User { Username = "John Doe", Password = "test123" };
+        context.Users.Add(user);
+        context.SaveChanges();
+        //SEED FAKE PROJECT
+        var project = new Project { Title = "Test Title" };
+        context.Projects.Add(project);
+        context.SaveChanges();
+        //SEED FAKE USER TO PROJECT RELATIONSHIP
+        var userToProject = new UsersToProjects { UserId = user.Id, ProjectId = project.Id };
+        context.UsersToProjects.Add(userToProject);
+        context.SaveChanges();
+        var controller = new ProjectsController(context);
+        FakeLogin(controller, user.Id);
+        var request = new AddMemberRequest { Username = "John Doe" };
+        //TRY AND ADD THE SAME USER TO THE PROJECT
+        var result = controller.AddUserToProject(request, project.Id);
+        Assert.IsType<ConflictObjectResult>(result);
+    }
+
+    [Fact]
+    public void AddUserToProject_ReturnsForbidden_WhenCallerNotMember()
+    {
+        var context = GetFakeDb();
+        var user = new User { Username = "John Doe", Password = "test123" };
+        context.Users.Add(user);
+        context.SaveChanges();
+        var project = new Project { Title = "Test Title" };
+        context.Projects.Add(project);
+        context.SaveChanges();
+        var controller = new ProjectsController(context);
+        FakeLogin(controller, 999);
+        var request = new AddMemberRequest { Username = "John Doe" };
+        var result = controller.AddUserToProject(request, project.Id);
+        var objectResult = Assert.IsType<ObjectResult>(result);
+        Assert.Equal(403, objectResult.StatusCode);
+    }
+
+    [Fact]
+    public void AddUserToProject_Returns201_WhenRequestIsValid()
+    {
+        var context = GetFakeDb();
+        var target = new User { Username = "John Doe", Password = "test123" };
+        context.Users.Add(target);
+        context.SaveChanges();
+        var caller = new User { Username = "Jimmy Ren", Password = "test1234" };
+        context.Users.Add(caller);
+        context.SaveChanges();
+        var project = new Project { Title = "Test Title" };
+        context.Projects.Add(project);
+        context.SaveChanges();
+        var userToProject = new UsersToProjects { UserId = caller.Id, ProjectId = project.Id };
+        context.UsersToProjects.Add(userToProject);
+        context.SaveChanges();
+        var controller = new ProjectsController(context);
+        FakeLogin(controller, caller.Id);
+        var request = new AddMemberRequest { Username = "John Doe" };
+        var result = controller.AddUserToProject(request, project.Id);
+        var objectResult = Assert.IsType<ObjectResult>(result);
+        Assert.Equal(201, objectResult.StatusCode);
+        Assert.NotNull(context.UsersToProjects.FirstOrDefault(
+            p => p.UserId == target.Id && p.ProjectId == project.Id));
     }
 }
