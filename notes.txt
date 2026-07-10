@@ -1,0 +1,14 @@
+MAKING XUNIT TESTS:
+- dotnet new xunit -o track-tasks.Tests - CREATES FOLDER
+- dotnet sln add track-tasks.Tests - CREATES .sln FILE
+- dotnet add track-tasks.Tests reference track-tasks.csproj - REFERENCES .csproj
+- dotnet add track-tasks.Tests package Microsoft.AspNetCore.Mvc.Testing - MAKES FAKE IN-MEMORY COPY OF OUR API
+- dotnet add track-tasks.Tests package Microsoft.EntityFrameworkCore.InMemory - MAKE FAKE RAM FOR DB, TEST NEVER TOUCHES REAL DB
+- dotnet test - RUNS ALL TEST CASES
+
+
+FIRST LINE: CREATS A NEW xUnit TEST PROJECT IN FOLDER CALL .TESTS
+SECOND LINE: ADDS IT TO YOUR SOLUTION FILE
+
+.sln = SOLUTION FILE, IT'S A CONTAINER/ORGANIZER FOR MULTIPLE PROJECTS
+.sln GROUPS RELATED PROJECTS SO TOOLS TREAT THEM AS ONE UNIT

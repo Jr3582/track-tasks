@@ -20,6 +20,9 @@
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.2" />
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="10.2.1" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.19.1" />
+    <Compile Remove="track-tasks.Tests/**" />
+    <Content Remove="track-tasks.Tests/**" />
+    <None Remove="track-tasks.Tests/**" />
   </ItemGroup>
 
 </Project>

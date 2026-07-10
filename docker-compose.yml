@@ -1,20 +1,26 @@
-version: '3.8'
-
+#COMPOSE = WHAT API IS RUNNING AND HOW THEY CONNECT
 services:
   api:
     build: .
     ports:
+      #(LEFT SIDE: RIGHT SIDE)
+      #LEFT SIDE: MY CHOICE
+      #RIGHT SIDE: FIXED CONTAINER USE "docker-compose ps" IN TERMINAL
+      #"5056:8080" = REQUEST HITTING PORT 5056 GETS FORWARDED TO CONTAINER PORT 8080
       - "5056:8080"
     depends_on:
       - db
     environment:
+      #WHY WE USE "Host=db" and not "Host=localhost"
+      #localhost = MYSELF BUT POSTGRES ISN'T INSIDE THE API CONTAINER, db IS THE HOSTNAME 
       - ConnectionStrings__DefaultConnection=Host=db;Database=tracktasks;Username=jimmyren;Password=postgres
 
   db:
     image: postgres:16
-    ports:
-      - "5432:5432"
     environment:
       POSTGRES_USER: jimmyren
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: tracktasks
+
+#COMMANDS:
+#docker-compose up --build -> BUILD THE FILE
