@@ -1,5 +1,4 @@
 const loginForm = document.getElementById("loginForm");
-const usernameInput = document.getElementById("usernameInput");
 const loginErrorMsg = document.getElementById("loginErrorMsg");
 
 loginForm.addEventListener("submit", async function(event) {
@@ -17,11 +16,11 @@ loginForm.addEventListener("submit", async function(event) {
         body: JSON.stringify(user)
     });
 
-    const responseJSON = await response.json();
     if(!response.ok) {
         loginErrorMsg.classList.remove("hidden");
         loginErrorMsg.textContent = "Invalid username or password!";
     } else {
+        const responseJSON = await response.json();
         localStorage.setItem("token", responseJSON.token);
         loginErrorMsg.classList.add("hidden");
         window.location.href = "index.html";

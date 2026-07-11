@@ -1,3 +1,6 @@
+let validPass = false;
+let confirmPass = false;
+
 function showPassword() {
     if(confirmPasswordInput && passwordInput) {
         if(passwordInput.type === "password" && confirmPasswordInput.type === "password") {
@@ -24,7 +27,7 @@ function showPassword() {
     }
 }
 
-if(passwordInput){
+if(passwordInput && passwordValidationMsg){
     passwordInput.addEventListener("input", function() {
         //REGEX
         const oneUpper = /[A-Z]+/;
@@ -70,7 +73,7 @@ if(passwordInput){
     })
 }
 
-if(confirmPasswordInput){
+if(confirmPasswordInput && confirmPassMsg){
     confirmPasswordInput.addEventListener("input", function() {
         if(confirmPasswordInput.value != passwordInput.value) {
             confirmPassMsg.classList.remove("opacity-0");

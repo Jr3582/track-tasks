@@ -65,16 +65,6 @@
             <div class="flex flex-col mx-4 mt-4 justify-center items-center">
                 <span class="font-playfair text-2xl">Your Projects:</span>
                 <div id="listOfProjects" class="flex flex-col overflow-y-auto max-h-64 w-full p-2 gap-1 pr-4">
-                    <div class="group relative flex items-center justify-between bg-gray-300 w-full rounded-md hover:bg-gray-500 hover:scale-105 hover:z-20 cursor-pointer transition ease-in-out duration-300 px-1">
-                        <div id="nameWrapper">
-                            <span class="font-playfair text-xl">Kebab Menu Test</span>
-                        </div>
-                        <div class="absolute right-0 rounded-m hover:bg-gray-400 w-fit h-full rounded-md">
-                            <button class="hidden group-hover:flex rounded-md pl-1 pr-1 h-full w-full items-center" onclick="toggleKebabMenu(event)">
-                                <i class="fa-solid fa-ellipsis"></i>
-                            </button>
-                        </div>
-                    </div>
                 </div>
             </div>
 
@@ -316,9 +306,9 @@
                                 <!-- OWNER DROP BOX -->
                                 <span class="font-playfair">OWNER<span class="text-red-600">*</span></span>
                                 <div class="relative ml-4">
-                                    <input type="hidden" id="updateOwner" value="Alice">
+                                    <input type="hidden" id="updateOwner" value="NONE">
                                     <div id="updateCurOwner" class="flex justify-between p-1 bg-purple-800 items-center rounded-md cursor-pointer button-anim" onclick="activateOwnerDropBox(event, document.getElementById('updateOwnerDropDownOptions'), document.getElementById('updateStatusDropDownOptions'), document.getElementById('updateUrgencyDropDownOptions'))"><span class="font-playfair text-purple-300">Alice</span><span class="pl-2 text-purple-300">▽</span></div>
-                                    <div id="updateOwnerDropDownOptions" class="absolute top-full left-0 w-full z-10 opacity-0 transition-opacity duration-300 pointer-events-none shadow-[3px_3px_4px_rgba(0,0,0,0.4)] max-h-32 overflow-y-auto overflow-x-hidden">
+                                    <div id="updateOwnerDropDownOptions" class="absolute top-full left-0 w-full z-10 opacity-0 transition-opacity duration-300 pointer-events-none shadow-[3px_3px_4px_rgba(0,0,0,0.4)] max-h-32 overflow-y-scroll overflow-x-hidden">
                                     </div>
                                 </div>
                             </div>
@@ -455,21 +445,6 @@
             </div>
             <div id="todo_col">
                 <!-- NEW TASKS GOES HERE -->
-
-                <!-- DUMMY TEST TASK FOR UI PURPOSES -->
-                <div class="relative bg-blue-600 rounded-md p-2 font-playfair text-2xl text-bold task-card cursor-pointer button-anim mb-2 group" onclick="showUpdateTask(1, event)">
-                    <div class="flex h-fit">
-                        <span class="flex w-1/2">Task Title</span>
-                        <button id="deleteBtn" name="PROJ_07" class="flex leading-none text-2xl ml-auto opacity-0 group-hover:opacity-100 transition-opacity duration-700 font-sans" onclick="showTaskDeletePopUp()">X</button>
-                    </div>
-                    <div class="flex flex-col mt-4">
-                        <span class="text-xs font-playfair">Owner: [OWNER NAME]</span>
-                        <div class="flex">
-                            <span class="text-lg">PROJ-01</span>
-                            <span class="text-2xl text-red-800 ml-auto pr-1">!</span>
-                        </div>
-                    </div>
-                </div>
             </div>
             <!-- BUTTON TO CREATE NEW TASKS -->
             <button onclick="showCreateTask('TO DO', event)" class="flex w-full h-fit bg-blue-500 text-xl rounded-md item-center justify-center cursor-pointer button-anim">

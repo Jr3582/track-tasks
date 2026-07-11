@@ -1,6 +1,7 @@
 //FUNCTION TO SHOW CREATE TASK POP UP
-function showCreateTask(status, event){
+async function showCreateTask(status, event){
     event.stopPropagation();
+    if(!curProjId) return;
     st = status;
     switchOption(status, "TO DO", "IN PROGRESS", "IN REVIEW", "DONE", "bg-blue-800", "bg-green-800", "bg-yellow-800", "bg-red-800", "text-blue-500", "text-green-500", "text-yellow-500", "text-red-500", curStatus);
 
@@ -11,6 +12,11 @@ function showCreateTask(status, event){
         createPopUp.classList.add("opacity-100");
         createPopUp.classList.add("pointer-events-auto");
     }
+
+    const projRes = await authFetch(`http://localhost:5056/Projects/${curProjId}`);
+    const project = await projRes.json();
+    changeOwner(project.owner, document.getElementById('curOwner'), document.getElementById('owner'), ownerDropDown);
+
     getListOfMembersForDropDown(curProjId, ownerDropDown, document.getElementById('curOwner'), document.getElementById('owner'));
 }
 
@@ -18,8 +24,12 @@ function showCreateTask(status, event){
 async function showUpdateTask(id, event) {
     event.stopPropagation();
     curTaskId = id;
-    const getTask = await authFetch(`http://localhost:5056/Tasks/${id}`);
-    const task = await getTask.json();
+    const [taskRes, projRes] = await Promise.all([
+        authFetch(`http://localhost:5056/Tasks/${id}`),
+        authFetch(`http://localhost:5056/Projects/${curProjId}`)
+    ]);
+    const task = await taskRes.json();
+    const project = await projRes.json();
 
     updateTitle.value = task.title;
     updateSummary.value = task.summary;
@@ -33,7 +43,7 @@ async function showUpdateTask(id, event) {
 
     changeStatus(task.status, updateCurStatus);
     changeUrgency(task.urgency, updateCurUrgency);
-    changeOwner(task.owner, updateCurOwner, updateOwner, updateOwnerDropDown);
+    changeOwner(task.owner || project.owner, updateCurOwner, updateOwner, updateOwnerDropDown);
 
     if(updatePopUp.classList.contains("opacity-0")) {
         updatePopUp.classList.remove("opacity-0");

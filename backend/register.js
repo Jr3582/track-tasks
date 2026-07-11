@@ -1,6 +1,5 @@
 let validEmail = false;
 let validUsername = false;
-let validPass = false;
 let validConfirmPass = false;
 
 

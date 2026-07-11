@@ -2,9 +2,9 @@ let st = "TO DO";
 let urg = "LOW";
 let curTaskId = 0;
 let curTaskIdToDelete = 0;
-let curProjId = 4;
-let curProjectDirectory;
 let previousProject = localStorage.getItem("previousDirectory");
+let curProjId = previousProject ? parseInt(previousProject) : null;
+let curProjectDirectory = localStorage.getItem("previousDirectoryTitle");
 let activeProjDiv = null;
 let activeButton = null;
 let activeProjectId = null;
@@ -185,7 +185,7 @@ updateTaskform.addEventListener("submit", async function(event) {
     }
 
     const curTask = document.getElementById(curTaskId);
-    curTask.children[1].children[0].textContent = responseJSON.owner;
+    curTask.children[1].children[0].textContent = "Owner: " + responseJSON.owner;
 
     //GETS RID OF POPUP AFTER UPDATING
     if(updatePopUp.classList.contains("opacity-100")) {
@@ -354,7 +354,7 @@ updateTaskform.addEventListener("click", function(event) {
     event.stopPropagation();
 })
 
-deleteBtn.addEventListener("click", function(event) {
+deleteBtn?.addEventListener("click", function(event) {
     event.stopPropagation();
 })
 
@@ -542,5 +542,5 @@ toolTip.addEventListener("click", function(event) {
 
 //FETCH ALL TASKS NOW REMEMBERS WHERE YOU LEFT OFF
 getCurrentUser();
-fetchAllTasks(previousProject);
+if(previousProject) fetchAllTasks(previousProject);
 fetchAllProjects();

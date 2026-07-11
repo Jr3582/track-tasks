@@ -1,4 +1,7 @@
 # JustTracks 🗂️
+[![CI](https://github.com/Jr3582/track-tasks/actions/workflows/ci.yml/badge.svg)](https://github.com/Jr3582/track-tasks/actions/workflows/ci.yml)
+
+![JustTracks Demo](demo/justtracks-demo-small.gif)
 
 A full-stack project management web application inspired by Jira and Trello. Built as a portfolio project to demonstrate full-stack development skills including REST API design, authentication, and relational database modeling.
 
