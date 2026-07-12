@@ -258,9 +258,7 @@ confirmKeepProj.addEventListener("click", function() {
 createProjectForm.addEventListener("submit", async function (event) {
     event.stopPropagation();
     event.preventDefault();
-    const token = localStorage.getItem("token");
-    const payload = JSON.parse(atob(token.split(".")[1]));
-    const username = payload.sub;
+    const username = getOwner();
     if(projectName.value.length === 0) {
         invalidProjTitleMsg.classList.remove("hidden");
         invalidProjTitleMsg.textContent = "Please enter a name for your project!"
@@ -519,9 +517,7 @@ closeViewMemPopUp.addEventListener("click", function() {
 })
 
 function getCurrentUser() {
-    const token = localStorage.getItem("token");
-    const payload = JSON.parse(atob(token.split(".")[1]));
-    let username = payload.sub;
+    let username = getOwner();
     toolTip.textContent = "Username: " + username;
     if(username.length > 12) {
         username = username.slice(0,9) + "...";

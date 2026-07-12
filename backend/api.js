@@ -153,9 +153,7 @@ async function getListOfMembers(projectId) {
     const pResponse = await authFetch(`http://localhost:5056/Projects/${projectId}`);
     const project = await pResponse.json();
     const members = await response.json();
-    const token = localStorage.getItem("token");
-    const payload = JSON.parse(atob(token.split(".")[1]));
-    const username = payload.sub;
+    const username = getOwner();
 
     //ADDING THE OWNER FIRST
     const ownerLi = document.createElement("li");

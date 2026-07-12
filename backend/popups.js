@@ -74,9 +74,7 @@ function showCreateProject(event) {
     var mm = String(today.getMonth() + 1).padStart(2, '0');
     var yyyy = today.getFullYear();
 
-    const token = localStorage.getItem("token");
-    const payload = JSON.parse(atob(token.split(".")[1]));
-    const username = payload.sub;
+    const username = getOwner();
     projOwner.value = username;
 
     today = mm + '/' + dd + '/' + yyyy;

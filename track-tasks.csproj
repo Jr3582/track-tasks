@@ -1,10 +1,11 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <RootNamespace>track_tasks</RootNamespace>
+    <UserSecretsId>02c9c7ee-8785-4b8c-890a-fe94f273b7e4</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
