@@ -9,6 +9,7 @@ let activeProjDiv = null;
 let activeButton = null;
 let activeProjectId = null;
 let activeProjectName = null;
+let timerId = 0;
 
 
 new Sortable(todo_col, {
@@ -230,7 +231,6 @@ confirmDelProj.addEventListener("click", async function (event) {
         deleteProjectsPopUp.classList.add("pointer-events-none");
     }
 
-    kebabMenu.classList.add("hidden");
     activeProjDiv = null;
 })
 
@@ -453,7 +453,7 @@ document.addEventListener("click", function(e) {
         createProjectForm.reset();
     }
 
-    if(!kebabMenu.classList.contains("hidden") && !kebabMenu.contains(e.target) && !addMembersPopUp.contains(e.target)) {
+    if(!kebabMenu.classList.contains("hidden") && !kebabMenu.contains(e.target) && !addMembersPopUp.contains(e.target) && !viewMembersPopUp.contains(e.target) && !deleteProjectsPopUp.contains(e.target)) {
         kebabMenu.classList.add("hidden");
 
         activeProjDiv.classList.remove("scale-105", "bg-gray-500");
@@ -505,6 +505,7 @@ addMemButton.addEventListener("click", async function(event) {
     } else {
         memberPopUpText.textContent = "There was a error adding your member";
     }
+    memberUsername.value = "";
 })
 
 closeViewMemPopUp.addEventListener("click", function() {
@@ -539,6 +540,13 @@ usernamePill.addEventListener("click", function(event) {
 toolTip.addEventListener("click", function(event) {
     event.stopPropagation();
 })
+
+function getOwner() {
+    const token = localStorage.getItem("token");
+    const payload = JSON.parse(atob(token.split(".")[1]));
+    const username = payload.sub;
+    return username;
+}
 
 //FETCH ALL TASKS NOW REMEMBERS WHERE YOU LEFT OFF
 getCurrentUser();

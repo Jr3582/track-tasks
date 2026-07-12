@@ -18,6 +18,7 @@ const memberUsername = document.getElementById("memberUsername");
 const addMembersPopUp = document.getElementById("addMembersPopUp");
 const addMemButton = document.getElementById("addMemButton");
 const memberPopUpText = document.getElementById("memberPopUpText");
+const usernameSuggestions = document.getElementById("usernameSuggestions");
 
 //VIEWING MEMBERS
 const viewMembersPopUp = document.getElementById("viewMembersPopUp");
@@ -99,4 +100,4 @@ const showPassBtn = document.getElementById("showPassBtn");
 const passwordInput = document.getElementById("passwordInput");
 const confirmPasswordInput = document.getElementById("confirmPasswordInput");
 const passwordValidationMsg = document.getElementById("passwordValidationMsg");
-const confirmPassMsg = document.getElementById("confirmPassValidationMsg");
+const confirmPassMsg = document.getElementById("confirmPassMsg");

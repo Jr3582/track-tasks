@@ -302,6 +302,15 @@ function toggleKebabMenu(event) {
         buttonParent.classList.remove("hover:bg-gray-400");
 
         buttonParent.classList.add("bg-gray-400");
+
+        const deleteProjectRow = document.getElementById("deleteProjectRow");
+        if(listOfCurProjects.children.length <= 1) {
+            deleteProjectRow.classList.add("opacity-50", "pointer-events-none", "cursor-not-allowed");
+            deleteProjectRow.classList.remove("cursor-pointer", "hover:scale-105");
+        } else {
+            deleteProjectRow.classList.remove("opacity-50", "pointer-events-none", "cursor-not-allowed");
+            deleteProjectRow.classList.add("cursor-pointer", "hover:scale-105");
+        }
     } else if (!kebabMenu.classList.contains("hidden")) {
         kebabMenu.classList.add("hidden");
 
@@ -345,4 +354,40 @@ function renameProject() {
     nameInput.addEventListener("blur", function() {
         nameWrapper.innerHTML = `<span class="font-playfair text-xl">${nameInput.value}</span>`;
     });
+}
+
+memberUsername.addEventListener("input", async function() {
+    //CLEAR INNER HTML SO SUGGESTIONS DON'T STACK
+    usernameSuggestions.innerHTML = "";
+
+    //AUTOMATICALLY RETURN IF USERNAME IS NULL (NO ERRORS THIS WAY)
+    if(memberUsername.value === "") return;
+
+    //CLEAR TIMEOUT
+    clearTimeout(timerId);
+
+    timerId = setTimeout(async function() {
+        const searchUsers = await authFetch(`http://localhost:5056/Users/searchUsername?username=${memberUsername.value}`);
+        for(let users of await searchUsers.json()) {
+            if(getOwner() === users.username) continue;
+            
+            const searchedUserDiv = document.createElement("div");
+            searchedUserDiv.className = "p-1 font-playfair cursor-pointer border-black border-b-2";
+            searchedUserDiv.textContent = users.username;
+
+            searchedUserDiv.onclick = function() {
+                autoFillUsername(users.username);
+            }
+
+            usernameSuggestions.appendChild(searchedUserDiv);
+        }
+    }, 1000);
+})
+
+function autoFillUsername(username){
+    //GET RID OF DROPDOWN LIST AFTER NAME IS CLICKED
+    usernameSuggestions.innerHTML = "";
+
+    memberUsername.textContent = username;
+    memberUsername.value = username;
 }

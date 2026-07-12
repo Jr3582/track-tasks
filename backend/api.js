@@ -8,7 +8,10 @@ async function fetchAllTasks(projId) {
 
 async function fetchAllProjects() {
     const projs = await authFetch(`http://localhost:5056/Projects`);
-    for(let proj of await projs.json()) {
+    const projList = await projs.json();
+    let firstProjId = null;
+    for(let proj of projList) {
+        if(firstProjId === null) firstProjId = proj.id;
         const moreOptionsBtn = document.createElement("button");
         moreOptionsBtn.className = "hidden group-hover:flex rounded-md pl-1 pr-1 h-full w-full items-center";
         const i = document.createElement("i");
@@ -40,6 +43,8 @@ async function fetchAllProjects() {
         const previousProjectTitle = localStorage.getItem("previousDirectoryTitle");
         curProjectName.textContent = previousProjectTitle;
     }
+
+    return firstProjId;
 }
 
 async function updateStatusOnColSwitch(taskId, newStatus) {
@@ -167,6 +172,7 @@ async function getListOfMembers(projectId) {
 
     //ADDING REST OF MEMBERS
     for(let member of members) {
+        if(member.username === project.owner) continue;
         const memberLi = document.createElement("li");
         const memberName = document.createElement("span");
 

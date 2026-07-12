@@ -1,5 +1,5 @@
 let validPass = false;
-let confirmPass = false;
+let validConfirmPass = false;
 
 function showPassword() {
     if(confirmPasswordInput && passwordInput) {
@@ -64,12 +64,13 @@ if(passwordInput && passwordValidationMsg){
             passwordValidationMsg.textContent = "Please include at least 1 number";
             validPass = false;
         } else {
+            passwordValidationMsg.classList.remove("opacity-100");
             passwordValidationMsg.classList.add("opacity-0");
-            passwordInput.classList.add("border-green-600");
             passwordInput.classList.remove("border-red-600");
             passwordInput.classList.add("border-green-600");
             validPass = true;
         }
+        validateForm();
     })
 }
 
@@ -81,13 +82,14 @@ if(confirmPasswordInput && confirmPassMsg){
             confirmPasswordInput.classList.remove("border-green-600");
             confirmPasswordInput.classList.add("border-red-600");
             confirmPassMsg.textContent = "Passwords do not match!";
-            confirmPass = false;
+            validConfirmPass = false;
         } else {
             confirmPassMsg.classList.remove("opacity-100");
             confirmPassMsg.classList.add("opacity-0");
             confirmPasswordInput.classList.remove("border-red-600");
             confirmPasswordInput.classList.add("border-green-600");
-            confirmPass = true;
+            validConfirmPass = true;
         }
+        validateForm();
     })
 }

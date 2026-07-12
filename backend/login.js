@@ -22,6 +22,21 @@ loginForm.addEventListener("submit", async function(event) {
     } else {
         const responseJSON = await response.json();
         localStorage.setItem("token", responseJSON.token);
+
+        const projsRes = await fetch("http://localhost:5056/Projects", {
+            headers: { "Authorization": `Bearer ${responseJSON.token}` }
+        });
+        const projs = await projsRes.json();
+        if(projs.length > 0) {
+            const prevDir = localStorage.getItem("previousDirectory");
+            const prevDirValid = prevDir && projs.some(p => p.id == prevDir);
+            if(!prevDirValid) {
+                const firstProj = projs.sort((a, b) => a.id - b.id)[0];
+                localStorage.setItem("previousDirectory", firstProj.id);
+                localStorage.setItem("previousDirectoryTitle", firstProj.title);
+            }
+        }
+
         loginErrorMsg.classList.add("hidden");
         window.location.href = "index.html";
     }

@@ -1,6 +1,5 @@
 let validEmail = false;
 let validUsername = false;
-let validConfirmPass = false;
 
 
 registerForm.addEventListener("submit", async function(event) {
@@ -20,7 +19,6 @@ registerForm.addEventListener("submit", async function(event) {
     });
         
     window.location.href = "login.html";
-
 })
 
 emailInput.addEventListener("blur", async function() {
@@ -31,6 +29,7 @@ emailInput.addEventListener("blur", async function() {
         emailErrorMsg.textContent = "Invalid email format!";
         emailInput.classList.remove("border-green-600");
         emailInput.classList.add("border-red-600");
+        validEmail = false;
         validateForm();
         return;
     }
@@ -39,7 +38,7 @@ emailInput.addEventListener("blur", async function() {
     emailInput.classList.remove("border-red-600");
     emailInput.classList.add("border-green-600");
 
-    const response = await authFetch(`http://localhost:5056/Users/check?email=${emailInput.value}`);
+    const response = await authFetch(`http://localhost:5056/Users/checkEmail?email=${emailInput.value}`);
     const message = await response.text();
     if(!response.ok) {
         emailErrorMsg.textContent = message;
@@ -47,25 +46,34 @@ emailInput.addEventListener("blur", async function() {
         emailErrorMsg.classList.add("opacity-100");
         emailInput.classList.remove("border-green-600");
         emailInput.classList.add("border-red-600");
+        validEmail = false;
         validateForm();
     } else {
         emailErrorMsg.classList.remove("opacity-100");
         emailErrorMsg.classList.add("opacity-0");
+        validEmail = true;
         validateForm();
     }
 })
 
 usernameInput.addEventListener("blur", async function() {
+    if (!usernameInput.value) return;
     const response = await authFetch(`http://localhost:5056/Users/check?username=${usernameInput.value}`);
     const message = await response.text();
     if(!response.ok) {
         usernameErrorMsg.classList.remove("opacity-0");
         usernameErrorMsg.classList.add("opacity-100");
         usernameErrorMsg.textContent = message;
+        usernameInput.classList.remove("border-green-600");
+        usernameInput.classList.add("border-red-600");
+        validUsername = false;
         validateForm();
     } else {
         usernameErrorMsg.classList.remove("opacity-100");
         usernameErrorMsg.classList.add("opacity-0");
+        usernameInput.classList.remove("border-red-600");
+        usernameInput.classList.add("border-green-600");
+        validUsername = true;
         validateForm();
     }
 })
@@ -73,7 +81,11 @@ usernameInput.addEventListener("blur", async function() {
 function validateForm() {
     if(validEmail && validUsername && validPass && validConfirmPass) {
         registerUserBtn.disabled = false;
+        registerUserBtn.classList.remove("bg-gray-300/50");
+        registerUserBtn.classList.add("bg-green-600");
     } else {
         registerUserBtn.disabled = true;
+        registerUserBtn.classList.remove("bg-green-600");
+        registerUserBtn.classList.add("bg-gray-300/50");
     }
 }
