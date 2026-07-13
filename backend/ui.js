@@ -260,7 +260,7 @@ function createTaskCard(task) {
     projectNameAndUrgencyDiv.className = "flex";
 
     //CHANGING TEXT
-    title.textContent = task.title;
+    title.textContent = task.title.length > 30 ? task.title.slice(0, 30) + "..." : task.title;
     deleteButton.textContent = "X";
     urgency.textContent = fetchUrgency(task.urgency);
     ownerSpan.textContent = "Owner: " + task.owner;

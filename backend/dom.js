@@ -13,6 +13,10 @@ const updatePopUp = document.getElementById("updatePopUp");
 const delPopUp = document.getElementById("deletePopUp");
 const createNewProjectPopUp = document.getElementById("createNewProjectPopUp");
 
+//GENERATE AI DESCRIPTION BUTTON
+const generateUpdateDescriptionButton = document.getElementById("generateUpdateDescriptionButton");
+const generateCreateDescriptionButton = document.getElementById("generateCreateDescriptionButton");
+
 //ADDING MEMBERS
 const memberUsername = document.getElementById("memberUsername");
 const addMembersPopUp = document.getElementById("addMembersPopUp");

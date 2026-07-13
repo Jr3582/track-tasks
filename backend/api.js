@@ -1,7 +1,7 @@
 async function fetchAllTasks(projId) {
     let task;
     const tasks = await authFetch(`http://localhost:5056/Tasks/project/${projId}`);
-    for(task of await tasks.json()){
+    for (task of await tasks.json()) {
         createTaskCard(task);
     }
 }
@@ -10,8 +10,8 @@ async function fetchAllProjects() {
     const projs = await authFetch(`http://localhost:5056/Projects`);
     const projList = await projs.json();
     let firstProjId = null;
-    for(let proj of projList) {
-        if(firstProjId === null) firstProjId = proj.id;
+    for (let proj of projList) {
+        if (firstProjId === null) firstProjId = proj.id;
         const moreOptionsBtn = document.createElement("button");
         moreOptionsBtn.className = "hidden group-hover:flex rounded-md pl-1 pr-1 h-full w-full items-center";
         const i = document.createElement("i");
@@ -27,7 +27,7 @@ async function fetchAllProjects() {
         const projNameWrapper = document.createElement("div");
         projNameWrapper.className = "nameWrapper";
 
-        moreOptionsBtn.onclick = function(event) {
+        moreOptionsBtn.onclick = function (event) {
             toggleKebabMenu(event);
         }
 
@@ -92,13 +92,13 @@ async function switchProj(newProjId) {
     localStorage.setItem("previousDirectory", curProjId);
     localStorage.setItem("previousDirectoryTitle", project.title);
 
-    fetchAllTasks(newProjId); 
+    fetchAllTasks(newProjId);
 }
 
 async function addMemberToProject(projectId, username) {
     const response = await authFetch(`http://localhost:5056/Projects/${projectId}/members`, {
         method: "POST",
-        headers: { "Content-Type": "application/json"},
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username: username })
 
     });
@@ -113,7 +113,7 @@ async function deleteProject(projectId) {
     return response;
 }
 
-async function deleteTask(taskId){
+async function deleteTask(taskId) {
     const response = await authFetch(`http://localhost:5056/Tasks/${taskId}`, {
         method: "DELETE"
     })
@@ -140,7 +140,7 @@ async function changeName(newName, projectId) {
 }
 
 async function deleteMember(projectId, userId) {
-    const response = await authFetch (`http://localhost:5056/Projects/${projectId}/members/${userId}`, {
+    const response = await authFetch(`http://localhost:5056/Projects/${projectId}/members/${userId}`, {
         method: "DELETE",
     })
     const member = document.getElementById("member_" + userId);
@@ -169,8 +169,8 @@ async function getListOfMembers(projectId) {
     listOfMembers.appendChild(ownerLi);
 
     //ADDING REST OF MEMBERS
-    for(let member of members) {
-        if(member.username === project.owner) continue;
+    for (let member of members) {
+        if (member.username === project.owner) continue;
         const memberLi = document.createElement("li");
         const memberName = document.createElement("span");
 
@@ -178,18 +178,18 @@ async function getListOfMembers(projectId) {
 
         memberLi.className = "before:content-['•'] before:mr-2 before:text-4xl flex items-center";
         memberName.className = "bg-gray-300 rounded-md px-3";
-        memberLi.id = "member_"+member.userId;
+        memberLi.id = "member_" + member.userId;
 
 
         memberLi.appendChild(memberName);
         listOfMembers.appendChild(memberLi);
 
         //ONLY THE OWNER CAN SEE AND DELETE USERS
-        if(project.owner == username) {
+        if (project.owner == username) {
             const deleteMemberButton = document.createElement("button");
             deleteMemberButton.className = "ml-2 text-red-600 text-2xl font-sans cursor-pointer hover:scale-110 transition ease-in-out duration-300";
             deleteMemberButton.textContent = "x";
-            deleteMemberButton.addEventListener("click", function() {
+            deleteMemberButton.addEventListener("click", function () {
                 deleteMember(projectId, member.userId);
             })
             memberLi.appendChild(deleteMemberButton);
@@ -213,12 +213,12 @@ async function getListOfMembersForDropDown(projectId, dropdownEl, curOwnerEl, ow
     ownerName.className = "font-playfair text-purple-300 p-1";
     ownerName.textContent = projectOwner;
     ownerDiv.appendChild(ownerName);
-    ownerDiv.addEventListener("click", function() {
+    ownerDiv.addEventListener("click", function () {
         changeOwner(projectOwner, curOwnerEl, ownerInputEl, dropdownEl);
     });
     dropdownEl.appendChild(ownerDiv);
 
-    for(let member of members) {
+    for (let member of members) {
         const memberDiv = document.createElement("div");
         const memberName = document.createElement("span");
 
@@ -227,11 +227,46 @@ async function getListOfMembersForDropDown(projectId, dropdownEl, curOwnerEl, ow
         memberName.textContent = member.username;
         memberDiv.appendChild(memberName);
 
-        memberDiv.addEventListener("click", function() {
+        memberDiv.addEventListener("click", function () {
             changeOwner(member.username, curOwnerEl, ownerInputEl, dropdownEl);
         });
 
         dropdownEl.appendChild(memberDiv);
     }
     return response;
+}
+
+async function generateDescription(titleEl, descriptionEl, buttonEl) {
+    if (titleEl.value === "") return;
+    const original = buttonEl.innerHTML;
+    buttonEl.disabled = true;
+    buttonEl.innerHTML = `
+        <span class="flex items-center justify-center">
+            <svg class="mr-3 size-5 animate-spin" viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="10"
+                    stroke="currentColor"
+                    stroke-width="4" fill="none"
+                    class="opacity-25"
+                    />
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+            </svg>
+            Processing...
+        </span>`;
+
+    try{
+        const response = await authFetch(`http://localhost:5056/Ai/generateDescription`, {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({ title: titleEl.value})
+        });
+        const data = await response.json()
+        descriptionEl.value = data.description;
+        return response;
+    } catch {
+        console.error();
+    } finally {
+        buttonEl.innerHTML = original;
+        buttonEl.disabled = false;
+    }
+
 }
