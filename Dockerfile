@@ -20,7 +20,8 @@ RUN dotnet publish -c Release -o /publish
 
 FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS runtime
 WORKDIR /app
-COPY --from=build /publish .
+COPY --from=build /publish . 
+COPY --from=build /app/client ./client
 CMD ["dotnet", "track-tasks.dll"]
 
 #DIFFERENCE BETWEEN RUN AND CMD:
