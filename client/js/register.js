@@ -10,7 +10,7 @@ registerForm.addEventListener("submit", async function(event) {
         password: passwordInput.value
     };
     
-    const response = await fetch("http://localhost:5056/Users/register", {
+    const response = await fetch("/register", {
         method: "Post",
         headers: {
             "Content-Type": "application/json"

@@ -8,7 +8,7 @@ loginForm.addEventListener("submit", async function(event) {
         password: passwordInput.value
     };
 
-    const response = await fetch("http://localhost:5056/Users/login", {
+    const response = await fetch("/Users/login", {
         method: "Post",
         headers: {
             "Content-Type": "application/json"
@@ -23,7 +23,7 @@ loginForm.addEventListener("submit", async function(event) {
         const responseJSON = await response.json();
         localStorage.setItem("token", responseJSON.token);
 
-        const projsRes = await fetch("http://localhost:5056/Projects", {
+        const projsRes = await fetch("/Projects", {
             headers: { "Authorization": `Bearer ${responseJSON.token}` }
         });
         const projs = await projsRes.json();
