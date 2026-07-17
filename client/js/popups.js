@@ -13,7 +13,7 @@ async function showCreateTask(status, event){
         createPopUp.classList.add("pointer-events-auto");
     }
 
-    const projRes = await authFetch(`http://localhost:5056/Projects/${curProjId}`);
+    const projRes = await authFetch(`/Projects/${curProjId}`);
     const project = await projRes.json();
     changeOwner(project.owner, document.getElementById('curOwner'), document.getElementById('owner'), ownerDropDown);
 
@@ -25,8 +25,8 @@ async function showUpdateTask(id, event) {
     event.stopPropagation();
     curTaskId = id;
     const [taskRes, projRes] = await Promise.all([
-        authFetch(`http://localhost:5056/Tasks/${id}`),
-        authFetch(`http://localhost:5056/Projects/${curProjId}`)
+        authFetch(`/Tasks/${id}`),
+        authFetch(`/Projects/${curProjId}`)
     ]);
     const task = await taskRes.json();
     const project = await projRes.json();

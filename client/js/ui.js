@@ -239,7 +239,7 @@ function createTaskCard(task) {
     deleteButton.setAttribute("id", "deleteBtn");
     deleteButton.setAttribute("name", `PROJ_${task.id.toString()}`);
     deleteButton.addEventListener("click", function(event) {
-        showDeleteTaskPopUp(deleteButton, taskId);
+        showTaskDeletePopUp(task, taskId);
         event.stopPropagation();
     })
 
@@ -367,7 +367,7 @@ memberUsername.addEventListener("input", async function() {
     clearTimeout(timerId);
 
     timerId = setTimeout(async function() {
-        const searchUsers = await authFetch(`http://localhost:5056/Users/searchUsername?username=${memberUsername.value}`);
+        const searchUsers = await authFetch(`/Users/searchUsername?username=${memberUsername.value}`);
         for(let users of await searchUsers.json()) {
             if(getOwner() === users.username) continue;
             

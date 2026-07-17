@@ -38,7 +38,7 @@ emailInput.addEventListener("blur", async function() {
     emailInput.classList.remove("border-red-600");
     emailInput.classList.add("border-green-600");
 
-    const response = await authFetch(`http://localhost:5056/Users/checkEmail?email=${emailInput.value}`);
+    const response = await authFetch(`/Users/checkEmail?email=${emailInput.value}`);
     const message = await response.text();
     if(!response.ok) {
         emailErrorMsg.textContent = message;
@@ -58,7 +58,7 @@ emailInput.addEventListener("blur", async function() {
 
 usernameInput.addEventListener("blur", async function() {
     if (!usernameInput.value) return;
-    const response = await authFetch(`http://localhost:5056/Users/check?username=${usernameInput.value}`);
+    const response = await authFetch(`/Users/check?username=${usernameInput.value}`);
     const message = await response.text();
     if(!response.ok) {
         usernameErrorMsg.classList.remove("opacity-0");

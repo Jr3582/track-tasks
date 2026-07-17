@@ -2,6 +2,7 @@ using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
 using track_tasks;
@@ -81,6 +82,16 @@ builder.Services.AddAuthentication(options =>
 });
 
 var app = builder.Build();
+
+app.UseDefaultFiles(new DefaultFilesOptions
+{
+    FileProvider = new PhysicalFileProvider(Path.Combine(builder.Environment.ContentRootPath, "client")),
+    DefaultFileNames = new List<string> { "login.html" }
+});
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(Path.Combine(builder.Environment.ContentRootPath, "client"))
+});
 
 //USE CORS ALLOWS FRONT END AND BACK END TO TALK
 app.UseCors(corsPolicy);

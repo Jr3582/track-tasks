@@ -1,13 +1,13 @@
 async function fetchAllTasks(projId) {
     let task;
-    const tasks = await authFetch(`http://localhost:5056/Tasks/project/${projId}`);
+    const tasks = await authFetch(`/Tasks/project/${projId}`);
     for (task of await tasks.json()) {
         createTaskCard(task);
     }
 }
 
 async function fetchAllProjects() {
-    const projs = await authFetch(`http://localhost:5056/Projects`);
+    const projs = await authFetch(`/Projects`);
     const projList = await projs.json();
     let firstProjId = null;
     for (let proj of projList) {
@@ -48,7 +48,7 @@ async function fetchAllProjects() {
 }
 
 async function updateStatusOnColSwitch(taskId, newStatus) {
-    const taskToUpdate = await authFetch(`http://localhost:5056/Tasks/${taskId}`);
+    const taskToUpdate = await authFetch(`/Tasks/${taskId}`);
     const taskJSON = await taskToUpdate.json();
     console.log(taskJSON);
 
@@ -68,7 +68,7 @@ async function updateStatusOnColSwitch(taskId, newStatus) {
         status: newStatus,
         urgency: urg,
     }
-    const response = await authFetch(`http://localhost:5056/Tasks/${taskId}`, {
+    const response = await authFetch(`/Tasks/${taskId}`, {
         method: "Put",
         headers: {
             "Content-Type": "application/json"
@@ -85,7 +85,7 @@ async function switchProj(newProjId) {
     inprog_col.innerHTML = "";
     inrew_col.innerHTML = "";
     done_col.innerHTML = "";
-    const response = await authFetch(`http://localhost:5056/Projects/${curProjId}`);
+    const response = await authFetch(`/Projects/${curProjId}`);
     const project = await response.json();
     curProjectName.textContent = project.title;
     curProjectDirectory = project.title;
@@ -96,7 +96,7 @@ async function switchProj(newProjId) {
 }
 
 async function addMemberToProject(projectId, username) {
-    const response = await authFetch(`http://localhost:5056/Projects/${projectId}/members`, {
+    const response = await authFetch(`/Projects/${projectId}/members`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username: username })
@@ -107,21 +107,21 @@ async function addMemberToProject(projectId, username) {
 }
 
 async function deleteProject(projectId) {
-    const response = await authFetch(`http://localhost:5056/Projects/${projectId}`, {
+    const response = await authFetch(`/Projects/${projectId}`, {
         method: "DELETE",
     })
     return response;
 }
 
 async function deleteTask(taskId) {
-    const response = await authFetch(`http://localhost:5056/Tasks/${taskId}`, {
+    const response = await authFetch(`/Tasks/${taskId}`, {
         method: "DELETE"
     })
     return response
 }
 
 async function changeName(newName, projectId) {
-    const projectToUpdate = await authFetch(`http://localhost:5056/Projects/${projectId}`)
+    const projectToUpdate = await authFetch(`/Projects/${projectId}`)
     const projectJSON = await projectToUpdate.json();
 
     const project = {
@@ -129,7 +129,7 @@ async function changeName(newName, projectId) {
         description: projectJSON.description,
         owner: projectJSON.owner
     }
-    const response = await authFetch(`http://localhost:5056/Projects/${projectId}`, {
+    const response = await authFetch(`/Projects/${projectId}`, {
         method: "PUT",
         headers: {
             "Content-Type": "application/json"
@@ -140,7 +140,7 @@ async function changeName(newName, projectId) {
 }
 
 async function deleteMember(projectId, userId) {
-    const response = await authFetch(`http://localhost:5056/Projects/${projectId}/members/${userId}`, {
+    const response = await authFetch(`/Projects/${projectId}/members/${userId}`, {
         method: "DELETE",
     })
     const member = document.getElementById("member_" + userId);
@@ -149,8 +149,8 @@ async function deleteMember(projectId, userId) {
 }
 
 async function getListOfMembers(projectId) {
-    const response = await authFetch(`http://localhost:5056/Projects/${projectId}/members`);
-    const pResponse = await authFetch(`http://localhost:5056/Projects/${projectId}`);
+    const response = await authFetch(`/Projects/${projectId}/members`);
+    const pResponse = await authFetch(`/Projects/${projectId}`);
     const project = await pResponse.json();
     const members = await response.json();
     const username = getOwner();
@@ -201,8 +201,8 @@ async function getListOfMembers(projectId) {
 async function getListOfMembersForDropDown(projectId, dropdownEl, curOwnerEl, ownerInputEl) {
     dropdownEl.innerHTML = "";
 
-    const response = await authFetch(`http://localhost:5056/Projects/${projectId}/members`);
-    const pResponse = await authFetch(`http://localhost:5056/Projects/${projectId}`);
+    const response = await authFetch(`/Projects/${projectId}/members`);
+    const pResponse = await authFetch(`/Projects/${projectId}`);
     const project = await pResponse.json();
     const members = await response.json();
     const projectOwner = project.owner;
@@ -254,7 +254,7 @@ async function generateDescription(titleEl, descriptionEl, buttonEl) {
         </span>`;
 
     try{
-        const response = await authFetch(`http://localhost:5056/Ai/generateDescription`, {
+        const response = await authFetch(`/Ai/generateDescription`, {
             method: "POST",
             headers: {"Content-Type": "application/json"},
             body: JSON.stringify({ title: titleEl.value})

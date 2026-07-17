@@ -78,7 +78,7 @@ createTaskform.addEventListener("submit", async function(event) {
         projectName: curProjectDirectory
     }
 
-    const response = await authFetch("http://localhost:5056/Tasks", {
+    const response = await authFetch("/Tasks", {
         method: "Post",
         headers: {
             "Content-Type": "application/json"
@@ -111,7 +111,7 @@ updateTaskform.addEventListener("submit", async function(event) {
     //STOPS THE PAGE FROM REFRESHING AFTER SUBMITTING
     event.preventDefault();
 
-    const taskBeforeUpdate = await authFetch(`http://localhost:5056/Tasks/${curTaskId}`);
+    const taskBeforeUpdate = await authFetch(`/Tasks/${curTaskId}`);
     const taskBeforeUpdateJson = await taskBeforeUpdate.json();
 
     //CONVERTING THE TIME FORMAT TO FULL ISO
@@ -130,7 +130,7 @@ updateTaskform.addEventListener("submit", async function(event) {
         status: st,
         urgency: urg
     }
-    const response = await authFetch(`http://localhost:5056/Tasks/${curTaskId}`, {
+    const response = await authFetch(`/Tasks/${curTaskId}`, {
         method: "Put",
         headers: {
             "Content-Type": "application/json"
@@ -294,7 +294,7 @@ createProjectForm.addEventListener("submit", async function (event) {
         projectName.value = projectName.value.slice(0,12)+"...";
     }
 
-    const response = await authFetch("http://localhost:5056/Projects", {
+    const response = await authFetch("/Projects", {
         method: "Post",
         headers: {
             "Content-Type": "application/json"
@@ -428,7 +428,7 @@ document.addEventListener("click", function(e) {
         updatePopUp.classList.remove("pointer-events-auto");
         updatePopUp.classList.add("pointer-events-none");
 
-        updatePopUp.reset();
+        document.getElementById("updateTask").reset();
     }
 
     if(delPopUp.classList.contains("opacity-100")) {
