@@ -10,7 +10,7 @@ registerForm.addEventListener("submit", async function(event) {
         password: passwordInput.value
     };
     
-    const response = await fetch("/register", {
+    const response = await fetch("/Users/register", {
         method: "Post",
         headers: {
             "Content-Type": "application/json"
