@@ -1,6 +1,12 @@
+function requireAuth() {
+    if (!localStorage.getItem("token")) {
+        window.location.href = "/login.html";
+    }
+}
+
 async function authFetch(url, options = {}) {
     const token = localStorage.getItem("token");
-    
+
     options.headers = {
         //SPREAD HEADER
         //WE USE A SPREAD HEADER SO WE HAVE MULTIPLE HEADERS
@@ -11,5 +17,12 @@ async function authFetch(url, options = {}) {
         "Authorization": `Bearer ${token}`
     }
 
-    return fetch(url, options);
+    const response = await fetch(url, options);
+
+    if (response.status === 401) {
+        localStorage.removeItem("token");
+        window.location.href = "/login.html";
+    }
+
+    return response;
 }

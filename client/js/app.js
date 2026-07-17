@@ -1,3 +1,5 @@
+requireAuth();
+
 let st = "TO DO";
 let urg = "LOW";
 let curTaskId = 0;
