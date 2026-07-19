@@ -32,12 +32,42 @@ public class ProjectsControllerTests
             HttpContext = new DefaultHttpContext { User = user }
         };
     }
+    [Fact]
+    public void GetAll_ReturnsOnlyCallersProjects_WhenMultipleUsersExist()
+    {
+        var context = GetFakeDb();
+
+        var user1 = new User { Username = "John Doe", Password = "test123" };
+        var user2 = new User { Username = "Jane Doe", Password = "test123" };
+        context.Users.AddRange(user1, user2);
+        context.SaveChanges();
+
+        var myProject = new Project { Title = "My Project" };
+        var otherProject = new Project { Title = "Not Mine" };
+        context.Projects.AddRange(myProject, otherProject);
+        context.SaveChanges();
+
+        context.UsersToProjects.Add(new UsersToProjects { UserId = user1.Id, ProjectId = myProject.Id });
+        context.UsersToProjects.Add(new UsersToProjects { UserId = user2.Id, ProjectId = otherProject.Id });
+        context.SaveChanges();
+
+        var controller = new ProjectsController(context);
+        FakeLogin(controller, user1.Id);
+
+        var result = controller.GetAll();
+
+        var objectResult = Assert.IsType<OkObjectResult>(result);
+        var projects = Assert.IsAssignableFrom<IEnumerable<Project>>(objectResult.Value);
+
+        Assert.Contains(projects, p => p.Id == myProject.Id);
+        Assert.DoesNotContain(projects, p => p.Id == otherProject.Id);
+    }
 
     [Fact]
     public void GetProject_ReturnsNotFound_WhenProjectDoesNotExist()
     {
-        var context = GetFakeDb();
         //INITIALIZE FAKE DB FOR PROJECT CONTROLLER
+        var context = GetFakeDb();
         var controller = new ProjectsController(context);
         //FEED IN A RESULT THAT WILL 100% RETURN NOT FOUND
         var result = controller.GetProject(999);
@@ -55,6 +85,24 @@ public class ProjectsControllerTests
         var controller = new ProjectsController(context);
         var result = controller.GetProject(project.Id);
         Assert.IsType<OkObjectResult>(result);
+    }
+
+    [Fact]
+    public void CreateProject_Returns201_WhenRequestIsValid()
+    {
+        var context = GetFakeDb();
+        var user = new User { Username = "John Doe", Password = "test123" };
+        context.Users.Add(user);
+        context.SaveChanges();
+        //FAKE LOGIN WITH FAKE USER
+        var project = new Project { Title = "Test" };
+        var controller = new ProjectsController(context);
+        FakeLogin(controller, user.Id);
+        var result = controller.CreateProject(project);
+        var objectResult = Assert.IsType<ObjectResult>(result);
+        Assert.Equal(201, objectResult.StatusCode);
+        Assert.NotNull(context.UsersToProjects.FirstOrDefault(
+            p => p.UserId == user.Id && p.ProjectId == project.Id));
     }
 
     [Fact]
