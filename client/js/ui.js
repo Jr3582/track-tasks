@@ -44,7 +44,7 @@ function darkerShadeClass(colorClass) {
     if(!match) return null;
     const [, prefix, color, shade] = match;
     const idx = TAILWIND_SHADE_STEPS.indexOf(Number(shade));
-    if(idx === -1 || idx === TAILWIND_SHADE_STEPS.length - 1) return null;
+    if(idx === -1 || idx >= TAILWIND_SHADE_STEPS.length) return null;
     return `dark:${prefix}-${color}-${TAILWIND_SHADE_STEPS[idx + 1]}`;
 }
 
@@ -255,9 +255,16 @@ function getDueDateDisplay(dueDate) {
         day: 'numeric',
         timeZone: 'UTC'
     });
-    const className = (diffDays <= 3 && diffDays >= 0)
-        ? "text-sm font-playfair italic font-black bg-red-400 dark:bg-red-500 text-red-800 dark:text-red-900 underline rounded-md pl-1 pr-1"
-        : "text-sm font-playfair italic";
+    let className = null;
+    if(diffDays < 0) {
+        className = "text-sm font-playfair italic font-black bg-gray-400 dark:bg-gray-600 text-gray-700 dark:text-gray-900 underline rounded-md pl-1 pr-1";
+    } else if(diffDays <= 3 && diffDays >= 0) {
+        className = "text-sm font-playfair italic font-black bg-red-400 dark:bg-red-600 text-red-700 dark:text-red-900 underline rounded-md pl-1 pr-1";
+    } else if(diffDays <= 6 && diffDays > 3) {
+        className = "text-sm font-playfair italic font-black bg-orange-400 dark:bg-orange-600 text-orange-700 dark:text-orange-900 underline rounded-md pl-1 pr-1"
+    } else if(diffDays > 6) {
+        className = "text-sm font-playfair italic font-black bg-green-400 dark:bg-green-600 text-green-700 dark:text-green-900 underline rounded-md pl-1 pr-1";
+    }
     return { formatted, className };
 }
 
