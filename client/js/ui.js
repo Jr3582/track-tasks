@@ -35,14 +35,31 @@ function switchOption(choice, o1, o2, o3, o4, o1c, o2c, o3c, o4c, o1tc, o2tc, o3
     }
 }
 
+//TAILWIND'S DEFAULT SHADE SCALE, USED TO COMPUTE "ONE SHADE DARKER" FOR dark: VARIANTS
+const TAILWIND_SHADE_STEPS = [50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950];
+
+//GIVEN "bg-blue-600" RETURNS "dark:bg-blue-700" (ONE STEP DARKER), OR null IF NOT A SHADED COLOR CLASS
+function darkerShadeClass(colorClass) {
+    const match = colorClass.match(/^(bg|text|border)-([a-z]+)-(\d+)$/);
+    if(!match) return null;
+    const [, prefix, color, shade] = match;
+    const idx = TAILWIND_SHADE_STEPS.indexOf(Number(shade));
+    if(idx === -1 || idx === TAILWIND_SHADE_STEPS.length - 1) return null;
+    return `dark:${prefix}-${color}-${TAILWIND_SHADE_STEPS[idx + 1]}`;
+}
+
 //HELPER FUNCTIONS FOR REMOVING BACKGROUND COLOR
 function removeBg(item) {
     const bgClass = [...item.classList].find(cls => cls.startsWith("bg-"));
     if(bgClass) item.classList.remove(bgClass);
+    const darkBgClass = [...item.classList].find(cls => cls.startsWith("dark:bg-"));
+    if(darkBgClass) item.classList.remove(darkBgClass);
 }
 
 function addBg(item, bgColor) {
     item.classList.add(bgColor);
+    const darkVariant = darkerShadeClass(bgColor);
+    if(darkVariant) item.classList.add(darkVariant);
 }
 
 
@@ -50,14 +67,22 @@ function addBg(item, bgColor) {
 function removeTextColor(child1, child2) {
     const textClass = [...child1.classList].find(cls => cls.startsWith("text-"));
     const textClass2 = [...child2.classList].find(cls => cls.startsWith("text-"));
+    const darkTextClass = [...child1.classList].find(cls => cls.startsWith("dark:text-"));
+    const darkTextClass2 = [...child2.classList].find(cls => cls.startsWith("dark:text-"));
 
     if(textClass) child1.classList.remove(textClass);
     if(textClass2) child2.classList.remove(textClass2);
+    if(darkTextClass) child1.classList.remove(darkTextClass);
+    if(darkTextClass2) child2.classList.remove(darkTextClass2);
 }
 
 function addTextColor(child1, color1, child2, color2) {
     child1.classList.add(color1);
     child2.classList.add(color2);
+    const darkVariant1 = darkerShadeClass(color1);
+    const darkVariant2 = darkerShadeClass(color2);
+    if(darkVariant1) child1.classList.add(darkVariant1);
+    if(darkVariant2) child2.classList.add(darkVariant2);
 }
 
 //CHANGE STATUS FOR DROPDOWN
@@ -194,7 +219,7 @@ function buildAndPlaceTaskCard(task, titleDiv, taskTitle, deleteButton, projName
             column = done_col;
             break;
     }
-    newTask.classList.add(bgColor);
+    addBg(newTask, bgColor);
     column.appendChild(newTask);
 }
 
@@ -231,7 +256,7 @@ function getDueDateDisplay(dueDate) {
         timeZone: 'UTC'
     });
     const className = (diffDays <= 3 && diffDays >= 0)
-        ? "text-sm font-playfair italic font-black bg-red-400 text-red-800 underline rounded-md pl-1 pr-1"
+        ? "text-sm font-playfair italic font-black bg-red-400 dark:bg-red-500 text-red-800 dark:text-red-900 underline rounded-md pl-1 pr-1"
         : "text-sm font-playfair italic";
     return { formatted, className };
 }
@@ -275,7 +300,7 @@ function createTaskCard(task) {
 
     deleteButton.className = "flex leading-none text-2xl ml-auto opacity-0 group-hover:opacity-100 transition-opacity duration-700 font-sans";
 
-    urgency.className = "text-2xl text-red-800 ml-auto pr-1";
+    urgency.className = "text-2xl text-red-800 dark:text-red-900 ml-auto pr-1";
     title.className = "flex w-1/2";
     projName.className = "text-lg";
 

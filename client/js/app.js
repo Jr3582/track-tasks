@@ -550,7 +550,36 @@ function getOwner() {
     return username;
 }
 
+function toggleMode() {
+    const isDark = document.documentElement.classList.toggle('dark');
+    localStorage.setItem('theme', isDark ? 'dark' : 'light');
+    if (localStorage.getItem('theme') === 'dark') {
+        toggleModeBtn.children[0].textContent = "Toggle Light Mode";
+        toggleModeBtn.children[0].className = "font-playfair text-xl dark:text-yellow-600"
+        toggleModeBtn.className = "dark:bg-yellow-900 p-2 rounded-md w-full"
+        document.documentElement.classList.add('dark');
+    } else {
+        toggleModeBtn.children[0].textContent = "Toggle Dark Mode";
+        toggleModeBtn.children[0].className = "font-playfair text-xl text-purple-400"
+        toggleModeBtn.className = "bg-purple-800 p-2 rounded-md w-full"
+    }
+}
+
+function loadTheme() {
+    if (localStorage.getItem('theme') === 'dark') {
+        toggleModeBtn.children[0].textContent = "Toggle Light Mode";
+        toggleModeBtn.children[0].className = "font-playfair text-xl dark:text-yellow-600"
+        toggleModeBtn.className = "dark:bg-yellow-900 p-2 rounded-md w-full"
+        document.documentElement.classList.add('dark');
+    } else {
+        toggleModeBtn.children[0].textContent = "Toggle Dark Mode";
+        toggleModeBtn.children[0].className = "font-playfair text-xl text-purple-400"
+        toggleModeBtn.className = "bg-purple-800 p-2 rounded-md w-full"
+    }
+}
+
 //FETCH ALL TASKS NOW REMEMBERS WHERE YOU LEFT OFF
+loadTheme();
 getCurrentUser();
 if(previousProject) fetchAllTasks(previousProject);
 fetchAllProjects();

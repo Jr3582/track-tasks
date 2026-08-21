@@ -89,6 +89,7 @@ const kebabMenu = document.getElementById("kebabDropdown");
 const displayUsername = document.getElementById("displayUsername");
 const toolTip = document.getElementById("toolTip");
 const usernamePill = document.getElementById("usernamePill");
+const toggleModeBtn = document.getElementById("toggleModeBtn");
 
 //REGISTERING USERS
 const usernameInput = document.getElementById("usernameInput");
