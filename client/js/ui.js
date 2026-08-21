@@ -160,7 +160,7 @@ function activateOwnerDropBox(event, ownerDropDown, statDropDown, urgentDropDown
     }
 }
 
-function buildAndPlaceTaskCard(task, titleDiv, taskTitle, deleteButton, projName, urgency, newTask, taskSubInfoDiv, ownerSpan, projectNameAndUrgencyDiv) {
+function buildAndPlaceTaskCard(task, titleDiv, taskTitle, deleteButton, projName, urgency, newTask, taskSubInfoDiv, ownerSpan, projectNameAndUrgencyDiv, dueDateSpan) {
     let bgColor;
     let column;
     //APPENDING EVERYTHING TOGETHER
@@ -171,6 +171,7 @@ function buildAndPlaceTaskCard(task, titleDiv, taskTitle, deleteButton, projName
     projectNameAndUrgencyDiv.appendChild(urgency);
 
     taskSubInfoDiv.appendChild(ownerSpan);
+    taskSubInfoDiv.appendChild(dueDateSpan);
     taskSubInfoDiv.appendChild(projectNameAndUrgencyDiv);
 
     newTask.appendChild(titleDiv);
@@ -217,6 +218,24 @@ function fetchUrgency(taskUrgency) {
     return res;
 }
 
+//HELPER FUNCTION TO FORMAT A DUE DATE INTO DISPLAY TEXT + STYLING
+function getDueDateDisplay(dueDate) {
+    const date = new Date(dueDate);
+    const curDate = new Date();
+    //MILLISEC (1000) * SEC (60) * MIN (60) * DAY (24)
+    const diffDays = (date - curDate) / (1000 * 60 * 60 * 24);
+    const formatted = date.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        timeZone: 'UTC'
+    });
+    const className = (diffDays <= 3 && diffDays >= 0)
+        ? "text-sm font-playfair italic font-black bg-red-400 text-red-800 underline rounded-md pl-1 pr-1"
+        : "text-sm font-playfair italic";
+    return { formatted, className };
+}
+
 //HELPER FUNCTION TO CREATE TASK CARDS
 function createTaskCard(task) {
     const newTask = document.createElement("div");
@@ -229,6 +248,8 @@ function createTaskCard(task) {
     const taskId = task.id;
     const taskSubInfoDiv = document.createElement("div");
     const ownerSpan = document.createElement("span");
+    const dueDateSpan = document.createElement("span");
+    const dueDateText = document.createElement("span");
     const projectNameAndUrgencyDiv = document.createElement("div");
     newTask.setAttribute("onclick", `showUpdateTask(${task.id.toString()}, event)`);
     newTask.setAttribute("id", task.id.toString());
@@ -243,6 +264,9 @@ function createTaskCard(task) {
         event.stopPropagation();
     })
 
+    //CHANGING THE DATE FORMAT
+    const { formatted: formattedDueDate, className: dueDateTextClassName } = getDueDateDisplay(task.dueDate);
+
     //ADDING CLASS STYLING
     newTask.className = "relative rounded-md p-2 font-playfair text-2xl text-bold task-card cursor-pointer button-anim mb-2 group";
 
@@ -256,7 +280,10 @@ function createTaskCard(task) {
     projName.className = "text-lg";
 
     taskSubInfoDiv.className = "flex flex-col mt-4";
-    ownerSpan.className = "text-xs font-playfair italic font-bold";
+    ownerSpan.className = "text-sm font-playfair italic";
+    //CHANGE TEXT COLOR TO RED IF THE DUE DATE IS APPROACHING
+    dueDateText.className = dueDateTextClassName;
+    dueDateSpan.className = "text-sm font-playfair italic";
     projectNameAndUrgencyDiv.className = "flex";
 
     //CHANGING TEXT
@@ -264,6 +291,9 @@ function createTaskCard(task) {
     deleteButton.textContent = "X";
     urgency.textContent = fetchUrgency(task.urgency);
     ownerSpan.textContent = "Owner: " + task.owner;
+    dueDateText.textContent = formattedDueDate;
+    dueDateSpan.textContent = "Due: "
+    dueDateSpan.appendChild(dueDateText);
     //~~~ PROJ_ IS JUST FILLER FOR NOW, I'LL CHANGE LATER TO REFLECT ACTUAL PROJECTS ~~~
     if(task.projectName.length >= 4) {
         projectName = task.projectName.slice(0,4).toUpperCase();
@@ -272,7 +302,7 @@ function createTaskCard(task) {
     }
     projName.textContent = `${projectName.replace(/\s/g, "")}-${task.taskNumber}`;
 
-    buildAndPlaceTaskCard(task, titleDiv, title, deleteButton, projName, urgency, newTask, taskSubInfoDiv, ownerSpan, projectNameAndUrgencyDiv);
+    buildAndPlaceTaskCard(task, titleDiv, title, deleteButton, projName, urgency, newTask, taskSubInfoDiv, ownerSpan, projectNameAndUrgencyDiv, dueDateSpan);
 }
 
 function toggleKebabMenu(event) {

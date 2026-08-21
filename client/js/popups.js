@@ -3,6 +3,14 @@ async function showCreateTask(status, event){
     event.stopPropagation();
     if(!curProjId) return;
     st = status;
+
+    const today = new Date();
+    const yyyy = today.getUTCFullYear();
+    const mm = String(today.getUTCMonth() + 1).padStart(2, '0');
+    const dd = String(today.getUTCDate()).padStart(2, '0');
+    startDate.value = `${yyyy}-${mm}-${dd}`;
+    dueDate.value = `${yyyy}-${mm}-${dd}`;
+
     switchOption(status, "TO DO", "IN PROGRESS", "IN REVIEW", "DONE", "bg-blue-800", "bg-green-800", "bg-yellow-800", "bg-red-800", "text-blue-500", "text-green-500", "text-yellow-500", "text-red-500", curStatus);
 
     if(createPopUp.classList.contains("opacity-0")) {
@@ -31,13 +39,23 @@ async function showUpdateTask(id, event) {
     const task = await taskRes.json();
     const project = await projRes.json();
 
+    const newStartDateFormat = new Date(task.startDate);
+    const startyyyy = newStartDateFormat.getUTCFullYear();
+    const startmm = String(newStartDateFormat.getUTCMonth() + 1).padStart(2, '0');
+    const startdd = String(newStartDateFormat.getUTCDate()).padStart(2, '0');
+
+    const newDueDateFormat = new Date(task.dueDate);
+    const dueyyyy = newDueDateFormat.getUTCFullYear();
+    const duemm = String(newDueDateFormat.getUTCMonth() + 1).padStart(2, '0');
+    const duedd = String(newDueDateFormat.getUTCDate()).padStart(2, '0');
+
     updateTitle.value = task.title;
     updateSummary.value = task.summary;
     updateDescription.value = task.description;
     updateAssignee.value = task.assignee;
     updateParentTask.value = task.parentTask;
-    updateStartDate.value = task.startDate;
-    updateDueDate.value = task.dueDate;
+    updateStartDate.value = `${startyyyy}-${startmm}-${startdd}`;
+    updateDueDate.value = `${dueyyyy}-${duemm}-${duedd}`;
     updateCurStatus.value = task.status;
     updateCurUrgency.value = task.urgency;
 
@@ -77,7 +95,7 @@ function showCreateProject(event) {
     const username = getOwner();
     projOwner.value = username;
 
-    today = mm + '/' + dd + '/' + yyyy;
+    today = yyyy + '/' + mm + '/' + dd;
 
     //SHOWING USERS THAT THE CREATE DATE WILL ALWAYS BE TODAY
     projectCreateDate.placeholder = today;

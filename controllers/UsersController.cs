@@ -99,6 +99,8 @@ public class UsersController(AppDbContext context, IConfiguration configuration)
             Owner = user.Username,
             Status = "TO DO",
             Urgency = "LOW",
+            StartDate = DateTime.UtcNow,
+            DueDate = DateTime.UtcNow.AddDays(7),
             ProjectId = starterProject.Id,
             ProjectName = starterProject.Title
         };

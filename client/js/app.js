@@ -62,7 +62,7 @@ createTaskform.addEventListener("submit", async function(event) {
     event.preventDefault();
 
     //CONVERTING THE TIME FORMAT TO FULL ISO
-    const fullISOStart = startDate.value ? new Date(startDate.value).toISOString() : null;
+    const fullISOStart = startDate.value ? new Date(startDate.value).toISOString(): null;
     const fullISODue = dueDate.value ? new Date(dueDate.value).toISOString() : null;
 
     const task = {
@@ -117,8 +117,8 @@ updateTaskform.addEventListener("submit", async function(event) {
     const taskBeforeUpdateJson = await taskBeforeUpdate.json();
 
     //CONVERTING THE TIME FORMAT TO FULL ISO
-    const fullISOStart = startDate.value ? new Date(updateStartDate.value).toISOString() : null;
-    const fullISODue = dueDate.value ? new Date(updateDueDate.value).toISOString() : null;
+    const fullISOStart = updateStartDate.value ? new Date(updateStartDate.value).toISOString() : null;
+    const fullISODue = updateDueDate.value ? new Date(updateDueDate.value).toISOString() : null;
 
     const task = {
         title: updateTitle.value,
@@ -141,14 +141,18 @@ updateTaskform.addEventListener("submit", async function(event) {
     });
     const responseJSON = await response.json();
 
-    if(taskBeforeUpdate.title !== responseJSON.title) {
+    if(taskBeforeUpdateJson.title !== responseJSON.title) {
         const curDOM = document.getElementById(curTaskId);
         curDOM.children[0].children[0].textContent = responseJSON.title;
     }
 
-    if(taskBeforeUpdate.urgency !== responseJSON.urgency) {
+    if(taskBeforeUpdateJson.dueDate !== responseJSON.dueDate) {
         const curDOM = document.getElementById(curTaskId);
-        curDOM.children[1].children[1].children[1].textContent = fetchUrgency(responseJSON.urgency);
+        const dueDateSpan = curDOM.children[1].children[1];
+        const dueDateText = dueDateSpan.children[0];
+        const { formatted, className } = getDueDateDisplay(responseJSON.dueDate);
+        dueDateText.textContent = formatted;
+        dueDateText.className = className;
     }
 
     // STORE CURRENT
@@ -184,7 +188,7 @@ updateTaskform.addEventListener("submit", async function(event) {
 
     if(taskBeforeUpdateJson.urgency !== responseJSON.urgency) {
         const curTask = document.getElementById(curTaskId);
-        curTask.children[1].children[1].children[1].textContent = fetchUrgency(responseJSON.urgency);
+        curTask.children[1].children[2].children[1].textContent = fetchUrgency(responseJSON.urgency);
     }
 
     const curTask = document.getElementById(curTaskId);
