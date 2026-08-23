@@ -4,6 +4,7 @@ let st = "TO DO";
 let urg = "LOW";
 let curTaskId = 0;
 let curTaskIdToDelete = 0;
+let previousProjectId = 0;
 let previousProject = localStorage.getItem("previousDirectory");
 let curProjId = previousProject ? parseInt(previousProject) : null;
 let curProjectDirectory = localStorage.getItem("previousDirectoryTitle");
@@ -13,6 +14,34 @@ let activeProjectId = null;
 let activeProjectName = null;
 let timerId = 0;
 
+let connection = new signalR.HubConnectionBuilder()
+    .withUrl("/taskHub")
+    .build();
+
+connection.start()
+    .then(() => {
+        console.log("Connected to TaskHub");
+        return connection.invoke("JoinProjectGroup", curProjId.toString());
+    })
+    .catch(err => console.error("SignalR connection error:", err));
+
+connection.on("TaskUpdated", (task) => {
+    //DEBUG CONSOLE.LOG
+    //console.log(task);
+    updateTaskCardDOM(task);
+})
+
+connection.on("TaskCreated", (task) => {
+    //DEBUG CONSOLE.LOG
+    //console.log(task);
+    createTaskCard(task);
+})
+
+connection.on("TaskDeleted", (task) => {
+    //DEBUG CONSOLE.LOG
+    //console.log(task);
+    document.getElementById(task.id).remove();
+})
 
 new Sortable(todo_col, {
     group: "tasks",
@@ -46,6 +75,7 @@ new Sortable(inrew_col, {
         updateStatusOnColSwitch(event.item.id, "IN REVIEW");
     },
 });
+
 new Sortable(done_col, {
     group: "tasks",
     draggable: ".task-card",
@@ -90,9 +120,8 @@ createTaskform.addEventListener("submit", async function(event) {
 
     const responseJSON = await response.json();
 
-    console.log(responseJSON);
-
-    createTaskCard(responseJSON);
+    //BUG: THIS LINE HERE CREATES 2 TASK CARDS
+    //createTaskCard(responseJSON);
 
     //GETS RID OF POPUP AFTER UPDATING
     if(createPopUp.classList.contains("opacity-100")) {
@@ -104,8 +133,6 @@ createTaskform.addEventListener("submit", async function(event) {
     }
 
     createTaskform.reset();
-
-    console.log(responseJSON);
 })
 
 //FOR UPDATING FORM
@@ -113,14 +140,12 @@ updateTaskform.addEventListener("submit", async function(event) {
     //STOPS THE PAGE FROM REFRESHING AFTER SUBMITTING
     event.preventDefault();
 
-    const taskBeforeUpdate = await authFetch(`/Tasks/${curTaskId}`);
-    const taskBeforeUpdateJson = await taskBeforeUpdate.json();
-
     //CONVERTING THE TIME FORMAT TO FULL ISO
     const fullISOStart = updateStartDate.value ? new Date(updateStartDate.value).toISOString() : null;
     const fullISODue = updateDueDate.value ? new Date(updateDueDate.value).toISOString() : null;
 
     const task = {
+        id: curTaskId,
         title: updateTitle.value,
         summary: updateSummary.value,
         description: updateDescription.value,
@@ -130,7 +155,8 @@ updateTaskform.addEventListener("submit", async function(event) {
         dueDate: fullISODue,
         owner: updateOwner.value,
         status: st,
-        urgency: urg
+        urgency: urg,
+        projectId: curProjId,
     }
     const response = await authFetch(`/Tasks/${curTaskId}`, {
         method: "Put",
@@ -141,58 +167,7 @@ updateTaskform.addEventListener("submit", async function(event) {
     });
     const responseJSON = await response.json();
 
-    if(taskBeforeUpdateJson.title !== responseJSON.title) {
-        const curDOM = document.getElementById(curTaskId);
-        curDOM.children[0].children[0].textContent = responseJSON.title;
-    }
-
-    if(taskBeforeUpdateJson.dueDate !== responseJSON.dueDate) {
-        const curDOM = document.getElementById(curTaskId);
-        const dueDateSpan = curDOM.children[1].children[1];
-        const dueDateText = dueDateSpan.children[0];
-        const { formatted, className } = getDueDateDisplay(responseJSON.dueDate);
-        dueDateText.textContent = formatted;
-        dueDateText.className = className;
-    }
-
-    // STORE CURRENT
-    // DELETE PREVIOUS
-    // PUT CURRENT IN THE CORRECT COL
-    if(taskBeforeUpdateJson.status !== responseJSON.status) {
-        let curBg;
-        let curCol;
-        const savedCurElement = document.getElementById(curTaskId);
-        document.getElementById(curTaskId).remove();
-        switch(responseJSON.status) {
-            case "TO DO":
-                curBg = "bg-blue-600";
-                curCol = todo_col;
-                break;
-            case "IN PROGRESS":
-                curBg = "bg-green-600";
-                curCol = inprog_col;
-                break;
-            case "IN REVIEW":
-                curBg = "bg-yellow-600";
-                curCol = inrew_col;
-                break;
-            case "DONE":
-                curBg = "bg-red-600";
-                curCol = done_col;
-                break;
-        }
-        removeBg(savedCurElement);
-        addBg(savedCurElement, curBg);
-        curCol.appendChild(savedCurElement);
-    }
-
-    if(taskBeforeUpdateJson.urgency !== responseJSON.urgency) {
-        const curTask = document.getElementById(curTaskId);
-        curTask.children[1].children[2].children[1].textContent = fetchUrgency(responseJSON.urgency);
-    }
-
-    const curTask = document.getElementById(curTaskId);
-    curTask.children[1].children[0].textContent = "Owner: " + responseJSON.owner;
+    updateTaskCardDOM(responseJSON);
 
     //GETS RID OF POPUP AFTER UPDATING
     if(updatePopUp.classList.contains("opacity-100")) {
@@ -203,7 +178,8 @@ updateTaskform.addEventListener("submit", async function(event) {
         updatePopUp.classList.add("pointer-events-none");
     }
 
-    console.log(responseJSON);
+    //DEBUG CONSOLE.LOG
+    //console.log(responseJSON);
 
 })
 
@@ -212,7 +188,9 @@ confirmDelTask.addEventListener("click", async function (event) {
     event.stopPropagation();
     await deleteTask(curTaskIdToDelete);
 
-    document.getElementById(curTaskIdToDelete).remove();
+    //REMOVED FOR SIGNLAR
+    //IF LEFT TASK GETS DELETED TWICE ON FRONT-END
+    //document.getElementById(curTaskIdToDelete).remove();
 
     if(delPopUp.classList.contains("opacity-100")) {
         delPopUp.classList.remove("opacity-100");
@@ -482,6 +460,7 @@ document.addEventListener("click", function(e) {
 function logout() {
     localStorage.removeItem("token");
     window.location.href = "login.html";
+    connection.stop()
 
 }
 
@@ -528,7 +507,7 @@ function getCurrentUser() {
     if(username.length > 12) {
         username = username.slice(0,9) + "...";
     }
-    console.log(username);
+    console.log("Welcome: " + username);
     displayUsername.textContent = username;
 }
 

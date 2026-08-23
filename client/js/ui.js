@@ -1,7 +1,5 @@
 function switchOption(choice, o1, o2, o3, o4, o1c, o2c, o3c, o4c, o1tc, o2tc, o3tc, o4tc, curChoice) {
     curChoice.children[0].textContent = choice;
-    console.log(curChoice.children[0]);
-    console.log(curChoice.children[1]);
     
     switch (choice) {
         case o1:
@@ -96,9 +94,6 @@ function changeStatus(status, statusDOM) {
 
     statusDropDown.classList.add("opacity-0");
     statusDropDown.classList.add("pointer-events-none");
-    
-    //DEBUGGING MESSAGE
-    console.log(st);
 }
 
 //CHANGE URGENCY FOR DROPDOWN
@@ -111,9 +106,6 @@ function changeUrgency(urgency, urgencyDOM) {
 
     urgencyDropDown.classList.add("opacity-0");
     urgencyDropDown.classList.add("pointer-events-none");
-
-    //DEBUGGING MESSAGE
-    console.log(urg);
 }
 
 function activateStatusDropBox(event, statDropDown, urgentDropDown) {
@@ -128,9 +120,6 @@ function activateStatusDropBox(event, statDropDown, urgentDropDown) {
 
         statDropDown.classList.add("opacity-100");
         statDropDown.classList.add("pointer-events-auto");
-
-        //DEBUGGING MESSAGE
-        console.log("openning statusDropDown");
 
         //NOTES:
         //pointer-events-none: Makes it so that you can click through without activating
@@ -256,9 +245,9 @@ function getDueDateDisplay(dueDate) {
         timeZone: 'UTC'
     });
     let className = null;
-    if(diffDays < 0) {
+    if(diffDays < -1) {
         className = "text-sm font-playfair italic font-black bg-gray-400 dark:bg-gray-600 text-gray-700 dark:text-gray-900 underline rounded-md pl-1 pr-1";
-    } else if(diffDays <= 3 && diffDays >= 0) {
+    } else if(diffDays <= 3 && diffDays >= -1) {
         className = "text-sm font-playfair italic font-black bg-red-400 dark:bg-red-600 text-red-700 dark:text-red-900 underline rounded-md pl-1 pr-1";
     } else if(diffDays <= 6 && diffDays > 3) {
         className = "text-sm font-playfair italic font-black bg-orange-400 dark:bg-orange-600 text-orange-700 dark:text-orange-900 underline rounded-md pl-1 pr-1"
@@ -266,6 +255,52 @@ function getDueDateDisplay(dueDate) {
         className = "text-sm font-playfair italic font-black bg-green-400 dark:bg-green-600 text-green-700 dark:text-green-900 underline rounded-md pl-1 pr-1";
     }
     return { formatted, className };
+}
+
+//HELPER FUNCTION TO PATCH AN EXISTING TASK CARD'S DOM TO MATCH AN UPDATED TASK
+//USED BY BOTH THE LOCAL UPDATE FORM SUBMIT AND THE SIGNALR "TaskUpdated" BROADCAST
+function updateTaskCardDOM(task) {
+    const curDOM = document.getElementById(task.id);
+    //DEBUG CONSOLE.LOG
+    //console.log(task.id);
+    if(!curDOM) return;
+
+    curDOM.children[0].children[0].textContent = task.title;
+
+    const dueDateSpan = curDOM.children[1].children[1];
+    const dueDateText = dueDateSpan.children[0];
+    const { formatted, className } = getDueDateDisplay(task.dueDate);
+    dueDateText.textContent = formatted;
+    dueDateText.className = className;
+
+    curDOM.children[1].children[2].children[1].textContent = fetchUrgency(task.urgency);
+
+    curDOM.children[1].children[0].textContent = "Owner: " + task.owner;
+
+    let curBg;
+    let curCol;
+    switch(task.status) {
+        case "TO DO":
+            curBg = "bg-blue-600";
+            curCol = todo_col;
+            break;
+        case "IN PROGRESS":
+            curBg = "bg-green-600";
+            curCol = inprog_col;
+            break;
+        case "IN REVIEW":
+            curBg = "bg-yellow-600";
+            curCol = inrew_col;
+            break;
+        case "DONE":
+            curBg = "bg-red-600";
+            curCol = done_col;
+            break;
+    }
+    removeBg(curDOM);
+    addBg(curDOM, curBg);
+    //appendChild MOVES THE NODE IF IT'S ALREADY IN THE DOM, NO-OP IF ALREADY IN curCol
+    curCol.appendChild(curDOM);
 }
 
 //HELPER FUNCTION TO CREATE TASK CARDS

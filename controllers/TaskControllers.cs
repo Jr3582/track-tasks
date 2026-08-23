@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualBasic;
 using track_tasks;
@@ -10,13 +11,10 @@ namespace track_tasks.Controllers;
 [Authorize]
 [ApiController]
 [Route("[controller]")]
-public class TasksController(AppDbContext context) : ControllerBase
+public class TasksController(AppDbContext context, IHubContext<TaskHub> hubContext) : ControllerBase
 {
-    //Variables need to be static because everytime a new request comes in
-    //a new instance of the controller is created
-    //so none of the varaibale info carries over
-    //without static each variable would be a new instance, (_newId starting at 1, and empty list)
     private AppDbContext _context = context;
+    private IHubContext<TaskHub> _hubContext = hubContext;
 
     [HttpGet]
     public IActionResult GetAll()
@@ -40,7 +38,7 @@ public class TasksController(AppDbContext context) : ControllerBase
 
     [HttpPost] 
     //POST == ADD
-    public IActionResult Create([FromBody] TaskItem task)
+    public async Task<IActionResult> CreateAsync([FromBody] TaskItem task)
     {
         var projectTasks = _context.Tasks.Where(t => t.ProjectId == task.ProjectId).ToList();
         task.TaskNumber = projectTasks.Any() ? projectTasks.Max(t => t.TaskNumber) + 1 : 1;
@@ -49,14 +47,18 @@ public class TasksController(AppDbContext context) : ControllerBase
         _context.Tasks.Add(task);
         //SAVE CHANGES
         _context.SaveChanges();
+        await _hubContext.Clients.Group($"project-{task.ProjectId}").SendAsync("TaskCreated", task);
         return StatusCode(201, task);
     }
 
     [HttpPut("{id}")] 
     //PUT == UPDATE 
     //("{id}") is used to get the ID in the URL
-    public IActionResult Update([FromRoute] int id, [FromBody] TaskItem updatedTask)
+    public async Task<IActionResult> UpdateAsync([FromRoute] int id, [FromBody] TaskItem updatedTask)
     {
+        //DEBUG STATEMENTS
+        //Console.WriteLine($"Incoming task ProjectId: {updatedTask.ProjectId}");
+        //Console.WriteLine($"Incoming task-id: {id}");
         var searchResult = _context.Tasks.FirstOrDefault(task => task.Id == id);
         if(searchResult == null)
         {
@@ -75,13 +77,17 @@ public class TasksController(AppDbContext context) : ControllerBase
         searchResult.Urgency = updatedTask.Urgency;
 
         _context.SaveChanges();
+        //DEBUG STATEMENTS
+        //Console.WriteLine($"Broadcasting to project-{updatedTask.ProjectId}");
+        //Console.WriteLine($"Broadcasting to task-{updatedTask.Id}");
+        await _hubContext.Clients.Group($"project-{updatedTask.ProjectId}").SendAsync("TaskUpdated", updatedTask);
 
         return Ok(searchResult);
     }
 
     [HttpDelete("{id}")]
     //DELTE the ID in the URL
-    public IActionResult Delete([FromRoute] int id)
+    public async Task<IActionResult> DeleteAsync([FromRoute] int id)
     {
         var searchResult = _context.Tasks.FirstOrDefault(task => task.Id == id);
         if(searchResult == null)
@@ -90,6 +96,9 @@ public class TasksController(AppDbContext context) : ControllerBase
         }
         _context.Tasks.Remove(searchResult);
         _context.SaveChanges();
+        // Console.WriteLine($"Broadcasting to search-result:{searchResult.ProjectId}");
+        // Console.WriteLine($"Broadcasting to search-result:{searchResult}");
+        await _hubContext.Clients.Group($"project-{searchResult.ProjectId}").SendAsync("TaskDeleted", searchResult.Id);
         return Ok();
     }
 }

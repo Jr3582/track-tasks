@@ -61,6 +61,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 {
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
+builder.Services.AddSignalR();
 
 builder.Services.AddAuthentication(options =>
 {
@@ -112,6 +113,7 @@ app.UseSwaggerUI(options =>
     options.SwaggerEndpoint("/openapi/v1.json", "v1");
 });
 
+app.MapHub<TaskHub>("/taskHub");
 app.MapControllers();
 
 app.Run();

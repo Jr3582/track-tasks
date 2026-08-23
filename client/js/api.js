@@ -51,13 +51,14 @@ async function fetchAllProjects() {
 async function updateStatusOnColSwitch(taskId, newStatus) {
     const taskToUpdate = await authFetch(`/Tasks/${taskId}`);
     const taskJSON = await taskToUpdate.json();
-    console.log(taskJSON);
+    // console.log(taskJSON);
 
     //CONVERTING THE TIME FORMAT TO FULL ISO
     const fullISOStart = taskJSON.startDate ? new Date(taskJSON.startDate).toISOString() : null;
     const fullISODue = taskJSON.dueDate ? new Date(taskJSON.dueDate).toISOString() : null;
 
     const task = {
+        id: taskId,
         title: taskJSON.title,
         summary: taskJSON.summary,
         description: taskJSON.description,
@@ -67,7 +68,8 @@ async function updateStatusOnColSwitch(taskId, newStatus) {
         dueDate: fullISODue,
         owner: taskJSON.owner,
         status: newStatus,
-        urgency: urg,
+        urgency: taskJSON.urgency,
+        projectId: taskJSON.projectId,
     }
     const response = await authFetch(`/Tasks/${taskId}`, {
         method: "Put",
@@ -77,10 +79,11 @@ async function updateStatusOnColSwitch(taskId, newStatus) {
         body: JSON.stringify(task)
     });
 
-    console.log(await response.json());
+    // console.log(await response.json());
 }
 
 async function switchProj(newProjId) {
+    previousProjectId = curProjId;
     curProjId = newProjId;
     todo_col.innerHTML = "";
     inprog_col.innerHTML = "";
@@ -92,6 +95,15 @@ async function switchProj(newProjId) {
     curProjectDirectory = project.title;
     localStorage.setItem("previousDirectory", curProjId);
     localStorage.setItem("previousDirectoryTitle", project.title);
+    //DEBUG STATEMENTS FOR LEAVING AND JOINING CONNECTIONS:
+    //console.log("Leaving projectId: ", previousProjectId);
+    //console.log("Joining projectId: ", curProjId);
+
+    //LEAVING PREVIOUS CONENCTION
+    await connection.invoke("LeaveProjectGroup", previousProjectId.toString());
+
+    //JOINING NEW CONNECTION
+    await connection.invoke("JoinProjectGroup", curProjId.toString());
 
     fetchAllTasks(newProjId);
 }
