@@ -52,7 +52,7 @@
             <!-- TITLE -->
             <div class="mx-auto mt-4 bg-gray-400 dark:bg-gray-700 p-4 drop-shadow-[2px_2px_5px_rgba(0,0,0,1)] rounded-md w-fit h-fit">
                 <span class="font-playfair text-4xl">
-                    Just Tracks
+                    JustTracks
                 </span>
             </div>
 
@@ -157,10 +157,10 @@
     <div id="popUp"
         class="flex absolute w-full h-full z-[999] bg-black/50 justify-center items-center opacity-0 transition-opacity duration-300 pointer-events-none">
         <!-- INNER BOX (THIS IS WHERE ALL THE INPUT INFO GOES)-->
-        <form id="createTask" class="flex w-2/3 h-2/3">
+        <form id="createTask" class="flex w-3/4 h-2/3">
             <div class="grid grid-cols-3 w-full h-full bg-white dark:bg-gray-800 rounded-md p-8 gap-2">
                 <!-- (TITLE, SUMMARY, DESCRIPTION)-->
-                <div class="col-span-2 h-full border-r-4 p-2">
+                <div class="col-span-2 h-full border-r-4 p-2 pr-6 dark:border-gray-600 overflow-y-scroll">
                     <!-- TITLE -->
                     <div class="flex pb-4 flex-col gap-1">
                         <span class="font-playfair">TITLE<span class="text-red-600 dark:text-red-700">*</span></span>
@@ -176,20 +176,46 @@
                     </div>
 
                     <!-- DESCRIPTION -->
-                    <div class="flex flex-col gap-1">
+                    <div class="flex pb-4 flex-col gap-1">
                         <div class="flex flex-row justify-between items-center mb-1">
                             <span class="font-playfair">DESCRIPTION<span class="text-red-600 dark:text-red-700">*</span></span>
                             <button id="generateCreateDescriptionButton" type="button"
-                                class="p-1 font-playfair bg-blue-600 dark:bg-blue-700 rounded-md text-white"
+                                class="p-1 font-playfair bg-blue-600 dark:bg-blue-800 dark:text-gray-400 rounded-md text-white"
                                 onclick="generateDescription(document.getElementById('title'), document.getElementById('description'), this)">
-                                    ⭐Generate Description⭐
+                                ⭐Generate Description⭐
                             </button>
                         </div>
-                        <textarea id="description" type="text"
-                            class="w-full min-h-64 bg-gray-300 dark:bg-gray-700 rounded-md p-1 font-playfair outline-none whitespace-pre-line resize-none"></textarea>
+                        <textarea id="description" type="text" class="w-full min-h-64 bg-gray-300 dark:bg-gray-700 rounded-md p-1 font-playfair outline-none whitespace-pre-line resize-none"></textarea>
+                    </div>
+
+                    <!-- COMMENT AREA -->
+                    <div>
+                        <span class="font-playfair">COMMENTS</span>
+                        <div class="flex flex-col items-end gap-">
+                            <input type="text" class="w-full rounded-md mt-2 mb-2 border-blaxk dark:border-gray-600 bg-gray-300 dark:bg-gray-700 p-1 outline-none">
+                            <div class="flex flex-row gap-2">
+                                <button class="font-playfair text-white dark:text-gray-400 border-2 dark:border-black p-2 rounded-xl">CANCEL</button>
+                                <button class="font-playfair text-white bg-blue-600 dark:bg-blue-800 dark:text-gray-400 p-2 rounded-xl">COMMENT</button>
+                            </div>
+                        </div>
+
+                        <hr class="border-black dark:border-gray-600 border-t-4 mx-2 mt-4">
+
+                        <div class="flex flex-col items-start border-t-2 border-black dark:border-gray-600 pt-4 mx-2 mb-2 gap-2">
+                            <div class="flex flex-row items-center">
+                                <div class="bg-blue-500 dark:bg-blue-900 h-8 max-w-28 p-1 rounded-xl flex items-center">
+                                    <span id="userCommentName" class="font-playfair text-xs">[USER.NAME]</span>
+                                    <div class="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 bg-gray-800 dark:bg-gray-900 text-white text-sm rounded-md p-2 hidden w-max cursor-"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-white border-2 dark:bg-gray-700 dark:border-gray-600 p-1 rounded-xl w-full h-fit max-h-64 overflow-y-scroll">
+                                <span class="text-sm font-playfair"></span>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div class="grid grid-rows-5 h-full gap-2">
+                <div class="grid grid-rows-5 h-full gap-2 pl-6">
                     <div class="row-span-4">
                         <!-- STATUS, URGENCY, ASSIGNMENT COL, START DATE, AND END DATE -->
                         <div class="flex flex-col">
@@ -287,7 +313,7 @@
 
                     </div>
                     <!-- (SUBMIT BUTTON)-->
-                    <div class="row-span-1 border-t-4 p-2">
+                    <div class="row-span-1 border-t-4 dark:border-gray-600 p-4">
                         <button
                             class="flex w-full h-full bg-blue-600 dark:bg-blue-700 rounded-md justify-center items-center cursor-pointer button-anim">
                             <span class="font-playfair text-4xl">Create Task</span>
@@ -303,10 +329,10 @@
     <div id="updatePopUp"
         class="flex absolute w-full h-full z-[999] bg-black/50 justify-center items-center opacity-0 transition-opacity duration-300 pointer-events-none">
         <!-- INNER BOX (THIS IS WHERE ALL THE INPUT INFO GOES)-->
-        <form id="updateTask" class="flex w-2/3 h-2/3">
-            <div class="grid grid-cols-3 w-full h-full bg-white dark:bg-gray-800 rounded-md p-8 gap-2">
+        <form id="updateTask" class="flex w-3/4 h-2/3">
+            <div class="grid grid-cols-3 w-full h-full bg-white dark:bg-gray-800 rounded-md p-8 gap-2 overflow-y-scroll">
                 <!-- (TITLE, SUMMARY, DESCRIPTION)-->
-                <div class="col-span-2 h-full border-r-4 p-2">
+                <div class="col-span-2 h-full border-r-4 dark:border-gray-600 p-2 pr-6">
                     <!-- CHANGE TITLE -->
                     <div class="flex pb-4 flex-col gap-1">
                         <span class="font-playfair">TITLE<span class="text-red-600 dark:text-red-700">*</span></span>
@@ -326,16 +352,15 @@
                         <div class="flex flex-row justify-between items-center mb-1">
                             <span class="font-playfair">DESCRIPTION<span class="text-red-600 dark:text-red-700">*</span></span>
                             <button id="generateUpdateDescriptionButton"
-                                class="p-1 font-playfair bg-blue-600 dark:bg-blue-700 rounded-md text-white"
+                                class="p-1 font-playfair bg-blue-600 dark:bg-blue-800 dark:text-gray-400 rounded-md text-white"
                                 onclick="generateDescription(document.getElementById('updateTitle'), document.getElementById('updateDescription'), this)">
                                     ⭐Generate Description⭐
                             </button>
                         </div>
-                        <textarea id="updateDescription" type="text"
-                            class="w-full min-h-64 bg-gray-300 dark:bg-gray-700 rounded-md p-1 font-playfair outline-none whitespace-pre-line resize-none"></textarea>
+                        <textarea id="updateDescription" type="text" class="w-full min-h-64 bg-gray-300 dark:bg-gray-700 rounded-md p-1 font-playfair outline-none whitespace-pre-line resize-none"></textarea>
                     </div>
                 </div>
-                <div class="grid grid-rows-5 h-full gap-2">
+                <div class="grid grid-rows-5 h-full gap-2 pl-6">
                     <div class="row-span-4">
                         <!-- STATUS, URGENCY, ASSIGNMENT COL, START DATE, AND END DATE -->
                         <div class="flex flex-col">
@@ -424,7 +449,7 @@
                         </div>
                     </div>
                     <!-- (UPDATE BUTTON)-->
-                    <div class="row-span-1 border-t-4 p-2">
+                    <div class="row-span-1 border-t-4 dark:border-gray-600 p-4">
                         <button
                             class="flex w-full h-full bg-blue-600 dark:bg-blue-700 rounded-md justify-center items-center cursor-pointer button-anim">
                             <span class="font-playfair text-4xl">Update Task</span>
