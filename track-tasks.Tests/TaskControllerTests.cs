@@ -35,11 +35,6 @@ public class TasksControllerTests
 
         return mockHubContext.Object;
     }
-    [Fact]
-    public void GetAll_ReturnsOk_WhenCalled()
-    {
-        
-    }
 
     [Fact]
     public void GetTask_ReturnsNotFound_WhenTaskDoesNotExist()
@@ -63,43 +58,43 @@ public class TasksControllerTests
     }
 
     [Fact]
-    public void Create_ReturnsCreated_WhenRequestIsValid()
+    public async Task Create_ReturnsCreated_WhenRequestIsValid()
     {
         var context = GetFakeDb();
         var task = new TaskItem { Title = "Task1", ProjectId = 1 };
         var controller = new TasksController(context, GetMockHubContext());
-        var result = controller.CreateAsync(task);
+        var result = await controller.CreateAsync(task);
         var objectResult = Assert.IsType<ObjectResult>(result);
         Assert.Equal(201, objectResult.StatusCode);
     }
 
     [Fact]
-    public void Create_IncrementsTaskNumber_WhenTaskExistsInSameProject()
+    public async Task Create_IncrementsTaskNumber_WhenTaskExistsInSameProject()
     {
         var context = GetFakeDb();
         var controller = new TasksController(context, GetMockHubContext());
 
         var task1 = new TaskItem { Title = "Task1", ProjectId = 1 };
-        controller.CreateAsync(task1);
+        await controller.CreateAsync(task1);
 
         var task2 = new TaskItem { Title = "Task2", ProjectId = 1 };
-        controller.CreateAsync(task2);
+        await controller.CreateAsync(task2);
 
         Assert.Equal(task1.TaskNumber + 1, task2.TaskNumber);
     }
 
     [Fact]
-    public void Update_ReturnsNotFound_WhenTaskDoesNotExist()
+    public async Task Update_ReturnsNotFound_WhenTaskDoesNotExist()
     {
         var context = GetFakeDb();
         var controller = new TasksController(context, GetMockHubContext());
         var updatedTask = new TaskItem { Title = "Updated Task" };
-        var result = controller.UpdateAsync(999, updatedTask);
+        var result = await controller.UpdateAsync(999, updatedTask);
         Assert.IsType<NotFoundResult>(result);
     }
 
     [Fact]
-    public void Update_ReturnsOk_WhenTaskExists()
+    public async Task Update_ReturnsOk_WhenTaskExists()
     {
         var context = GetFakeDb();
         var oldTask = new TaskItem { Title = "Old Task" };
@@ -107,29 +102,29 @@ public class TasksControllerTests
         context.SaveChanges();
         var controller = new TasksController(context, GetMockHubContext());
         var updatedTask = new TaskItem { Title = "Updated Task" };
-        var result = controller.UpdateAsync(oldTask.Id, updatedTask);
+        var result = await controller.UpdateAsync(oldTask.Id, updatedTask);
         Assert.IsType<OkObjectResult>(result);
         Assert.Equal(updatedTask.Title, oldTask.Title);
     }
 
     [Fact]
-    public void Delete_ReturnsNotFound_WhenTaskDoesNotExist()
+    public async Task Delete_ReturnsNotFound_WhenTaskDoesNotExist()
     {
         var context = GetFakeDb();
         var controller = new TasksController(context, GetMockHubContext());
-        var result = controller.DeleteAsync(999);
+        var result = await controller.DeleteAsync(999);
         Assert.IsType<NotFoundResult>(result);
     }
 
     [Fact]
-    public void Delete_ReturnsOk_WhenTaskExists()
+    public async Task Delete_ReturnsOk_WhenTaskExists()
     {
         var context = GetFakeDb();
         var task = new TaskItem { Title = "Task1" };
         context.Tasks.Add(task);
         context.SaveChanges();
         var controller = new TasksController(context, GetMockHubContext());
-        var result = controller.DeleteAsync(task.Id);
+        var result = await controller.DeleteAsync(task.Id);
         Assert.IsType<OkResult>(result);
         Assert.Null(context.Tasks.FirstOrDefault(t => t.Id == task.Id));
     }
