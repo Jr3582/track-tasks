@@ -488,3 +488,65 @@ function autoFillUsername(username){
     memberUsername.textContent = username;
     memberUsername.value = username;
 }
+
+function createCommentCard(comment) {
+    const parentDiv = document.createElement("div");
+    //MAKING THE USERNAME DIV
+    const usernameDiv = document.createElement("div");
+    const usernameContainer = document.createElement("div");
+    const usernameSpan = document.createElement("span");
+
+    //MAKING THE COMMENT DIV
+    const commentDiv = document.createElement("div");
+    const commentContainer = document.createElement("div");
+    const commentArea = document.createElement("span");
+    const commentDelete = document.createElement("i");
+
+    parentDiv.setAttribute("id", `comment_${comment.id}`);
+    commentDelete.addEventListener("click", function(event) {
+        console.log("deleting: " + comment.id);
+        deleteComment(comment.id);
+        event.stopPropagation();
+    });
+
+
+    parentDiv.className = "flex flex-col items-start pt-4 mb-2 gap-2";
+    usernameDiv.className = "flex flex-row items-center";
+    usernameContainer.className = "bg-blue-500 dark:bg-blue-900 h-8 max-w-28 p-1 rounded-xl flex items-center";
+    usernameSpan.className = "font-playfair text-xs";
+    usernameSpan.textContent = comment.username;
+
+    commentDiv.className = "bg-white border-2 dark:bg-gray-700 dark:border-gray-600 p-1 rounded-xl w-full h-fit max-h-64 overflow-y-scroll";
+    commentContainer.className = "flex flex-col gap-1";
+    commentArea.className = "text-sm font-playfair";
+    commentDelete.className = "flex self-end p-1 fa-regular fa-trash-can cursor-pointer w-fit";
+    commentArea.textContent = comment.content;
+
+    usernameContainer.appendChild(usernameSpan);
+    usernameDiv.appendChild(usernameContainer);
+    
+    commentContainer.appendChild(commentArea);
+    commentContainer.appendChild(commentDelete);
+    commentDiv.appendChild(commentContainer);
+
+    parentDiv.appendChild(usernameDiv);
+    parentDiv.appendChild(commentDiv);
+
+    commentSection.appendChild(parentDiv);
+}
+
+// <!-- EACH COMMENT -->
+// <div id="comment_0" class="flex flex-col items-start pt-4 mb-2 gap-2">
+//     <div class="flex flex-row items-center">
+//         <div class="bg-blue-500 dark:bg-blue-900 h-8 max-w-28 p-1 rounded-xl flex items-center">
+//             <span id="userCommentName" class="font-playfair text-xs">[USER.NAME]</span>
+//         </div>
+//     </div>
+    
+//     <div class="bg-white border-2 dark:bg-gray-700 dark:border-gray-600 p-1 rounded-xl w-full h-fit max-h-64 overflow-y-scroll">
+//         <div class="flex flex-col gap-1">
+//             <span class="text-sm font-playfair">EEE</span>
+//             <i class="flex justify-end p-1 fa-regular fa-trash-can"></i>
+//         </div>
+//     </div>
+// </div>

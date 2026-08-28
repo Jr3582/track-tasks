@@ -32,12 +32,17 @@ async function showCreateTask(status, event){
 async function showUpdateTask(id, event) {
     event.stopPropagation();
     curTaskId = id;
-    const [taskRes, projRes] = await Promise.all([
+    const [taskRes, projRes, commentsRes] = await Promise.all([
         authFetch(`/Tasks/${id}`),
-        authFetch(`/Projects/${curProjId}`)
+        authFetch(`/Projects/${curProjId}`),
+        authFetch(`/Comments/${id}`)
     ]);
     const task = await taskRes.json();
     const project = await projRes.json();
+    const comments = await commentsRes.json();
+
+    commentSection.innerHTML = "";
+    comments.forEach(createCommentCard);
 
     const newStartDateFormat = new Date(task.startDate);
     const startyyyy = newStartDateFormat.getUTCFullYear();

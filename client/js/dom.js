@@ -106,3 +106,9 @@ const passwordInput = document.getElementById("passwordInput");
 const confirmPasswordInput = document.getElementById("confirmPasswordInput");
 const passwordValidationMsg = document.getElementById("passwordValidationMsg");
 const confirmPassMsg = document.getElementById("confirmPassMsg");
+
+//COMMENT DOMS
+const commentSection = document.getElementById("commentSection");
+const commentInputBox = document.getElementById("commentInputBox");
+const commentCancelBtn = document.getElementById("commentCancelBtn");
+const commentCommentBtn = document.getElementById("commentCommentBtn");

@@ -43,6 +43,18 @@ connection.on("TaskDeleted", (task) => {
     document.getElementById(task.id).remove();
 })
 
+connection.on("CommentAdded", (comment) => {
+    //DEBUG CONSOLE.LOG
+    //console.log(comment);
+    createCommentCard(comment);
+})
+
+connection.on("CommentRemoved", (commentId) => {
+    //DEBUG CONSOLE.LOG
+    //console.log("deleting: " + commentId);
+    document.getElementById("comment_"+commentId).remove();
+})
+
 new Sortable(todo_col, {
     group: "tasks",
     draggable: ".task-card",
@@ -118,7 +130,7 @@ createTaskform.addEventListener("submit", async function(event) {
         body: JSON.stringify(task)
     });
 
-    const responseJSON = await response.json();
+    //const responseJSON = await response.json();
 
     //BUG: THIS LINE HERE CREATES 2 TASK CARDS
     //createTaskCard(responseJSON);
@@ -557,6 +569,41 @@ function loadTheme() {
     }
 }
 
+//COMMENT STUFF
+function activateCommentBtns() {
+    if(commentCancelBtn.classList.contains("hidden") && commentCommentBtn.classList.contains("hidden")) {
+        commentCancelBtn.classList.remove("hidden");
+        commentCommentBtn.classList.remove("hidden");
+    }
+}
+
+function cancelComment() {
+    if(!commentCancelBtn.classList.contains("hidden") && !commentCommentBtn.classList.contains("hidden")) {
+        commentCancelBtn.classList.add("hidden");
+        commentCommentBtn.classList.add("hidden");
+        commentInputBox.value = "";
+    }
+}
+
+async function submitComment() {
+    const comment = {
+        content: commentInputBox.value,
+    }
+
+    const response = await authFetch(`/Comments/${curTaskId}`, {
+        method: "Post",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(comment)
+    });
+
+    const responseJSON = await response.json();
+
+    // BUG: THIS LINE HERE CREATES 2 TASK CARDS
+    // createCommentBox(responseJSON);
+    // console.log(responseJSON);
+}
 //FETCH ALL TASKS NOW REMEMBERS WHERE YOU LEFT OFF
 loadTheme();
 getCurrentUser();

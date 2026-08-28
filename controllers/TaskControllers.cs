@@ -90,10 +90,7 @@ public class TasksController(AppDbContext context, IHubContext<TaskHub> hubConte
     public async Task<IActionResult> DeleteAsync([FromRoute] int id)
     {
         var searchResult = _context.Tasks.FirstOrDefault(task => task.Id == id);
-        if(searchResult == null)
-        {
-            return NotFound();
-        }
+        if(searchResult == null) return NotFound();
         _context.Tasks.Remove(searchResult);
         _context.SaveChanges();
         // Console.WriteLine($"Broadcasting to search-result:{searchResult.ProjectId}");

@@ -283,3 +283,10 @@ async function generateDescription(titleEl, descriptionEl, buttonEl) {
     }
 
 }
+
+async function deleteComment(commentId) {
+    const response = await authFetch(`/Comments/${commentId}`, {
+        method: "DELETE"
+    })
+    return response
+}

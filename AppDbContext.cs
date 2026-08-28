@@ -9,6 +9,7 @@ public class AppDbContext : DbContext
     public DbSet<Project> Projects { get; set; }
     public DbSet<User> Users { get; set; }
     public DbSet<UsersToProjects> UsersToProjects { get; set;}
+    public DbSet<Comment> Comment {get; set;}
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
     {
         

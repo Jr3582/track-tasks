@@ -135,10 +135,7 @@ public class ProjectsController(AppDbContext context) : ControllerBase
     public IActionResult DeleteProject([FromRoute] int id)
     {
         var searchResult = _context.Projects.FirstOrDefault(project => project.Id == id);
-        if(searchResult == null)
-        {
-            return NotFound();
-        }
+        if(searchResult == null) return NotFound();
         _context.Projects.Remove(searchResult);
         _context.SaveChanges();
         return Ok();
